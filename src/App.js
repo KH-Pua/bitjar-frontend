@@ -1,20 +1,26 @@
-import React from "react";
-import logo from "./logo.png";
+import { useState, useEffect, createContext } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
-class App extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-        </header>
-      </div>
-    );
-  }
-}
+import BACKEND_URL from "./constants.js";
+import GlobalProvider from "./providers/globalProvider.js";
+import ErrorPage from "./pages/errorPage.js";
+
+//import pages here
+import Homepage from "./pages/homePage.js";
+
+
+const App = () => {
+  return (
+    <GlobalProvider>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+
+        {/* Fallback for any unmatched route */}
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </GlobalProvider>
+  );
+};
 
 export default App;
