@@ -1,24 +1,16 @@
-import { useState, useEffect, createContext } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import "./App.css";
+//-----------Libraries-----------//
+import React from "react";
 
-import BACKEND_URL from "./constants.js";
+//-----------Providers-----------//
 import GlobalProvider from "./providers/globalProvider.js";
-import ErrorPage from "./pages/errorPage.js";
-
-//import pages here
-import Homepage from "./pages/homePage.js";
-
+import Routes from "./providers/routerProvider.js";
+//-----------Styling-----------//
+import "./App.css";
 
 const App = () => {
   return (
     <GlobalProvider>
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-
-        {/* Fallback for any unmatched route */}
-        <Route path="*" element={<ErrorPage />} />
-      </Routes>
+      <Routes />
     </GlobalProvider>
   );
 };
