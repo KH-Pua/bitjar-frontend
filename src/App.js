@@ -2,8 +2,8 @@
 import React from "react";
 
 //-----------Providers-----------//
-import GlobalProvider from "./Providers/GlobalProvider.js";
-import Routes from "./Providers/RouterProvider.js";
+import GlobalProvider from "./providers/globalProvider.js";
+import Routes from "./providers/routerProvider.js";
 //-----------Styling-----------//
 import "./App.css";
 

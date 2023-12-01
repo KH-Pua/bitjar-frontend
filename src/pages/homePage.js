@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import { GlobalContext } from "../Providers/GlobalProvider.js";
+import { GlobalContext } from "../providers/globalProvider.js";
 import NavBar from "../components/details/NavBar.js";
 
 export default function HomePage() {

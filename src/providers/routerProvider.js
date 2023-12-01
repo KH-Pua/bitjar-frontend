@@ -2,8 +2,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 //-----------Pages-----------//
-import HomePage from "../pages/HomePage";
-import ErrorPage from "../pages/ErrorPage";
+import HomePage from "../pages/homePage.js";
+import ErrorPage from "../pages/errorPage.js";
 
 const router = createBrowserRouter([
   {
