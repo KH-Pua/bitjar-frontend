@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext, Fragment } from "react";
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
-import { GlobalContext } from "../provider/globalProvider.js";
 
 import {
     Bars3Icon,
@@ -35,7 +34,7 @@ export default function BaseTemplate() {
     const [userData, setUserData] = useState("");
 
     const navigation = [
-        { name: "Home", href: "/home", icon: HomeIcon, current: false },
+        { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
         { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
         { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
         { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
@@ -44,7 +43,7 @@ export default function BaseTemplate() {
       ];
   
       const userNavigation = [
-        { name: "Home", href: "/listingAll" },
+        { name: "Dashboard", href: "/dashboard" },
         { name: "Sign out", href: process.env.REACT_APP_LOGOUT_URL },
       ];
 
@@ -87,7 +86,7 @@ export default function BaseTemplate() {
     // }, [isAuthenticated, user]);
 
       const handleClick = (name) => {
-        navigate("/listingAll");
+        navigate("/dashboard");
       };
 
       const renderSideBarWithHeader = () => {
@@ -155,9 +154,9 @@ export default function BaseTemplate() {
                               <img
                                 src={logo}
                                 alt="BitJar Logo"
-                                className="h-8 w-auto"
+                                className="h-14 w-auto"
                               />
-                              <h1 className="cursor-pointer font-sans text-2xl font-bold text-slate-900">
+                              <h1 className="cursor-pointer font-sans text-4xl font-bold text-slate-900">
                                 BitJar
                               </h1>
                             </div>
@@ -230,9 +229,9 @@ export default function BaseTemplate() {
                       <img
                         src={logo}
                         alt="BitJar Logo"
-                        className="h-8 w-auto"
+                        className="h-14 w-auto"
                       />
-                      <h1 className="cursor-pointer font-sans text-2xl font-bold text-slate-900">
+                      <h1 className="cursor-pointer font-sans text-4xl font-bold text-slate-900">
                         BitJar
                       </h1>
                     </div>
@@ -394,14 +393,16 @@ export default function BaseTemplate() {
                       </div>
                     </div>
                   </div>
+
                   <main className="py-10">
                     <div className="px-4 sm:px-6 lg:px-8">
                       <Outlet />
                     </div>
                   </main>
+
                 </div>
               </div>
-            </>,
+            </>
           );
         }
       };
