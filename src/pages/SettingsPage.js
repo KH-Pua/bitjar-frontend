@@ -6,7 +6,7 @@ import { GlobalContext } from "../Providers/GlobalProvider.js";
 //-----------Components-----------//
 import NavBar from "../components/details/NavBar.js";
 
-export default function HomePage() {
+export default function SettingsPage() {
   const infoToPass = useContext(GlobalContext);
   const navigate = useNavigate();
 
@@ -15,9 +15,7 @@ export default function HomePage() {
       <aside>
         <NavBar />
       </aside>
-      <div className="flex w-screen flex-col items-center justify-center">
-        <h1 className="p-0 text-xs text-black">Home Page</h1>
-      </div>{" "}
+      <h1 className="p-0 text-xs text-black">Settings Page</h1>
     </div>
   );
 }
