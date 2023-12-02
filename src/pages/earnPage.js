@@ -84,6 +84,32 @@ export default function EarnPage() {
     }
   };
 
+  const withdrawWETH = async () => {
+    if (!account || !amount) return;
+
+    try {
+      const wethTokenAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+      const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
+
+      const lendingPoolContract = new web3.eth.Contract(
+        aaveLendingPoolABI,
+        lendingPoolAddress,
+      );
+
+      // Convert the amount to Wei
+      const amountInWei = web3.utils.toWei(amount, "ether");
+
+      // Withdraw WETH from the LendingPool
+      await lendingPoolContract.methods
+        .withdraw(wethTokenAddress, amountInWei, account)
+        .send({ from: account });
+
+      console.log("Withdrew", amount, "WETH from Aave v3");
+    } catch (error) {
+      console.error("Error in withdrawing WETH:", error);
+    }
+  };
+
   const fetchTransactions = async (address) => {
     try {
       const response = await alchemy.core.getAssetTransfers({
@@ -135,6 +161,7 @@ export default function EarnPage() {
             placeholder="Amount of WETH"
           />
           <button onClick={supplyWETH}>Supply WETH to Aave v3</button>
+          <button onClick={withdrawWETH}>Withdraw WETH from Aave v3</button>
         </div>
       )}
       {/* ... Other components ... */}
