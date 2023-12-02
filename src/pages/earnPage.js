@@ -331,61 +331,60 @@ export default function EarnPage() {
               onDeposit={supplyWBTC}
               onWithdraw={withdrawWBTC}
             />
-                <button
-                onClick={getWalletAllTokenBalances}
-                className="mt-10 rounded-md bg-indigo-400 p-2"
-              >
-                Get All Token Balances
-              </button>
-              <button
-                onClick={() => {
-                  console.log(coinImage);
-                }}
-                className="mt-10 rounded-md bg-indigo-400 p-2"
-              >
-                Check Coin Images
-              </button>
-            </div>
+            <button
+              onClick={getWalletAllTokenBalances}
+              className="mt-10 rounded-md bg-indigo-400 p-2"
+            >
+              Get All Token Balances
+            </button>
+            <button
+              onClick={() => {
+                console.log(coinImage);
+              }}
+              className="mt-10 rounded-md bg-indigo-400 p-2"
+            >
+              Check Coin Images
+            </button>
           </div>
-        )}
-        <div className="flex flex-row flex-wrap gap-x-[1em] gap-y-[.5em]">
-          {imagesFlag && coinImage && account
-            ? walletTokens.map((element, index) => {
-                console.log(`element is ${element}`);
-                // console.log(coinImage.element) // NOT SURE WHY THIS SYNTAX DOESNT WORK??
-                console.log(coinImage[element]);
-                return (
-                  <div
-                    key={element}
-                    className="flex w-[20%] flex-col items-center rounded-md border bg-slate-100 py-[1em]"
-                  >
-                    <div className="font-semibold">{element}</div>
-                    {coinImage[element] ? (
-                      <div className="h-[3rem] w-[3rem] scale-100 overflow-hidden rounded-[50%] border border-slate-200">
-                        <img
-                          src={coinImage[element]}
-                          alt="logo"
-                          className="h-[100%] w-[100%] object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-[3rem] w-[3rem] scale-100 overflow-hidden rounded-[50%] border border-slate-200">
-                        <img
-                          src="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg"
-                          alt="logo"
-                          className="h-[100%] w-[100%] object-cover"
-                        />
-                      </div>
-                    )}
-                    <p>Balance:</p>
-                    <p>{tokenBalance[element]}</p>
-                  </div>
-                );
-              })
-            : null}
         </div>
-        {/* ... Other components ... */}
+      )}
+      <div className="flex flex-row flex-wrap gap-x-[1em] gap-y-[.5em]">
+        {imagesFlag && coinImage && account
+          ? walletTokens.map((element, index) => {
+              console.log(`element is ${element}`);
+              // console.log(coinImage.element) // NOT SURE WHY THIS SYNTAX DOESNT WORK??
+              console.log(coinImage[element]);
+              return (
+                <div
+                  key={element}
+                  className="flex w-[20%] flex-col items-center rounded-md border bg-slate-100 py-[1em]"
+                >
+                  <div className="font-semibold">{element}</div>
+                  {coinImage[element] ? (
+                    <div className="h-[3rem] w-[3rem] scale-100 overflow-hidden rounded-[50%] border border-slate-200">
+                      <img
+                        src={coinImage[element]}
+                        alt="logo"
+                        className="h-[100%] w-[100%] object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-[3rem] w-[3rem] scale-100 overflow-hidden rounded-[50%] border border-slate-200">
+                      <img
+                        src="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg"
+                        alt="logo"
+                        className="h-[100%] w-[100%] object-cover"
+                      />
+                    </div>
+                  )}
+                  <p>Balance:</p>
+                  <p>{tokenBalance[element]}</p>
+                </div>
+              );
+            })
+          : null}
       </div>
-    </>
+      {/* ... Other components ... */}
+    </div>
   );
 }
