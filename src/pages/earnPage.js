@@ -3,7 +3,7 @@ import Web3 from "web3";
 import { Network, Alchemy } from "alchemy-sdk";
 import erc20ABI from "../utilities/erc20.abi.json";
 import aaveLendingPoolABI from "../utilities/aaveLendingPoolABI.json";
-
+import { fetchPoolData } from "../components/api/defillama.js";
 import { GlobalContext } from "../providers/globalProvider.js";
 
 const settings = {
@@ -28,6 +28,10 @@ export default function EarnPage() {
   const [coinImage, setCoinImage] = useState({});
   const [imagesFlag, setImagesFlag] = useState(false);
 
+  // Add state for WETH and WBTC pool data
+  const [wethPoolData, setWethPoolData] = useState({});
+  const [wbtcPoolData, setWbtcPoolData] = useState({});
+
   useEffect(() => {
     if (window.ethereum) {
       // console.log("metamask detected");
@@ -42,6 +46,17 @@ export default function EarnPage() {
       fetchBalance(account);
     }
   }, [account]);
+
+  useEffect(() => {
+    fetchPoolData("e880e828-ca59-4ec6-8d4f-27182a4dc23d").then((data) => {
+      console.log("WETH Pool Data: ", data);
+      setWethPoolData(data);
+    });
+    fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
+      console.log("WBTC Pool Data: ", data);
+      setWbtcPoolData(data);
+    });
+  }, []);
 
   const connectWallet = async () => {
     try {
@@ -205,10 +220,20 @@ export default function EarnPage() {
     }
   };
 
-  const ProductCard = ({ title, onDeposit, onWithdraw, onChange, amount }) => {
+  const ProductCard = ({
+    title,
+    onDeposit,
+    onWithdraw,
+    onChange,
+    amount,
+    tvl,
+    apy,
+  }) => {
     return (
       <div className="rounded-lg bg-white px-4 py-5 shadow sm:p-6">
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <div>TVL: ${tvl || "Loading..."}</div>
+        <div>APY: {apy ? apy.toFixed(2) : "Loading..."}%</div>
         <div className="mt-4">
           <input
             type="text"
@@ -323,6 +348,8 @@ export default function EarnPage() {
               onChange={handleWethAmountChange}
               onDeposit={supplyWETH}
               onWithdraw={withdrawWETH}
+              tvl={wethPoolData.tvlUsd}
+              apy={wethPoolData.apy}
             />
             <ProductCard
               title="WBTC"
@@ -330,6 +357,8 @@ export default function EarnPage() {
               onChange={handleWbtcAmountChange}
               onDeposit={supplyWBTC}
               onWithdraw={withdrawWBTC}
+              tvl={wbtcPoolData.tvlUsd}
+              apy={wbtcPoolData.apy}
             />
             <button
               onClick={getWalletAllTokenBalances}
