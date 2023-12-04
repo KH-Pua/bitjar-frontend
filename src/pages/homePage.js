@@ -1,8 +1,9 @@
+//-----------Libraries-----------//
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../providers/globalProvider.js";
-import NavBar from "../components/details/NavBar.js";
 
+//-----------Media-----------//
 import logo from "../media/bitjar-logo.png";
 
 export default function HomePage() {

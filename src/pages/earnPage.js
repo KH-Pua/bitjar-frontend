@@ -1,7 +1,10 @@
+//-----------Libraries-----------//
 import React, { useState, useEffect, useContext } from "react";
 import Web3 from "web3";
 import { Network, Alchemy } from "alchemy-sdk";
 import erc20ABI from "../utilities/erc20.abi.json";
+
+//-----------Libraries-----------//
 import aaveLendingPoolABI from "../utilities/aaveLendingPoolABI.json";
 import { fetchPoolData } from "../components/api/defillama.js";
 import { GlobalContext } from "../providers/globalProvider.js";

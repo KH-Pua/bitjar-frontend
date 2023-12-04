@@ -1,7 +1,7 @@
+//-----------Libraries-----------//
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../providers/globalProvider.js";
-import NavBar from "../components/details/NavBar.js";
 
 export default function MarketPage() {
   const infoToPass = useContext(GlobalContext);
