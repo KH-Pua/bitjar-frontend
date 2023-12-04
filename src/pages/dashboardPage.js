@@ -163,7 +163,7 @@ export default function DashboardPage() {
 
         {/* User Primary Information */}
         {!account ? null : (
-          <div className="flex w-full flex-row justify-around pb-[2em]">
+          <div className="flex w-full flex-row justify-start gap-[3em] pb-[2em]">
             {/* Maybe move wallet address to Status Bar at top
             <h2>Wallet Address:</h2>
             <p>{account}</p> */}
@@ -172,16 +172,14 @@ export default function DashboardPage() {
               <p className="text-[2rem] font-semibold"> xxx USD</p>
               {/* <h2>Wallet ETH Balance:</h2> <p>{balance} ETH</p> */}
             </div>
-            <div>
+            {/* <div>
               <h2 className="font-semibold text-slate-600">Supplied Value:</h2>
               <p className="text-[2rem] font-semibold"> xxx USD</p>
-              {/* <h2>Wallet ETH Balance:</h2> <p>{balance} ETH</p> */}
             </div>
             <div>
               <h2 className="font-semibold text-slate-600">Borrowed Value:</h2>
               <p className="text-[2rem] font-semibold"> xxx USD</p>
-              {/* <h2>Wallet ETH Balance:</h2> <p>{balance} ETH</p> */}
-            </div>
+            </div> */}
           </div>
         )}
 
