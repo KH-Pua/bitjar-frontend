@@ -38,7 +38,8 @@ export default function BaseTemplate() {
     const [pathName, setPathName] = useState("");
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [userData, setUserData] = useState("");
-    const [account, setAccount] = useState(null);
+
+    const [account, setAccount] = useState("");
 
     const connectWallet = async () => {
       try {
@@ -79,22 +80,17 @@ export default function BaseTemplate() {
     });
   };
 
-      useEffect(() => {
-        if (window.ethereum) {
-          // console.log("metamask detected");
-          web3 = new Web3(window.ethereum);
-        }
+  useEffect(() => {
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
 
-        let route = location.pathname;
+    let route = location.pathname;
 
-        let updatedNav = selectedPageButtonHandler(navigation, route);
-        setSidebarNavigation(updatedNav);
-        setDropdownNavigation(userNavigation);
-        // setUserData({
-        //     picture: "",
-        //     nickname: "Usr01",
-        // })
-      }, []);
+    let updatedNav = selectedPageButtonHandler(navigation, route);
+    setSidebarNavigation(updatedNav);
+    setDropdownNavigation(userNavigation);
+  }, []);
 
   useEffect(() => {
     if (pathName) {
@@ -103,9 +99,14 @@ export default function BaseTemplate() {
     }
   }, [pathName]);
 
-      useEffect(() => {
-        renderSideBarWithHeader();
-      }, [account, sidebarNavigation, dropdownNavigation, sidebarOpen]);
+  useEffect(() => {
+    renderSideBarWithHeader();
+  }, [sidebarNavigation, dropdownNavigation, sidebarOpen]);
+
+  useEffect(() => {
+    renderSideBarWithHeader();
+    console.log(account);
+  }, [account]);
 
   //   useEffect(() => {
   //     if (isAuthenticated) {
@@ -117,28 +118,30 @@ export default function BaseTemplate() {
     navigate("/dashboard");
   };
 
-      const renderSideBarWithHeader = () => {
-        if (sidebarNavigation && dropdownNavigation) {
-          setTemplate(
-            <>
-              <div>
-                <Transition.Root show={sidebarOpen} as={Fragment}>
-                  <Dialog
-                    as="div"
-                    className="relative z-50 lg:hidden"
-                    onClose={setSidebarOpen}
-                  >
-                    <Transition.Child
-                      as={Fragment}
-                      enter="transition-opacity ease-linear duration-300"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="transition-opacity ease-linear duration-300"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <div className="fixed inset-0 bg-gray-900/80" />
-                    </Transition.Child>
+  const renderSideBarWithHeader = () => {
+    console.log("Enter Sidebar with header")
+    console.log(account);
+    if (sidebarNavigation && dropdownNavigation) {
+      setTemplate(
+        <>
+          <div>
+            <Transition.Root show={sidebarOpen} as={Fragment}>
+              <Dialog
+                as="div"
+                className="relative z-50 lg:hidden"
+                onClose={setSidebarOpen}
+              >
+                <Transition.Child
+                  as={Fragment}
+                  enter="transition-opacity ease-linear duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="transition-opacity ease-linear duration-300"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <div className="fixed inset-0 bg-gray-900/80" />
+                </Transition.Child>
 
                 <div className="fixed inset-0 flex">
                   <Transition.Child
@@ -364,95 +367,103 @@ export default function BaseTemplate() {
                       aria-hidden="true"
                     />
 
-                        {/* Profile dropdown */}
-                        {!account ? (
-                          <Menu as="div" className="relative">
-                            <Menu.Button className="btn -m-1.5 flex items-center p-1.5">
-                              <span className="sr-only">Connect wallet</span>
-                              <span
-                                className="hidden lg:flex lg:items-center"
-                                onClick={connectWallet}
-                              >
-                                <span
-                                  className=" mx-4 text-sm font-semibold leading-6 text-gray-900"
-                                  aria-hidden="true"
-                                >
-                                  Connect Wallet
-                                </span>
-                              </span>
-                            </Menu.Button>
-                          </Menu>
-                        ) : (
-                          <Menu as="div" className="relative">
-                            <Menu.Button className="btn -m-1.5 flex items-center p-1.5">
-                              <span className="sr-only">Open user menu</span>
-                              <img
-                               className="h-8 w-8 rounded-full bg-gray-50"
-                               src={userData.picture}
-                               alt="img"
-                              /> 
-                              <span className="hidden lg:flex lg:items-center">
-                                <span
-                                  className="text-sm font-semibold leading-6 text-gray-900"
-                                  aria-hidden="true"
-                                >
-                                  {account}
-                                </span>
-                                <ChevronDownIcon
-                                  className="ml-2 h-5 w-5 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            </Menu.Button>
-                            <Transition
-                              as={Fragment}
-                              enter="transition ease-out duration-100"
-                              enterFrom="transform opacity-0 scale-95"
-                              enterTo="transform opacity-100 scale-100"
-                              leave="transition ease-in duration-75"
-                              leaveFrom="transform opacity-100 scale-100"
-                              leaveTo="transform opacity-0 scale-95"
+                    {/* Profile dropdown */}
+                    {!account ? (
+                      <Menu as="div" className="relative">
+                        <Menu.Button
+                          className="btn btn-ghost no-animation flex items-center bg-yellow-200 p-1.5 marker:-m-1.5 hover:bg-yellow-300"
+                          onClick={connectWallet}
+                        >
+                          <span className="sr-only">Connect wallet</span>
+                          <span className="lg:hidden lg:items-center">
+                            <span
+                              className=" mx-4 text-sm font-semibold leading-6 text-gray-900"
+                              aria-hidden="true"
                             >
-                              <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                                {dropdownNavigation.map((item) => (
-                                  <Menu.Item key={item.name}>
-                                    {({ active }) => (
-                                      <button
-                                        //to={item.href}
-                                        onClick={item.onclick}
-                                        className={classNames(
-                                          active ? "bg-gray-50" : "",
-                                          "block px-3 py-1 text-sm leading-6 text-gray-900",
-                                        )}
-                                      >
-                                        {item.name}
-                                      </button>
+                              Connect
+                            </span>
+                          </span>
+                          <span className="hidden lg:flex lg:items-center">
+                            <span
+                              className=" mx-4 text-sm font-semibold leading-6 text-gray-900"
+                              aria-hidden="true"
+                            >
+                              Connect Wallet
+                            </span>
+                          </span>
+                        </Menu.Button>
+                      </Menu>
+                    ) : (
+                      <Menu as="div" className="relative">
+                        <Menu.Button className="btn btn-ghost no-animation -m-1.5 flex items-center bg-slate-100 p-1.5 hover:bg-yellow-200">
+                          <span className="sr-only">Open user menu</span>
+                          <img
+                            className="h-8 w-8 rounded-full bg-gray-50"
+                            src={userData.picture}
+                            alt="img"
+                          />
+                          <span className="hidden lg:flex lg:items-center">
+                            <span
+                              className="text-sm font-semibold leading-6 text-gray-900"
+                              aria-hidden="true"
+                            >
+                              {account}
+                            </span>
+                            <ChevronDownIcon
+                              className="ml-2 h-5 w-5 text-gray-400"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        </Menu.Button>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                            {dropdownNavigation.map((item) => (
+                              <Menu.Item key={item.name}>
+                                {({ active }) => (
+                                  <button
+                                    //to={item.href}
+                                    onClick={item.onclick}
+                                    className={classNames(
+                                      active ? "bg-gray-50" : "",
+                                      "block px-3 py-1 text-sm leading-6 text-gray-900",
                                     )}
-                                  </Menu.Item>
-                                ))}
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
-                        )}
-                      </div>
-                    </div>
+                                  >
+                                    {item.name}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            ))}
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
+                    )}
                   </div>
-
-                  <main className="py-10">
-                    <div className="px-4 sm:px-6 lg:px-8">
-                      <Outlet />
-                    </div>
-                  </main>
                 </div>
               </div>
-            </>,
-          );
-        }
-      };
-  
-      return (
-        <>
-        {template}
+
+              <main className="py-10">
+                <div className="px-4 sm:px-6 lg:px-8">
+                  <Outlet account={account} />
+                </div>
+              </main>
+            </div>
+          </div>
         </>
-      )
+      );
+    }
+  };
+
+  return (
+    <>
+    {template}
+    </>
+  )
 }  
