@@ -9,6 +9,9 @@ import aaveLendingPoolABI from "../utilities/aaveLendingPoolABI.json";
 import { fetchPoolData } from "../components/api/defillama.js";
 import { GlobalContext } from "../providers/globalProvider.js";
 
+// Import Components
+import { TokenCard } from "../components/TokenCard/TokenCard.js";
+
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
   network: Network.ETH_MAINNET,
@@ -393,21 +396,9 @@ export default function EarnPage() {
                 >
                   <div className="font-semibold">{element}</div>
                   {coinImage[element] ? (
-                    <div className="h-[3rem] w-[3rem] scale-100 overflow-hidden rounded-[50%] border border-slate-200">
-                      <img
-                        src={coinImage[element]}
-                        alt="logo"
-                        className="h-[100%] w-[100%] object-cover"
-                      />
-                    </div>
+                    <TokenCard imagesrc={coinImage[element]} />
                   ) : (
-                    <div className="h-[3rem] w-[3rem] scale-100 overflow-hidden rounded-[50%] border border-slate-200">
-                      <img
-                        src="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg"
-                        alt="logo"
-                        className="h-[100%] w-[100%] object-cover"
-                      />
-                    </div>
+                    <TokenCard imagesrc="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" />
                   )}
                   <p>Balance:</p>
                   <p>{tokenBalance[element]}</p>
