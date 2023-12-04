@@ -1,7 +1,7 @@
+//-----------Libraries-----------//
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../providers/globalProvider.js";
-import NavBar from "../components/details/NavBar.js";
 
 // Web3 Imports - Can be refactored in the future after we got all the methods out
 import Web3 from "web3";
