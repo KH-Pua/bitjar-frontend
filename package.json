@@ -5,6 +5,8 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
+    "@moonpay/moonpay-js": "^0.3.1",
+    "@moonpay/moonpay-react": "^1.4.1",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@web3-onboard/core": "^2.21.2",
     "@web3-onboard/injected-wallets": "^2.10.10",
