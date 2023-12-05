@@ -7,7 +7,12 @@ import { MoonPayBuyWidget } from "@moonpay/moonpay-react";
 export default function BuyPage() {
   const infoToPass = useContext(GlobalContext);
   const navigate = useNavigate();
+  const [account, setAccount] = useState(null);
   const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setAccount(localStorage.getItem("connection_meta"));
+  },[])
 
   return (
     <div className="flex flex-row">

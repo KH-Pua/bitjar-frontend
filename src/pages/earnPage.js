@@ -28,6 +28,7 @@ export default function EarnPage() {
   const [account, setAccount] = useState("");
   const [wethAmount, setWethAmount] = useState("");
   const [wbtcAmount, setWbtcAmount] = useState("");
+  const [usdcAmount, setUsdcAmount] = useState("");
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState([]);
 
@@ -39,6 +40,7 @@ export default function EarnPage() {
   // Add state for WETH and WBTC pool data
   const [wethPoolData, setWethPoolData] = useState({});
   const [wbtcPoolData, setWbtcPoolData] = useState({});
+  const [usdcPoolData, setUsdcPoolData] = useState({});
 
   const [earnPage, setEarnPage] = useState("");
 
@@ -62,11 +64,11 @@ export default function EarnPage() {
       fetchBalance(account);
     }
     renderEarnPage();
-  }, [account, wethPoolData, wbtcPoolData]);
+  }, [account, wethPoolData, wbtcPoolData, usdcPoolData]);
 
   useEffect(() => {
     renderEarnPage();
-  }, [wethAmount, wbtcAmount])
+  }, [wethAmount, wbtcAmount, usdcAmount])
 
   useEffect(() => {
     fetchPoolData("e880e828-ca59-4ec6-8d4f-27182a4dc23d").then((data) => {
@@ -76,6 +78,10 @@ export default function EarnPage() {
     fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
       console.log("WBTC Pool Data: ", data);
       setWbtcPoolData(data);
+    });
+    fetchPoolData("aa70268e-4b52-42bf-a116-608b370f9501").then((data) => {
+      console.log("USDC Pool Data: ", data);
+      setUsdcPoolData(data);
     });
   }, []);
 
@@ -101,6 +107,10 @@ export default function EarnPage() {
 
   const handleWbtcAmountChange = (e) => {
     setWbtcAmount(e.target.value);
+  };
+
+  const handleUsdcAmountChange = (e) => {
+    setUsdcAmount(e.target.value);
   };
 
   const supplyWETH = async () => {
@@ -214,6 +224,59 @@ export default function EarnPage() {
       console.log("Withdrew", wbtcAmount, "WBTC from Aave v3");
     } catch (error) {
       console.error("Error in withdrawing WBTC:", error);
+    }
+  };
+
+  const supplyUSDC = async () => {
+    if (!account || !usdcAmount) return;
+
+    try {
+      const usdcTokenAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+      const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
+
+      const wethContract = new web3.eth.Contract(erc20ABI, usdcTokenAddress);
+      const lendingPoolContract = new web3.eth.Contract(
+        aaveLendingPoolABI,
+        lendingPoolAddress,
+      );
+
+      // Approve the LendingPool contract to spend your USDC
+      const amountInWei = web3.utils.toWei(usdcAmount, "ether");
+      await wethContract.methods
+        .approve(lendingPoolAddress, amountInWei)
+        .send({ from: account });
+
+      // Deposit USDC into the LendingPool
+      await lendingPoolContract.methods
+        .deposit(usdcTokenAddress, amountInWei, account, 0)
+        .send({ from: account });
+
+      console.log("Deposited", usdcAmount, "USDC to Aave v3");
+    } catch (error) {
+      console.error("Error in supplying USDC:", error);
+    }
+  };
+
+  const withdrawUSDC = async () => {
+    if (!account || !usdcAmount) return;
+
+    try {
+      const usdcTokenAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+      const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
+
+      const lendingPoolContract = new web3.eth.Contract(
+        aaveLendingPoolABI,
+        lendingPoolAddress,
+      );
+
+      const amountInSatoshi = toSatoshi(usdcAmount);
+      await lendingPoolContract.methods
+        .withdraw(usdcTokenAddress, amountInSatoshi, account)
+        .send({ from: account });
+
+      console.log("Withdrew", usdcAmount, "USDC from Aave v3");
+    } catch (error) {
+      console.error("Error in withdrawing USDC:", error);
     }
   };
 
@@ -376,21 +439,34 @@ export default function EarnPage() {
                 tvl={wbtcPoolData.tvlUsd}
                 apy={wbtcPoolData.apy}
               />
-              <button
-                onClick={getWalletAllTokenBalances}
-                className="mt-10 rounded-md bg-indigo-400 p-2"
-              >
-                Get All Token Balances
-              </button>
-              <button
-                onClick={() => {
-                  console.log(coinImage);
-                }}
-                className="mt-10 rounded-md bg-indigo-400 p-2"
-              >
-                Check Coin Images
-              </button>
+              <ProductCard
+                title="USDC"
+                amount={usdcAmount}
+                onChange={handleUsdcAmountChange}
+                onDeposit={supplyUSDC}
+                onWithdraw={withdrawUSDC}
+                tvl={usdcPoolData.tvlUsd}
+                apy={usdcPoolData.apy}
+              />
             </div>
+            <br />
+            <div className="flex justify-center gap-2">
+                <button
+                  onClick={getWalletAllTokenBalances}
+                  className="mt-10 rounded-md bg-indigo-400 p-2"
+                >
+                  Get All Token Balances
+                </button>
+                <button
+                  onClick={() => {
+                    console.log(coinImage);
+                  }}
+                  className="mt-10 rounded-md bg-indigo-400 p-2"
+                >
+                  Check Coin Images
+                </button>
+            </div>
+
           </div>
   
           <div className="flex flex-row flex-wrap gap-x-[1em] gap-y-[.5em]">
