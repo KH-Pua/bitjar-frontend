@@ -40,6 +40,10 @@ export default function DashboardPage() {
     if (window.ethereum) {
       // console.log("metamask detected");
       web3 = new Web3(window.ethereum);
+
+      let walletaddress = localStorage.getItem("connection_meta");
+      console.log("wallet address is: ", walletaddress);
+      setAccount(walletaddress);
     }
   }, []);
 
