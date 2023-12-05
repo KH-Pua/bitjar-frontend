@@ -32,43 +32,43 @@ export default function BaseTemplate() {
   const navigate = useNavigate();
   const location = useLocation();
 
-    const [sidebarNavigation, setSidebarNavigation] = useState("");
-    const [dropdownNavigation, setDropdownNavigation] = useState("");
-    const [template, setTemplate] = useState("");
-    const [pathName, setPathName] = useState("");
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [userData, setUserData] = useState("");
+  const [sidebarNavigation, setSidebarNavigation] = useState("");
+  const [dropdownNavigation, setDropdownNavigation] = useState("");
+  const [template, setTemplate] = useState("");
+  const [pathName, setPathName] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userData, setUserData] = useState("");
 
-    const [account, setAccount] = useState("");
+  const [account, setAccount] = useState("");
 
-    const connectWallet = async () => {
-      try {
-        const accounts = await web3.eth.requestAccounts();
-        console.log("these are the accounts: ", accounts);
-        setAccount(accounts[0]);
-      } catch (error) {
-        console.error("Error connecting to wallet:", error);
-      }
-    };
-  
-    const disconnectWallet = () => {
-      setAccount(null);
-    };
+  const connectWallet = async () => {
+    try {
+      const accounts = await web3.eth.requestAccounts();
+      console.log("these are the accounts: ", accounts);
+      setAccount(accounts[0]);
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+    }
+  };
 
-    const navigation = [
-        { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
-        { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
-        { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
-        { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
-        { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
-        { name: "Rewards", href: "/rewards", icon: TrophyIcon, current: false },
-      ];
-  
-      const userNavigation = [
-        { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
-        { name: "Disconnect", onclick: disconnectWallet},
-        // { name: "Disconnect", href: process.env.REACT_APP_LOGOUT_URL },
-      ];
+  const disconnectWallet = () => {
+    setAccount(null);
+    localStorage.removeItem("connection_meta");
+  };
+
+  const navigation = [
+    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
+    { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
+    { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
+    { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
+    { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
+    { name: "Rewards", href: "/rewards", icon: TrophyIcon, current: false },
+  ];
+
+  const userNavigation = [
+    { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
+    { name: "Disconnect", onclick: disconnectWallet},
+  ];
 
   // Set current to true if route matches nav
   const selectedPageButtonHandler = (array, route) => {
@@ -105,22 +105,14 @@ export default function BaseTemplate() {
 
   useEffect(() => {
     renderSideBarWithHeader();
-    console.log(account);
+    localStorage.setItem("connection_meta", account)
   }, [account]);
-
-  //   useEffect(() => {
-  //     if (isAuthenticated) {
-  //       setUserData(user);
-  //     }
-  // }, [isAuthenticated, user]);
 
   const handleClick = (name) => {
     navigate("/dashboard");
   };
 
   const renderSideBarWithHeader = () => {
-    console.log("Enter Sidebar with header")
-    console.log(account);
     if (sidebarNavigation && dropdownNavigation) {
       setTemplate(
         <>
@@ -451,7 +443,7 @@ export default function BaseTemplate() {
 
               <main className="py-10">
                 <div className="px-4 sm:px-6 lg:px-8">
-                  <Outlet account={account} />
+                  <Outlet/>
                 </div>
               </main>
             </div>
