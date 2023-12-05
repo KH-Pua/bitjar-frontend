@@ -1,8 +1,13 @@
-import { useState, useEffect, useContext, Fragment } from "react";
+//-----------Libraries-----------//
+import { useState, useEffect, Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import Web3 from "web3";
 
+//-----------Utilities-----------//
+import { formatWalletAddress } from "../../utilities/formatting";
+
+//-----------Media-----------//
 import {
   Bars3Icon,
   BellIcon,
@@ -46,6 +51,7 @@ export default function BaseTemplate() {
       const accounts = await web3.eth.requestAccounts();
       console.log("these are the accounts: ", accounts);
       setAccount(accounts[0]);
+      localStorage.setItem("connection_meta", accounts[0]);
     } catch (error) {
       console.error("Error connecting to wallet:", error);
     }
@@ -67,7 +73,7 @@ export default function BaseTemplate() {
 
   const userNavigation = [
     { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
-    { name: "Disconnect", onclick: disconnectWallet},
+    { name: "Disconnect", onclick: disconnectWallet },
   ];
 
   // Set current to true if route matches nav
@@ -99,14 +105,15 @@ export default function BaseTemplate() {
     }
   }, [pathName]);
 
+  // Variables to re-render sidebar/header
   useEffect(() => {
     renderSideBarWithHeader();
-  }, [sidebarNavigation, dropdownNavigation, sidebarOpen]);
+  }, [sidebarNavigation, dropdownNavigation, sidebarOpen, account]);
 
+  // Check login state from connection meta
   useEffect(() => {
-    renderSideBarWithHeader();
-    localStorage.setItem("connection_meta", account)
-  }, [account]);
+    setAccount(localStorage.getItem("connection_meta"));
+  }, []);
 
   const handleClick = (name) => {
     navigate("/dashboard");
@@ -399,7 +406,7 @@ export default function BaseTemplate() {
                               className="text-sm font-semibold leading-6 text-gray-900"
                               aria-hidden="true"
                             >
-                              {account}
+                              {formatWalletAddress(account)}
                             </span>
                             <ChevronDownIcon
                               className="ml-2 h-5 w-5 text-gray-400"
@@ -443,19 +450,15 @@ export default function BaseTemplate() {
 
               <main className="py-10">
                 <div className="px-4 sm:px-6 lg:px-8">
-                  <Outlet/>
+                  <Outlet />
                 </div>
               </main>
             </div>
           </div>
-        </>
+        </>,
       );
     }
   };
 
-  return (
-    <>
-    {template}
-    </>
-  )
-}  
+  return <>{template}</>;
+}
