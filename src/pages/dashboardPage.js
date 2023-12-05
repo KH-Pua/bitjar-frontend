@@ -11,6 +11,9 @@ import { Network, Alchemy } from "alchemy-sdk";
 import { TokenCard } from "../components/TokenCard/TokenCard.js";
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 
+// Import Utils
+import { AAVE_ETH_CHAIN_COINLIST } from "../utilities/aaveEthChainAssetList.js";
+
 // Web3 settings
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
@@ -27,9 +30,9 @@ export default function DashboardPage() {
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState([]);
 
-  // States for All Token Balances
+  // States for AAVE Support Token Balances
   const [walletTokens, setWalletTokens] = useState([]);
-  const [tokenBalance, setTokenBalance] = useState({});
+  const [tokenBalance, setTokenBalance] = useState(null);
   const [coinImage, setCoinImage] = useState({});
   const [imagesFlag, setImagesFlag] = useState(false);
 
@@ -45,15 +48,12 @@ export default function DashboardPage() {
   // 2. Get all Tokens and Display
   useEffect(() => {
     if (account) {
-      console.log(`account to check balance: ${account}`);
-      // let walletadd = "0x3472ccc4a932cc5c07740781286083048eb4a5f1";
-      fetchBalance("0x4ac5e0c3a1114d47459a818c85348068745d7cd5");
+      fetchBalance(account);
     }
 
     // Prevent duplicate calls.
-    if (account && balance !== "0") {
-      const address = "0x3472ccc4a932cc5c07740781286083048eb4a5f1"; // Using spencer's demo address currently cause my own wallet got no Tokens
-      getWalletAllTokenBalances(address);
+    if (account && tokenBalance == null) {
+      getWalletAaveSupportedCoins(account);
     }
   }, [account]);
 
@@ -70,38 +70,46 @@ export default function DashboardPage() {
     }
   };
 
-  const getWalletAllTokenBalances = async () => {
-    // Get token balances
-    const address = "0x3472ccc4a932cc5c07740781286083048eb4a5f1"; // Using spencer's demo address currently cause my own wallet got no Tokens
-    const balances = await alchemy.core.getTokenBalances(address);
+  const getWalletAaveSupportedCoins = async (account) => {
+    console.log(`here is the list of aave: ${AAVE_ETH_CHAIN_COINLIST}`);
+    let PromiseList = [];
+    let tokenContractList = [];
 
-    /**
-     * Additional Functionality to remove all token balance = 0,
-     * followed by calling get token metadata function to convert the contractAddress to human-readable string
-     */
-    // Remove tokens with zero balance
-    const nonZeroBalances = balances.tokenBalances.filter((token) => {
-      return token.tokenBalance !== "0";
-    });
+    // For ERC-20 Tokens
+    for (const key in AAVE_ETH_CHAIN_COINLIST) {
+      let tokenContractAddress = AAVE_ETH_CHAIN_COINLIST[key];
+      tokenContractList.push(tokenContractAddress);
+    }
+    console.log(tokenContractList);
 
-    // Counter for SNo of final output
+    // const eth_balance = await alchemy.core.getBalance(account, "latest");
+    // console.log(eth_balance);
+
+    const data = await alchemy.core.getTokenBalances(
+      account,
+      tokenContractList,
+    );
+
+    console.log("Token balance for Address");
+    console.log(data);
+
     let i = 1;
 
-    // Loop through all tokens with non-zero balance
-    // use getTokenMetadata for human-readable format.
-    for (let token of nonZeroBalances) {
+    for (let token of data.tokenBalances) {
       // Get balance of token
       let balance = token.tokenBalance;
 
-      // Get metadata of token
       const metadata = await alchemy.core.getTokenMetadata(
         token.contractAddress,
       );
 
-      // Compute token balance in human-readable format
-      balance = balance / Math.pow(10, metadata.decimals);
-      balance = balance.toFixed(2);
-
+      if (balance != 0) {
+        // Compute token balance in human-readable format
+        balance = balance / Math.pow(10, metadata.decimals);
+        balance = balance.toFixed(2);
+      } else {
+        balance = 0;
+      }
       // Print name, balance, and symbol of token
       console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
       console.log(`Image is: ${metadata.logo}`);
@@ -165,21 +173,17 @@ export default function DashboardPage() {
         {/* User Primary Information */}
         {!account ? null : (
           <div className="flex w-full flex-row justify-start gap-[3em] pb-[2em]">
-            {/* Maybe move wallet address to Status Bar at top
-            <h2>Wallet Address:</h2>
-            <p>{account}</p> */}
             <div>
               <h2 className="font-semibold text-slate-700">Total Holdings:</h2>
               <p className="text-[.7rem] font-semibold text-slate-400">
-                across all platforms
+                with BitJar
               </p>
               <p className="text-[2rem] font-semibold"> xxx USD</p>
-              {/* <h2>Wallet ETH Balance:</h2> <p>{balance} ETH</p> */}
             </div>
             <div>
               <h2 className="font-semibold text-slate-700">Total Earnings:</h2>
               <p className="text-[.7rem] font-semibold text-slate-400">
-                across all platforms
+                with Bitjar
               </p>
               <p className="text-[2rem] font-semibold"> xxx USD</p>
             </div>
@@ -189,7 +193,7 @@ export default function DashboardPage() {
         {/* User's Assets */}
         {!account ? null : (
           <>
-            <div className="border pb-[2em]">
+            <div className=" pb-[2em]">
               <h1 className="text-xl font-bold">Assets</h1>
               <div>
                 <h2>Wallet Address:</h2> <p>{account}</p>
@@ -197,14 +201,11 @@ export default function DashboardPage() {
                 <h2 className="font-semibold text-slate-700">
                   Wallet Balance:
                 </h2>
-                <div className="flex w-full flex-row justify-around border">
+                <div className="flex w-full flex-row justify-start ">
                   <div>
                     <p className="text-[1.5rem]  font-semibold">
                       {balance} ETH
                     </p>
-                  </div>
-                  <div>
-                    <p className="text-[1.5rem] font-semibold">{balance} BTC</p>
                   </div>
                 </div>
               </div>
@@ -212,33 +213,21 @@ export default function DashboardPage() {
           </>
         )}
 
-        {/* User's Transactions on BitJar */}
         {!account ? null : (
-          <>
-            <div className="pb-[2em]">
-              <h1 className="text-xl font-bold">Transactions</h1>
-              <figure>
-                <h2>Points leaderboard</h2>
-                <TransactionHistoryTable userId="1" />
-              </figure>
-            </div>
-          </>
-        )}
-
-        {!account ? null : (
-          <div>
-            <h1 className="pb-[1em] text-xl font-bold">DeFi Assets</h1>
-            <div className="flex flex-row flex-wrap justify-center gap-x-[1em] gap-y-[.5em]">
+          <div className="h-full w-full pb-[1em]">
+            <h2 className="pb-[1em] font-semibold text-slate-700">
+              Supported Coin Balances:
+            </h2>
+            <div className="flex h-[12em] w-full flex-col flex-wrap justify-start gap-x-[.5em] gap-y-[.5em] overflow-x-scroll ">
               {imagesFlag && coinImage
                 ? // && account
                   walletTokens.map((element, index) => {
                     console.log(`element is ${element}`);
-                    // console.log(coinImage.element) // NOT SURE WHY THIS SYNTAX DOESNT WORK??
                     console.log(coinImage[element]);
                     return (
                       <div
                         key={element}
-                        className="flex w-[20%] flex-col items-center rounded-md border bg-slate-100 py-[1em]"
+                        className="flex w-[10%] flex-col items-center rounded-md border bg-slate-100 py-[1em]"
                       >
                         <div className="font-semibold">{element}</div>
                         {coinImage[element] ? (
@@ -247,12 +236,24 @@ export default function DashboardPage() {
                           <TokenCard imagesrc="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" />
                         )}
                         <p>Balance:</p>
-                        <p>{tokenBalance[element]}</p>
+                        <p>
+                          {tokenBalance[element]} {element}
+                        </p>
                       </div>
                     );
                   })
                 : null}
             </div>
+          </div>
+        )}
+
+        {/* User's Transactions on BitJar */}
+        {!account ? null : (
+          <div className="pb-[2em]">
+            <h1 className="text-xl font-bold">Transactions</h1>
+            <figure>
+              <TransactionHistoryTable userId="1" />
+            </figure>
           </div>
         )}
       </div>
