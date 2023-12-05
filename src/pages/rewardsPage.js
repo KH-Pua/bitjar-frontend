@@ -10,11 +10,10 @@ import ReferralHistoryTable from "../components/rewards/ReferralHistoryTable.js"
 
 //-----------Utlities-----------//
 import { dailyLoginPoints } from "../utilities/pointsMessages.js";
-import { apiRequest } from "../utilities/apiRequests";
+import { apiRequest, getUserData } from "../utilities/apiRequests";
 
 export default function RewardsPage() {
   //-----------HARDCODED DATA (TO UPDATE)-----------//
-  const userId = 2;
   const address = localStorage.getItem("connection_meta");
 
   // Variables
@@ -25,6 +24,7 @@ export default function RewardsPage() {
   const [referralLeaderboard, setReferralLeaderboard] = useState();
   const [pointsData, setPointsData] = useState();
   const [referralData, setReferralData] = useState();
+  const [user, setUser] = useState("");
 
   const fetchPointsRanking = async () => {
     try {
@@ -49,7 +49,7 @@ export default function RewardsPage() {
   const fetchPointsHistory = async () => {
     try {
       const response = await apiRequest.get(
-        `/users/transactions/points/${userId}`,
+        `/users/transactions/points/${user.id}`,
       );
       console.log("Points History:", response.data.output);
       setPointsData(response.data.output);
@@ -60,7 +60,7 @@ export default function RewardsPage() {
 
   const fetchReferralHistory = async () => {
     try {
-      const response = await apiRequest.get(`/users/referrals/${userId}`);
+      const response = await apiRequest.get(`/users/referrals/${user.id}`);
       console.log("Referral History:", response.data.output);
       setReferralData(response.data.output);
     } catch (err) {
@@ -68,21 +68,36 @@ export default function RewardsPage() {
     }
   };
 
+  const fetchUserData = async () => {
+    try {
+      const user = await getUserData(address);
+      console.log("UserData", user);
+      setUser(user);
+    } catch (error) {
+      console.error("Error in useEffect:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   // GET - Retrieve all data
   useEffect(() => {
     fetchPointsRanking();
     fetchReferralRanking();
     fetchPointsHistory();
     fetchReferralHistory();
-  }, []);
+  }, [user]);
 
   const collectDailySignInPoints = async () => {
     try {
       const response = await apiRequest.post(
-        `/users/transactions/points/add/${userId}`,
+        `/users/transactions/points/add/${user.id}`,
         dailyLoginPoints(),
       );
       fetchPointsHistory();
+      fetchUserData();
       setIsClaimed(true);
     } catch (err) {
       console.log(err);
@@ -98,12 +113,12 @@ export default function RewardsPage() {
           onClick={collectDailySignInPoints}
           disabled={isClaimed}
         >
-          Claim Daily Login Points {address}
+          Claim Daily Login Points
         </button>
       </header>
       {/* Points progress bar */}
       <div className="w-full rounded-lg bg-slate-200 p-2">
-        <ProgressBar progress="40%" currentPoints="1000" nextTier="400" />
+        <ProgressBar currentPoints={user && user.points} />
       </div>
       <main className="mt-3 grid grid-cols-1 gap-2 xl:grid-cols-2">
         <figure className="flex h-[500px] flex-col items-center">
