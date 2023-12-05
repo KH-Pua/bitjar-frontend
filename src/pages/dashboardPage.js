@@ -196,8 +196,6 @@ export default function DashboardPage() {
             <div className=" pb-[2em]">
               <h1 className="text-xl font-bold">Assets</h1>
               <div>
-                <h2>Wallet Address:</h2> <p>{account}</p>
-                <br />
                 <h2 className="font-semibold text-slate-700">
                   Wallet Balance:
                 </h2>
