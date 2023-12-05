@@ -6,6 +6,11 @@ import { GlobalContext } from "../providers/globalProvider.js";
 export default function SettingsPage() {
   const infoToPass = useContext(GlobalContext);
   const navigate = useNavigate();
+  const [account, setAccount] = useState(null);
+
+  useEffect(() => {
+    setAccount(localStorage.getItem("connection_meta"));
+  },[])
 
   return (
     <div className="flex flex-row">

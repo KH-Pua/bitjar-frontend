@@ -1,5 +1,6 @@
 //-----------Libraries-----------//
 import React, { useState, useEffect, useContext } from "react";
+import { useOutletContext } from "react-router-dom";
 import Web3 from "web3";
 import { Network, Alchemy } from "alchemy-sdk";
 import erc20ABI from "../utilities/erc20.abi.json";
@@ -22,8 +23,9 @@ const alchemy = new Alchemy(settings);
 let web3;
 
 export default function EarnPage() {
+  const walletAdd = useOutletContext();
   const infoToPass = useContext(GlobalContext);
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState("");
   const [wethAmount, setWethAmount] = useState("");
   const [wbtcAmount, setWbtcAmount] = useState("");
   const [balance, setBalance] = useState("0");
@@ -38,20 +40,33 @@ export default function EarnPage() {
   const [wethPoolData, setWethPoolData] = useState({});
   const [wbtcPoolData, setWbtcPoolData] = useState({});
 
+  const [earnPage, setEarnPage] = useState("");
+
   useEffect(() => {
-    if (window.ethereum) {
-      // console.log("metamask detected");
-      web3 = new Web3(window.ethereum);
-    }
+    // if (window.ethereum) {
+    //   // console.log("metamask detected");
+    //   web3 = new Web3(window.ethereum);
+    // }
+    // setAccount(localStorage.getItem("connection_meta"));
   }, []);
 
   useEffect(() => {
+    console.log("wallet add", walletAdd)
+    setAccount(walletAdd);
+  },[walletAdd])
+
+  useEffect(() => {
     if (account) {
-      // console.log("run account fetch transactions and balance");
+      console.log("run account fetch transactions and balance");
       fetchTransactions(account);
       fetchBalance(account);
     }
-  }, [account]);
+    renderEarnPage();
+  }, [account, wethPoolData, wbtcPoolData]);
+
+  useEffect(() => {
+    renderEarnPage();
+  }, [wethAmount, wbtcAmount])
 
   useEffect(() => {
     fetchPoolData("e880e828-ca59-4ec6-8d4f-27182a4dc23d").then((data) => {
@@ -64,21 +79,21 @@ export default function EarnPage() {
     });
   }, []);
 
-  const connectWallet = async () => {
-    try {
-      const accounts = await web3.eth.requestAccounts();
-      console.log("these are the accounts: ", accounts);
-      setAccount(accounts[0]);
-    } catch (error) {
-      console.error("Error connecting to wallet:", error);
-    }
-  };
+  // const connectWallet = async () => {
+  //   try {
+  //     const accounts = await web3.eth.requestAccounts();
+  //     console.log("these are the accounts: ", accounts);
+  //     setAccount(accounts[0]);
+  //   } catch (error) {
+  //     console.error("Error connecting to wallet:", error);
+  //   }
+  // };
 
-  const disconnectWallet = () => {
-    setAccount(null);
-    setBalance("0");
-    setTransactions([]);
-  };
+  // const disconnectWallet = () => {
+  //   setAccount(null);
+  //   setBalance("0");
+  //   setTransactions([]);
+  // };
 
   const handleWethAmountChange = (e) => {
     setWethAmount(e.target.value);
@@ -326,16 +341,104 @@ export default function EarnPage() {
     setImagesFlag(true);
     // console.log(`The balances of ${address} address are:`, balances);
   };
+  
+  const renderEarnPage = () => {
+    if (account) {
+      setEarnPage(
+        <>
+          <div>
+            <h2>Wallet Address: {account}</h2>
+            <h2>Wallet ETH Balance: {balance} ETH</h2>
+            <h3>Last 2 Transactions:</h3>
+            <ul>
+              {transactions.map((tx, index) => (
+                <li key={index}>
+                  {tx.hash} - {web3.utils.fromWei(tx.value, "ether")} ETH
+                </li>
+              ))}
+            </ul>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ProductCard
+                title="WETH"
+                amount={wethAmount}
+                onChange={handleWethAmountChange}
+                onDeposit={supplyWETH}
+                onWithdraw={withdrawWETH}
+                tvl={wethPoolData.tvlUsd}
+                apy={wethPoolData.apy}
+              />
+              <ProductCard
+                title="WBTC"
+                amount={wbtcAmount}
+                onChange={handleWbtcAmountChange}
+                onDeposit={supplyWBTC}
+                onWithdraw={withdrawWBTC}
+                tvl={wbtcPoolData.tvlUsd}
+                apy={wbtcPoolData.apy}
+              />
+              <button
+                onClick={getWalletAllTokenBalances}
+                className="mt-10 rounded-md bg-indigo-400 p-2"
+              >
+                Get All Token Balances
+              </button>
+              <button
+                onClick={() => {
+                  console.log(coinImage);
+                }}
+                className="mt-10 rounded-md bg-indigo-400 p-2"
+              >
+                Check Coin Images
+              </button>
+            </div>
+          </div>
+  
+          <div className="flex flex-row flex-wrap gap-x-[1em] gap-y-[.5em]">
+            {imagesFlag && coinImage && account
+              ? walletTokens.map((element, index) => {
+                  console.log(`element is ${element}`);
+                  // console.log(coinImage.element) // NOT SURE WHY THIS SYNTAX DOESNT WORK??
+                  console.log(coinImage[element]);
+                  return (
+                    <div
+                      key={element}
+                      className="flex w-[20%] flex-col items-center rounded-md border bg-slate-100 py-[1em]"
+                    >
+                      <div className="font-semibold">{element}</div>
+                      {coinImage[element] ? (
+                        <TokenCard imagesrc={coinImage[element]} />
+                      ) : (
+                        <TokenCard imagesrc="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" />
+                      )}
+                      <p>Balance:</p>
+                      <p>{tokenBalance[element]}</p>
+                    </div>
+                  );
+                })
+              : null}
+          </div>
+  
+          {/* ... Other components ... */}
+        </>,
+      );
+    } else {
+      setEarnPage(
+        <>
+          <p>Please connect your wallet</p>
+        </>
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col">
       <h1 className="p-0 text-3xl font-bold text-black">EarnPage</h1>
-      {!account ? (
+      {/* {!account ? (
         <button onClick={connectWallet}>Sign in with MetaMask</button>
       ) : (
         <button onClick={disconnectWallet}>Disconnect MetaMask</button>
-      )}
-      {account && (
+      )} */}
+      {/* {account && (
         <div>
           <h2>Wallet Address: {account}</h2>
           <h2>Wallet ETH Balance: {balance} ETH</h2>
@@ -382,7 +485,8 @@ export default function EarnPage() {
             </button>
           </div>
         </div>
-      )}
+      )} */}
+      {earnPage}
       <div className="flex flex-row flex-wrap gap-x-[1em] gap-y-[.5em]">
         {imagesFlag && coinImage && account
           ? walletTokens.map((element, index) => {
