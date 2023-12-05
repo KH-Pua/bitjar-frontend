@@ -1,8 +1,13 @@
-import { useState, useEffect, useContext, Fragment } from "react";
+//-----------Libraries-----------//
+import { useState, useEffect, Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import Web3 from "web3";
 
+//-----------Utilities-----------//
+import { formatWalletAddress } from "../../utilities/formatting";
+
+//-----------Media-----------//
 import {
   Bars3Icon,
   BellIcon,
@@ -32,43 +37,44 @@ export default function BaseTemplate() {
   const navigate = useNavigate();
   const location = useLocation();
 
-    const [sidebarNavigation, setSidebarNavigation] = useState("");
-    const [dropdownNavigation, setDropdownNavigation] = useState("");
-    const [template, setTemplate] = useState("");
-    const [pathName, setPathName] = useState("");
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [userData, setUserData] = useState("");
+  const [sidebarNavigation, setSidebarNavigation] = useState("");
+  const [dropdownNavigation, setDropdownNavigation] = useState("");
+  const [template, setTemplate] = useState("");
+  const [pathName, setPathName] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userData, setUserData] = useState("");
 
-    const [account, setAccount] = useState("");
+  const [account, setAccount] = useState("");
 
-    const connectWallet = async () => {
-      try {
-        const accounts = await web3.eth.requestAccounts();
-        console.log("these are the accounts: ", accounts);
-        setAccount(accounts[0]);
-      } catch (error) {
-        console.error("Error connecting to wallet:", error);
-      }
-    };
-  
-    const disconnectWallet = () => {
-      setAccount(null);
-    };
+  const connectWallet = async () => {
+    try {
+      const accounts = await web3.eth.requestAccounts();
+      console.log("these are the accounts: ", accounts);
+      setAccount(accounts[0]);
+      localStorage.setItem("connection_meta", accounts[0]);
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+    }
+  };
 
-    const navigation = [
-        { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
-        { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
-        { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
-        { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
-        { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
-        { name: "Rewards", href: "/rewards", icon: TrophyIcon, current: false },
-      ];
-  
-      const userNavigation = [
-        { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
-        { name: "Disconnect", onclick: disconnectWallet},
-        // { name: "Disconnect", href: process.env.REACT_APP_LOGOUT_URL },
-      ];
+  const disconnectWallet = () => {
+    setAccount(null);
+    localStorage.removeItem("connection_meta");
+  };
+
+  const navigation = [
+    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
+    { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
+    { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
+    { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
+    { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
+    { name: "Rewards", href: "/rewards", icon: TrophyIcon, current: false },
+  ];
+
+  const userNavigation = [
+    { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
+    { name: "Disconnect", onclick: disconnectWallet },
+  ];
 
   // Set current to true if route matches nav
   const selectedPageButtonHandler = (array, route) => {
@@ -99,28 +105,21 @@ export default function BaseTemplate() {
     }
   }, [pathName]);
 
+  // Variables to re-render sidebar/header
   useEffect(() => {
     renderSideBarWithHeader();
-  }, [sidebarNavigation, dropdownNavigation, sidebarOpen]);
+  }, [sidebarNavigation, dropdownNavigation, sidebarOpen, account]);
 
+  // Check login state from connection meta
   useEffect(() => {
-    renderSideBarWithHeader();
-    console.log(account);
-  }, [account]);
-
-  //   useEffect(() => {
-  //     if (isAuthenticated) {
-  //       setUserData(user);
-  //     }
-  // }, [isAuthenticated, user]);
+    setAccount(localStorage.getItem("connection_meta"));
+  }, []);
 
   const handleClick = (name) => {
     navigate("/dashboard");
   };
 
   const renderSideBarWithHeader = () => {
-    console.log("Enter Sidebar with header")
-    console.log(account);
     if (sidebarNavigation && dropdownNavigation) {
       setTemplate(
         <>
@@ -407,7 +406,7 @@ export default function BaseTemplate() {
                               className="text-sm font-semibold leading-6 text-gray-900"
                               aria-hidden="true"
                             >
-                              {account}
+                              {formatWalletAddress(account)}
                             </span>
                             <ChevronDownIcon
                               className="ml-2 h-5 w-5 text-gray-400"
@@ -451,19 +450,15 @@ export default function BaseTemplate() {
 
               <main className="py-10">
                 <div className="px-4 sm:px-6 lg:px-8">
-                  <Outlet account={account} />
+                  <Outlet />
                 </div>
               </main>
             </div>
           </div>
-        </>
+        </>,
       );
     }
   };
 
-  return (
-    <>
-    {template}
-    </>
-  )
-}  
+  return <>{template}</>;
+}

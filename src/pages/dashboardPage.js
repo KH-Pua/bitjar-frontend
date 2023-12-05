@@ -233,7 +233,9 @@ export default function DashboardPage() {
                         ) : (
                           <TokenCard imagesrc="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" />
                         )}
-                        <p>Balance:</p>
+                        <p className="text-[.7rem] font-semibold text-slate-400">
+                          Balance:
+                        </p>
                         <p>
                           {tokenBalance[element]} {element}
                         </p>
