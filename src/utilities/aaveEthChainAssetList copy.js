@@ -1,0 +1,58 @@
+export const aaveEthChainAssetList = () => {
+  // https://defillama.com/yields?project=aave-v3&chain=Ethereum&category=All
+  // const AAVE_ETH_CHAIN_COINLIST_BACKUP = [
+  //   "WSTETH",
+  //   "WBTC",
+  //   "wETH",
+  //   "LINK",
+  //   "RETH",
+  //   "USDC",
+  //   "USDT",
+  //   "CBETH",
+  //   "MKR",
+  //   "UNI",
+  //   "DAI",
+  //   "RPL",
+  //   "SNX",
+  //   "SNX",
+  //   "STG",
+  //   "LUSD",
+  //   "BAL",
+  //   "CRV",
+  //   "1INCH",
+  //   "ENS",
+  //   "FRAX",
+  //   "FXS",
+  //   "KNC",
+  //   "CRVUSD",
+  // ];
+
+  const AAVE_ETH_CHAIN_COINLIST = {
+    WSTETH: "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+    WBTC: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+    wETH: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    LINK: "0x514910771af9ca656af840dff83e8264ecf986ca",
+    // "RETH",
+    // "USDC",
+    // "USDT",
+    // "CBETH",
+    // "MKR",
+    // "UNI",
+    // "DAI",
+    // "RPL",
+    // "SNX",
+    // "SNX",
+    // "STG",
+    // "LUSD",
+    // "BAL",
+    // "CRV",
+    // "1INCH",
+    // "ENS",
+    // "FRAX",
+    // "FXS",
+    // "KNC",
+    // "CRVUSD",
+  };
+
+  return AAVE_ETH_CHAIN_COINLIST;
+};
