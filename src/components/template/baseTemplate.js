@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import Web3 from "web3";
 
 import {
   Bars3Icon,
@@ -25,30 +26,49 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+let web3;
+
 export default function BaseTemplate() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [sidebarNavigation, setSidebarNavigation] = useState("");
-  const [dropdownNavigation, setDropdownNavigation] = useState("");
-  const [template, setTemplate] = useState("");
-  const [pathName, setPathName] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userData, setUserData] = useState("");
+    const [sidebarNavigation, setSidebarNavigation] = useState("");
+    const [dropdownNavigation, setDropdownNavigation] = useState("");
+    const [template, setTemplate] = useState("");
+    const [pathName, setPathName] = useState("");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [userData, setUserData] = useState("");
 
-  const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
-    { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
-    { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
-    { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
-    { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
-    { name: "Rewards", href: "/rewards", icon: TrophyIcon, current: false },
-  ];
+    const [account, setAccount] = useState("");
 
-  const userNavigation = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Sign out", href: process.env.REACT_APP_LOGOUT_URL },
-  ];
+    const connectWallet = async () => {
+      try {
+        const accounts = await web3.eth.requestAccounts();
+        console.log("these are the accounts: ", accounts);
+        setAccount(accounts[0]);
+      } catch (error) {
+        console.error("Error connecting to wallet:", error);
+      }
+    };
+  
+    const disconnectWallet = () => {
+      setAccount(null);
+    };
+
+    const navigation = [
+        { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
+        { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
+        { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
+        { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
+        { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
+        { name: "Rewards", href: "/rewards", icon: TrophyIcon, current: false },
+      ];
+  
+      const userNavigation = [
+        { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
+        { name: "Disconnect", onclick: disconnectWallet},
+        // { name: "Disconnect", href: process.env.REACT_APP_LOGOUT_URL },
+      ];
 
   // Set current to true if route matches nav
   const selectedPageButtonHandler = (array, route) => {
@@ -60,17 +80,16 @@ export default function BaseTemplate() {
     });
   };
 
-  // Update navigation on selection
   useEffect(() => {
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
+
     let route = location.pathname;
 
     let updatedNav = selectedPageButtonHandler(navigation, route);
     setSidebarNavigation(updatedNav);
     setDropdownNavigation(userNavigation);
-    setUserData({
-      picture: "",
-      nickname: "Usr01",
-    });
   }, []);
 
   useEffect(() => {
@@ -84,6 +103,11 @@ export default function BaseTemplate() {
     renderSideBarWithHeader();
   }, [sidebarNavigation, dropdownNavigation, sidebarOpen]);
 
+  useEffect(() => {
+    renderSideBarWithHeader();
+    console.log(account);
+  }, [account]);
+
   //   useEffect(() => {
   //     if (isAuthenticated) {
   //       setUserData(user);
@@ -95,7 +119,9 @@ export default function BaseTemplate() {
   };
 
   const renderSideBarWithHeader = () => {
-    if (userData && sidebarNavigation && dropdownNavigation) {
+    console.log("Enter Sidebar with header")
+    console.log(account);
+    if (sidebarNavigation && dropdownNavigation) {
       setTemplate(
         <>
           <div>
@@ -342,70 +368,102 @@ export default function BaseTemplate() {
                     />
 
                     {/* Profile dropdown */}
-                    <Menu as="div" className="relative">
-                      <Menu.Button className="-m-1.5 flex items-center p-1.5">
-                        <span className="sr-only">Open user menu</span>
-                        <img
-                          className="h-8 w-8 rounded-full bg-gray-50"
-                          src={userData.picture}
-                          alt="img"
-                        />
-                        <span className="hidden lg:flex lg:items-center">
-                          <span
-                            className="ml-4 text-sm font-semibold leading-6 text-gray-900"
-                            aria-hidden="true"
-                          >
-                            {userData.nickname}
+                    {!account ? (
+                      <Menu as="div" className="relative">
+                        <Menu.Button
+                          className="btn btn-ghost no-animation flex items-center bg-yellow-200 p-1.5 marker:-m-1.5 hover:bg-yellow-300"
+                          onClick={connectWallet}
+                        >
+                          <span className="sr-only">Connect wallet</span>
+                          <span className="lg:hidden lg:items-center">
+                            <span
+                              className=" mx-4 text-sm font-semibold leading-6 text-gray-900"
+                              aria-hidden="true"
+                            >
+                              Connect
+                            </span>
                           </span>
-                          <ChevronDownIcon
-                            className="ml-2 h-5 w-5 text-gray-400"
-                            aria-hidden="true"
+                          <span className="hidden lg:flex lg:items-center">
+                            <span
+                              className=" mx-4 text-sm font-semibold leading-6 text-gray-900"
+                              aria-hidden="true"
+                            >
+                              Connect Wallet
+                            </span>
+                          </span>
+                        </Menu.Button>
+                      </Menu>
+                    ) : (
+                      <Menu as="div" className="relative">
+                        <Menu.Button className="btn btn-ghost no-animation -m-1.5 flex items-center bg-slate-100 p-1.5 hover:bg-yellow-200">
+                          <span className="sr-only">Open user menu</span>
+                          <img
+                            className="h-8 w-8 rounded-full bg-gray-50"
+                            src={userData.picture}
+                            alt="img"
                           />
-                        </span>
-                      </Menu.Button>
-                      <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                      >
-                        <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                          {dropdownNavigation.map((item) => (
-                            <Menu.Item key={item.name}>
-                              {({ active }) => (
-                                <NavLink
-                                  to={item.href}
-                                  className={classNames(
-                                    active ? "bg-gray-50" : "",
-                                    "block px-3 py-1 text-sm leading-6 text-gray-900",
-                                  )}
-                                >
-                                  {item.name}
-                                </NavLink>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </Menu.Items>
-                      </Transition>
-                    </Menu>
+                          <span className="hidden lg:flex lg:items-center">
+                            <span
+                              className="text-sm font-semibold leading-6 text-gray-900"
+                              aria-hidden="true"
+                            >
+                              {account}
+                            </span>
+                            <ChevronDownIcon
+                              className="ml-2 h-5 w-5 text-gray-400"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        </Menu.Button>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                            {dropdownNavigation.map((item) => (
+                              <Menu.Item key={item.name}>
+                                {({ active }) => (
+                                  <button
+                                    //to={item.href}
+                                    onClick={item.onclick}
+                                    className={classNames(
+                                      active ? "bg-gray-50" : "",
+                                      "block px-3 py-1 text-sm leading-6 text-gray-900",
+                                    )}
+                                  >
+                                    {item.name}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            ))}
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
+                    )}
                   </div>
                 </div>
               </div>
 
               <main className="py-10">
                 <div className="px-4 sm:px-6 lg:px-8">
-                  <Outlet />
+                  <Outlet account={account} />
                 </div>
               </main>
             </div>
           </div>
-        </>,
+        </>
       );
     }
   };
 
-  return <>{template}</>;
-}
+  return (
+    <>
+    {template}
+    </>
+  )
+}  

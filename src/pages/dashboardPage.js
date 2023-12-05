@@ -9,6 +9,7 @@ import { Network, Alchemy } from "alchemy-sdk";
 
 // Import Components
 import { TokenCard } from "../components/TokenCard/TokenCard.js";
+import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 
 // Web3 settings
 const settings = {
@@ -168,31 +169,58 @@ export default function DashboardPage() {
             <h2>Wallet Address:</h2>
             <p>{account}</p> */}
             <div>
-              <h2 className="font-semibold text-slate-600">Net Worth:</h2>
+              <h2 className="font-semibold text-slate-700">Total Holdings:</h2>
+              <p className="text-[.7rem] font-semibold text-slate-400">
+                across all platforms
+              </p>
               <p className="text-[2rem] font-semibold"> xxx USD</p>
               {/* <h2>Wallet ETH Balance:</h2> <p>{balance} ETH</p> */}
             </div>
-            {/* <div>
-              <h2 className="font-semibold text-slate-600">Supplied Value:</h2>
+            <div>
+              <h2 className="font-semibold text-slate-700">Total Earnings:</h2>
+              <p className="text-[.7rem] font-semibold text-slate-400">
+                across all platforms
+              </p>
               <p className="text-[2rem] font-semibold"> xxx USD</p>
             </div>
-            <div>
-              <h2 className="font-semibold text-slate-600">Borrowed Value:</h2>
-              <p className="text-[2rem] font-semibold"> xxx USD</p>
-            </div> */}
           </div>
         )}
 
-        {/* User's Supplied Assets */}
+        {/* User's Assets */}
         {!account ? null : (
           <>
-            <div className="pb-[2em]">
-              <h1 className="text-xl font-bold">AAVE Suppliable Assets</h1>
+            <div className="border pb-[2em]">
+              <h1 className="text-xl font-bold">Assets</h1>
               <div>
                 <h2>Wallet Address:</h2> <p>{account}</p>
                 <br />
-                <h2>Wallet ETH Balance:</h2> <p>{balance} ETH</p>
+                <h2 className="font-semibold text-slate-700">
+                  Wallet Balance:
+                </h2>
+                <div className="flex w-full flex-row justify-around border">
+                  <div>
+                    <p className="text-[1.5rem]  font-semibold">
+                      {balance} ETH
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[1.5rem] font-semibold">{balance} BTC</p>
+                  </div>
+                </div>
               </div>
+            </div>
+          </>
+        )}
+
+        {/* User's Transactions on BitJar */}
+        {!account ? null : (
+          <>
+            <div className="pb-[2em]">
+              <h1 className="text-xl font-bold">Transactions</h1>
+              <figure>
+                <h2>Points leaderboard</h2>
+                <TransactionHistoryTable userId="1" />
+              </figure>
             </div>
           </>
         )}

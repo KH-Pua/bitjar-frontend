@@ -1,14 +1,17 @@
-const PointsTable = ({ label1, label2, data }) => {
+import { formatWalletAddress } from "../../utilities/formatting";
+import logo from "../../media/bitjar-logo.png";
+
+const PointsTable = ({ data }) => {
   return (
-    <div className="overflow-x-auto">
+    <div className=" w-[500px] overflow-y-auto rounded-lg bg-slate-200 px-2 pb-2 shadow-lg">
       <table className="table">
         {/* head */}
-        <thead>
+        <thead className="">
           <tr>
             <th></th>
-            <th>{label1}</th>
-            <th>{label2}</th>
-            <th></th>
+            <th>Username</th>
+            <th>Wallet</th>
+            <th>Points</th>
           </tr>
         </thead>
         {/* body */}
@@ -19,19 +22,17 @@ const PointsTable = ({ label1, label2, data }) => {
                 <td>
                   <div className="flex items-center gap-3">
                     <div className="avatar">
-                      <div className="mask mask-squircle h-12 w-12">
+                      <div className="mask mask-squircle h-12 w-12 bg-white">
                         <img
-                          src={row.profilePicture}
-                          alt="Avatar Tailwind CSS Component"
+                          src={row.profilePicture ? row.profilePicture : logo}
+                          alt="DP"
                         />
                       </div>
                     </div>
                   </div>
                 </td>
-                <td>
-                  {row.userName}
-                  <br />
-                </td>
+                <td>{row.userName ? row.userName : "-"}</td>
+                <td>{formatWalletAddress(row.walletAddress)}</td>
                 <td>{row.points}</td>
               </tr>
             </tbody>
