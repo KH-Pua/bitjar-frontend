@@ -1,6 +1,6 @@
 //-----------Libraries-----------//
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { GlobalContext } from "../providers/globalProvider.js";
 import axios from "axios";
 
@@ -11,6 +11,7 @@ import { Network, Alchemy } from "alchemy-sdk";
 // Import Components
 import { TokenCard } from "../components/TokenCard/TokenCard.js";
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
+import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 // Import Utils
 import { AAVE_ETH_CHAIN_COINLIST } from "../utilities/aaveEthChainAssetList.js";
@@ -26,12 +27,12 @@ let web3;
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function DashboardPage() {
+  const account = useOutletContext();
   const infoToPass = useContext(GlobalContext);
-  const navigate = useNavigate();
+  const [confirmedUserId, setConfirmedUserId] = useState(null);
 
-  const [account, setAccount] = useState(null);
+  const [accountConfirmed, setAccountConfirmed] = useState(null);
   const [balance, setBalance] = useState("0");
-  const [transactions, setTransactions] = useState([]);
 
   // States for AAVE Support Token Balances
   const [walletTokens, setWalletTokens] = useState([]);
@@ -41,16 +42,14 @@ export default function DashboardPage() {
 
   // Total Holdings and Total Earnings
   const [totalHoldings, setTotalHoldings] = useState(null);
-  const [totalEarnings, setTotalEarnings] = useState(null);
+  // const [totalEarnings, setTotalEarnings] = useState(null);
 
   useEffect(() => {
-    if (window.ethereum) {
-      // console.log("metamask detected");
+    console.log("OUTSIDE ACCOUNT: ", account);
+    if (window.ethereum && account) {
+      console.log("metamask detected");
       web3 = new Web3(window.ethereum);
-
-      let walletaddress = localStorage.getItem("connection_meta");
-      console.log("wallet address is: ", walletaddress);
-      setAccount(walletaddress);
+      setAccountConfirmed(account);
     }
   }, []);
 
@@ -58,19 +57,34 @@ export default function DashboardPage() {
   // 1. Display ETH balance as numerical value
   // 2. Get all Tokens and Display
   useEffect(() => {
-    if (account) {
-      fetchBalance(account);
-      getUserTotalHoldings();
+    if (accountConfirmed) {
+      console.log("fetchingbalance for :", accountConfirmed);
+      fetchBalance(accountConfirmed);
+      getUserTotalHoldings(accountConfirmed);
     }
 
-    if (account && tokenBalance == null) {
-      getWalletAaveSupportedCoins(account);
+    if (accountConfirmed && tokenBalance == null) {
+      getWalletAaveSupportedCoins(accountConfirmed);
     }
-  }, [account]);
+  }, [accountConfirmed]);
 
-  const getUserTotalHoldings = async () => {
-    console.log(`enter getUserTotalHoldings`);
-    let userId = 1; // Need to get from base template
+  // const getUserId = async (walletaddress) => {
+  //   let userInformation = await axios.get(
+  //     `${BACKEND_URL}/users/userData/${walletaddress}`,
+  //   );
+  //   // console.log(`user information: ${userInformation.data.user.id}`);
+  //   setConfirmedUserId(userInformation.data.user.id);
+  // };
+
+  const getUserTotalHoldings = async (walletaddress) => {
+    let userInformation = await axios.get(
+      `${BACKEND_URL}/users/userData/${walletaddress}`,
+    );
+    // console.log(`user information: ${userInformation.data.user.id}`);
+    setConfirmedUserId(userInformation.data.user.id);
+
+    let userId = userInformation.data.user.id;
+    console.log("the userID is: ", userId);
 
     // Get User's past transactions on bitjar
     const pastBitjarTransactions = await axios.post(
@@ -115,13 +129,7 @@ export default function DashboardPage() {
 
     let latestCoinPrices = {};
     // Filter latest price from the above set state.
-    // for (const key in coinLatestData) {
     for (const key in coinData) {
-      // console.log(`${key}`);
-      // console.log(
-      //   coinData[`${key}`].data[`${key}`.toUpperCase()].quote.USD.price,
-      // );
-
       let price =
         coinData[`${key}`].data[`${key}`.toUpperCase()].quote.USD.price;
 
@@ -136,12 +144,10 @@ export default function DashboardPage() {
     //   )} and ${JSON.stringify(latestCoinPrices)}`,
     // );
     for (const key in walletCoinAmount) {
-      // console.log(`The value of ${key} held is: `, coinAmount[`${key}`]);
       let sum = walletCoinAmount[`${key}`] * latestCoinPrices[`${key}`];
       // console.log(sum);
       totalHoldings += sum;
     }
-    // console.log("total holdings is:", parseFloat(totalHoldings.toFixed(2)));
     let holdings = parseFloat(totalHoldings.toFixed(2));
     setTotalHoldings(holdings);
   };
@@ -224,39 +230,15 @@ export default function DashboardPage() {
     console.log("All Images Loaded");
   };
 
-  const connectWallet = async () => {
-    try {
-      const accounts = await web3.eth.requestAccounts();
-      console.log("these are the accounts: ", accounts);
-      setAccount(accounts[0]);
-    } catch (error) {
-      console.error("Error connecting to wallet:", error);
-    }
-  };
-
-  const disconnectWallet = () => {
-    setAccount(null);
-    setBalance("0");
-    setTransactions([]);
-  };
-
   return (
     <div className="flex w-full flex-row ">
       <div className="flex w-full flex-col justify-center gap-[.5em] px-3">
-        <h1 className="p-0 pb-[1em] text-3xl font-bold text-black">
-          Dashboard
-        </h1>
-        <div>
-          {!account ? (
-            <button onClick={connectWallet} className="connectWalletBtn">
-              CONNECT METAMASK
-            </button>
-          ) : (
-            <button onClick={disconnectWallet} className="disconnectWalletBtn">
-              Disconnect MetaMask
-            </button>
-          )}
-        </div>
+        {!account ? (
+          <ConnectWalletDefault />
+        ) : (
+          <h1 className="p-0 text-3xl font-bold text-black">Dashboard</h1>
+        )}
+
         {/* User Primary Information */}
         {!account ? null : (
           <div className="flex w-full flex-row justify-start gap-[3em] pb-[2em]">
@@ -269,13 +251,13 @@ export default function DashboardPage() {
                 {totalHoldings != null && totalHoldings} USD
               </p>
             </div>
-            <div>
+            {/* <div>
               <h2 className="font-semibold text-slate-700">Total Earnings:</h2>
               <p className="text-[.7rem] font-semibold text-slate-400">
                 with Bitjar
               </p>
               <p className="text-[2rem] font-semibold"> xxx USD</p>
-            </div>
+            </div> */}
           </div>
         )}
         {/* User's Assets */}
@@ -305,6 +287,11 @@ export default function DashboardPage() {
             </h2>
             {/* Not sure how to express the Height as a proportion, % didnt work.. Hardcoded it for now */}
             <div className="flex h-[13em] w-full flex-col flex-wrap justify-start gap-x-[.5em] gap-y-[.5em] overflow-x-scroll ">
+              {imagesFlag ? null : (
+                <div className="flex h-[100%] w-full animate-pulse flex-col justify-center text-center font-bold text-slate-600">
+                  LOADING. . .
+                </div>
+              )}
               {imagesFlag && coinImage
                 ? walletTokens.map((element, index) => {
                     console.log(`element is ${element}`);
@@ -343,7 +330,9 @@ export default function DashboardPage() {
           <div className="pb-[2em]">
             <h1 className="pb-[1em] text-xl font-bold">Transactions</h1>
             <figure>
-              <TransactionHistoryTable userId="1" />
+              {confirmedUserId && (
+                <TransactionHistoryTable userId={confirmedUserId} />
+              )}
             </figure>
           </div>
         )}
