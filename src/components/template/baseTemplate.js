@@ -42,7 +42,6 @@ export default function BaseTemplate() {
     setUserWalletAdd,
     userProfilePicture,
     setUserProfilePicture
-
   } = useContext(GlobalContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -100,6 +99,7 @@ export default function BaseTemplate() {
   useEffect(() => {
     // Wallet ID whenever page refreshes
     setAccount(localStorage.getItem("connection_meta"));
+    verifyUserInfo();
 
     //Check for web3 wallet
     if (window.ethereum) {
@@ -122,31 +122,25 @@ export default function BaseTemplate() {
   // Variables to re-render sidebar/header
   useEffect(() => {
     renderSideBarWithHeader();
-  }, [sidebarNavigation, dropdownNavigation, sidebarOpen, account]);
+  }, [sidebarNavigation, dropdownNavigation, sidebarOpen, account, userProfilePicture]);
+
+  // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
+  const verifyUserInfo = async () => {
+    try {
+      let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
+      //let recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, transactionsInfo)
+      console.log(userInfo);
+      //Set wallet address & profile picture to global state for passing around.
+      setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
+      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture)
+      // New user verification boolean
+      setVerifyNewUserBool(userInfo.data.output.newUser)
+    } catch (err) {
+      console.error("Error verify user info:", err);
+    };
+  };
 
   useEffect(() => {
-    // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
-    const verifyUserInfo = async () => {
-      try {
-        transactionsInfo = {
-          walletAddress: account,
-          pointsAllocated: rewardPointsSchedule.signUp
-          actionName: 
-        }
-        let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
-        let recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, {})
-        //RECORD TRANSACTIONS `${BACKEND_URL}/transactions/points/add/XXX`
-        console.log(userInfo);
-        //Set wallet address & profile picture to global state for passing around.
-        setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
-        setUserProfilePicture(userInfo.data.output.dataValues.profilePicture)
-        // New user verification boolean
-        setVerifyNewUserBool(userInfo.data.output.newUser)
-      } catch (err) {
-        console.error("Error verify user info:", err);
-      };
-    };
-
     if (account) {
       verifyUserInfo();
     };
@@ -163,7 +157,7 @@ export default function BaseTemplate() {
   },[verifyNewUserBool, userWalletAdd])
 
   const handleClick = (name) => {
-    navigate("/dashboard");
+    navigate("/");
   };
 
   const renderSideBarWithHeader = () => {

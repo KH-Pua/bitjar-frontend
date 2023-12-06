@@ -2,6 +2,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../providers/globalProvider.js";
+import Web3 from "web3";
 import axios from "axios";
 
 //-----------Utilities-----------//
@@ -34,6 +35,13 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    //Check for web3 wallet
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
+  }, []);
+
+  useEffect(() => {
     // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
     const verifyUserInfo = async () => {
       try {
@@ -57,7 +65,7 @@ export default function HomePage() {
     if (verifyNewUserBool && userWalletAdd) {
       console.log("new user created, redirect to onboarding page")
       navigate("/onboarding");
-    } else {
+    } else if (verifyNewUserBool === false) {
       console.log("Existing user");
       navigate("/dashboard");
     };
@@ -73,7 +81,7 @@ export default function HomePage() {
       </header>
       <br />
       <body className="flex flex-row items-center justify-center px-3">
-        <button className="btn bg-yellow-200 hover:bg-yellow-300" onClick={() => connectWallet()}>
+        <button className="btn btn-ghost no-animation flex items-center bg-yellow-200 p-1.5 marker:-m-1.5 hover:bg-yellow-300" onClick={connectWallet}>
           Connect Wallet
         </button>
       </body>

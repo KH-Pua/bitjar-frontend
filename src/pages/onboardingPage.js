@@ -3,17 +3,20 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { PhotoIcon } from '@heroicons/react/24/solid'
 import axios from "axios";
+import { ref as sRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
 //-----------Utilities-----------//
 import { GlobalContext } from "../providers/globalProvider.js";
 import BACKEND_URL from "../constants.js";
+import { storage } from "../firebase/firebase.js";
+
 
 export default function OnboardingPage() {
   const {
     userWalletAdd,
-    setUserWalletAdd
   } = useContext(GlobalContext);
   const navigate = useNavigate();
+  const STORAGE_KEY = "profilepic"
 
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -27,18 +30,54 @@ export default function OnboardingPage() {
 
   const handleSubmit = async (e) => {
     console.log("enter handle submit")
-    console.log(userEmail)
-    console.log(userWalletAdd)
     e.preventDefault();
     if (userName && userEmail && userWalletAdd) {
+
+      let imageURL
+
+      // Verified the id of the created listing, then upload photo to Firebase
+      try {
+          const fileRef = sRef(
+            storage,
+            `${STORAGE_KEY}/${userWalletAdd}/`
+          );
+
+          await uploadBytes(fileRef, file);
+          imageURL = await getDownloadURL(fileRef);
+
+          // Call the backend API to store the image URL
+          // const imgUploadResponse = await axios.post(
+          //   `${BACKEND_URL}/propertyassets`,
+          //   {
+          //     property_id: response.data.id,
+          //     file_link: imageURL,
+          //   },
+          //   {
+          //     headers: {
+          //       Authorization: `Bearer ${token}`,
+          //     },
+          //   }
+          // );
+
+          // if (imgUploadResponse.status === 201) {
+          //   navigate("/managerDashboard/");
+          // }
+      } catch (error) {
+        console.error("Error handling photo upload:", error);
+      }
+
       const editData = {
         walletAddress: userWalletAdd,
         email: userEmail,
-        userName: userName
+        userName: userName,
+        profilePicture: imageURL
       }
-      console.log(editData);
+
+
+      // update BE with inserted data
       try {
         const infoSubmit = await axios.post(`${BACKEND_URL}/users/editInfo`, editData);
+        //const recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, transactionsInfo)
         if (infoSubmit) {
           console.log(infoSubmit);
           navigate("/dashboard");
@@ -58,8 +97,7 @@ export default function OnboardingPage() {
     <div className="flex flex-col sm:px-60">
       <header className="p-10">
         <h1 className="text-3xl font-bold text-black">
-          Welcome to BitJar,
-          your one stop platform to buy, earn and swap BTC
+          Welcome to BitJar, your one stop platform to buy, earn and swap BTC
         </h1>
       </header>
       <main className="py-10">
@@ -83,20 +121,17 @@ export default function OnboardingPage() {
                     >
                       Listing photo
                     </label>
-                    <div className="mt-2 flex justify-center content-center text-center rounded-full w-48 h-48 border border-dashed border-gray-900/25 px-6 py-10">
+                    <div className="mt-2 flex h-48 w-48 content-center justify-center rounded-full border border-dashed border-gray-900/25 px-6 py-10 text-center">
                       {imagePreviewURL ? (
                         <div className="flex flex-col gap-1 text-center">
                           <div className="avatar">
-                            <div className=" w-28 h-28 rounded-full">
-                              <img
-                                src={imagePreviewURL}
-                                alt="uploadedPhoto"
-                              />
+                            <div className=" h-28 w-28 rounded-full">
+                              <img src={imagePreviewURL} alt="uploadedPhoto" />
                             </div>
                           </div>
                           <label
                             htmlFor="fileUpload"
-                            className="text-xs relative cursor-pointer rounded-md bg-white font-semibold text-black focus-within:outline-none focus-within:ring-2 focus-within:ring-yellow-200 focus-within:ring-offset-2"
+                            className="relative cursor-pointer rounded-md bg-white text-xs font-semibold text-black focus-within:outline-none focus-within:ring-2 focus-within:ring-yellow-200 focus-within:ring-offset-2"
                           >
                             <span>Change Photo</span>
                             <input
@@ -109,7 +144,7 @@ export default function OnboardingPage() {
                           </label>
                         </div>
                       ) : (
-                        <div className="flex flex-col text-center justify-center">
+                        <div className="flex flex-col justify-center text-center">
                           <PhotoIcon
                             className="mx-auto h-12 w-12 text-gray-300"
                             aria-hidden="true"
@@ -129,11 +164,7 @@ export default function OnboardingPage() {
                                 onChange={(e) => handleFileChange(e)}
                               />
                             </label>
-                            {/* <p className="pl-1">or drag and drop</p> */}
                           </div>
-                          {/* <p className="text-xs leading-5 text-gray-600">
-                            PNG, JPG, GIF up to 10MB
-                          </p> */}
                         </div>
                       )}
                     </div>
