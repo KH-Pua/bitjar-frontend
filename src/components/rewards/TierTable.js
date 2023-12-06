@@ -4,13 +4,13 @@ const TierTable = ({ data }) => {
       <table className="table">
         {/* head */}
         <thead className="">
-          <tr>
+          <tr className="text-center">
             <th>Airdrop Tier</th>
             <th>Points Needed</th>
             <th>Points Multiplier</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-center">
           <tr>
             <td>Silver</td>
             <td>0</td>

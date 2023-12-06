@@ -81,6 +81,7 @@ export default function BaseTemplate() {
     try {
       const user = await getUserData(account);
       setUserData(user);
+      console.log("userdata", user);
     } catch (error) {
       console.error("Error in useEffect:", error);
     }
@@ -128,10 +129,6 @@ export default function BaseTemplate() {
   useEffect(() => {
     setAccount(localStorage.getItem("connection_meta"));
   }, []);
-
-  const handleClick = (name) => {
-    navigate("/dashboard");
-  };
 
   const renderSideBarWithHeader = () => {
     if (sidebarNavigation && dropdownNavigation) {
@@ -191,19 +188,15 @@ export default function BaseTemplate() {
                         </div>
                       </Transition.Child>
                       <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
-                        <div
+                        <NavLink
+                          to="/"
                           className="flex h-16 shrink-0 items-center"
-                          onClick={handleClick}
                         >
-                          <img
-                            src={logo}
-                            alt="BitJar Logo"
-                            className="h-14 w-auto"
-                          />
-                          <h1 className="cursor-pointer font-sans text-4xl font-bold text-slate-900">
-                            BitJar
+                          <img src={logo} alt="BitJar Logo" className="h-16" />
+                          <h1 className="translate-y-2 text-[36px] font-semibold tracking-tight">
+                            Bitjar
                           </h1>
-                        </div>
+                        </NavLink>
                         <nav className="flex flex-1 flex-col">
                           <ul className="flex flex-1 flex-col gap-y-7">
                             <li>
@@ -266,15 +259,12 @@ export default function BaseTemplate() {
             {/* Static sidebar for desktop */}
             <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
               <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
-                <div
-                  className="flex h-16 shrink-0 items-center"
-                  onClick={handleClick}
-                >
-                  <img src={logo} alt="BitJar Logo" className="h-14 w-auto" />
-                  <h1 className="cursor-pointer font-sans text-4xl font-bold text-slate-900">
-                    BitJar
+                <NavLink to="/" className="flex h-16 shrink-0 items-center">
+                  <img src={logo} alt="BitJar Logo" className="h-16" />
+                  <h1 className="translate-y-2 text-[36px] font-semibold tracking-tight">
+                    Bitjar
                   </h1>
-                </div>
+                </NavLink>
                 <nav className="flex flex-1 flex-col">
                   <ul className="flex flex-1 flex-col gap-y-7">
                     <li>

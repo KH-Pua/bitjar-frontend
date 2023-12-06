@@ -4,13 +4,13 @@ const InfoTable = ({ data }) => {
       <table className="table">
         {/* head */}
         <thead className="">
-          <tr>
+          <tr className="text-center">
             <th>Action</th>
             <th>Points</th>
             <th>Notes</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-center">
           <tr>
             <td>Sign up with Bitjar</td>
             <td>50</td>
