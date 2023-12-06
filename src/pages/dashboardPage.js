@@ -11,6 +11,7 @@ import { Network, Alchemy } from "alchemy-sdk";
 // Import Components
 import { TokenCard } from "../components/TokenCard/TokenCard.js";
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
+import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 // Import Utils
 import { AAVE_ETH_CHAIN_COINLIST } from "../utilities/aaveEthChainAssetList.js";
@@ -232,9 +233,11 @@ export default function DashboardPage() {
   return (
     <div className="flex w-full flex-row ">
       <div className="flex w-full flex-col justify-center gap-[.5em] px-3">
-        <h1 className="p-0 pb-[1em] text-3xl font-bold text-black">
-          Dashboard
-        </h1>
+        {!account ? (
+          <ConnectWalletDefault />
+        ) : (
+          <h1 className="p-0 text-3xl font-bold text-black">Dashboard</h1>
+        )}
 
         {/* User Primary Information */}
         {!account ? null : (
