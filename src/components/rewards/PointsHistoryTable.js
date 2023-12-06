@@ -2,7 +2,7 @@ import { formatTimestamp } from "../../utilities/formatting";
 
 const PointsHistoryTable = ({ data }) => {
   return (
-    <div className="w-[500px] overflow-x-auto rounded-lg bg-slate-200 px-2 pb-2 shadow-lg">
+    <div className="w-full overflow-x-auto rounded-lg bg-slate-200 px-2 pb-2 shadow-lg">
       <table className="table">
         {/* head */}
         <thead>
