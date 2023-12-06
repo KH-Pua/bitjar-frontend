@@ -9,8 +9,8 @@ import PointsHistoryTable from "../components/rewards/PointsHistoryTable.js";
 import ReferralHistoryTable from "../components/rewards/ReferralHistoryTable.js";
 
 //-----------Utlities-----------//
-import { dailyLoginPoints } from "../utilities/pointsMessages.js";
 import { apiRequest, getUserData } from "../utilities/apiRequests";
+import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
 
 export default function RewardsPage() {
   //-----------HARDCODED DATA (TO UPDATE)-----------//
@@ -84,43 +84,29 @@ export default function RewardsPage() {
 
   // GET - Retrieve all data
   useEffect(() => {
-    fetchPointsRanking();
-    fetchReferralRanking();
-    fetchPointsHistory();
-    fetchReferralHistory();
+    if (user) {
+      fetchPointsRanking();
+      fetchReferralRanking();
+      fetchPointsHistory();
+      fetchReferralHistory();
+    }
   }, [user]);
 
-  const collectDailySignInPoints = async () => {
-    try {
-      const response = await apiRequest.post(
-        `/users/transactions/points/add/${user.id}`,
-        dailyLoginPoints(),
-      );
-      fetchPointsHistory();
-      fetchUserData();
-      setIsClaimed(true);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
-    <div className=" flex w-full flex-col">
-      <header className="flex flex-row justify-between">
+    <div className=" flex w-full flex-col items-center">
+      <header className="flex w-full flex-row justify-between">
         <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
-        <button
-          className="btn "
-          onClick={collectDailySignInPoints}
-          disabled={isClaimed}
-        >
-          Claim Daily Login Points
-        </button>
+        <DailyRewardsButton
+          user={user}
+          fetchPointsHistory={fetchPointsHistory}
+          fetchUserData={fetchUserData}
+        />
       </header>
       {/* Points progress bar */}
-      <div className="w-full rounded-lg bg-slate-200 p-2">
-        <ProgressBar currentPoints={user && user.points} />
+      <div className="my-2 w-full rounded-lg bg-slate-200 p-2">
+        <ProgressBar userData={user && user} />
       </div>
-      <main className="mt-3 grid grid-cols-1 gap-2 xl:grid-cols-2">
+      <main className="mt-3 grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
         <figure className="flex h-[500px] flex-col items-center">
           <h2 className="font-semibold">Points Leaderboard 🍯</h2>
           <PointsTable data={pointsLeaderboard} />
