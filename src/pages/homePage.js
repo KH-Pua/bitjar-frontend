@@ -1,6 +1,14 @@
 //-----------Libraries-----------//
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
+import Web3 from "web3";
+import axios from "axios";
+
+//-----------Utilities-----------//
+import { GlobalContext } from "../providers/globalProvider.js";
+import BACKEND_URL from "../constants.js";
+import { signUpPoints } from "../utilities/pointsMessages.js"
 
 //-----------Media-----------//
 import logo from "../media/bitjar-logo.png";
@@ -8,12 +16,78 @@ import logogif from "../media/BitJar-gif.gif";
 import InfoTable from "../components/rewards/InfoTable.js";
 import TierTable from "../components/rewards/TierTable.js";
 
+let web3;
+
 export default function HomePage() {
+  const {
+    userWalletAdd,
+    setUserWalletAdd,
+  } = useContext(GlobalContext);
   const navigate = useNavigate();
 
-  const navigateTodashboard = () => {
-    navigate("/dashboard");
+  const [account, setAccount] = useState("");
+  const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
+
+  const connectWallet = async () => {
+    try {
+      const accounts = await web3.eth.requestAccounts();
+      console.log("these are the accounts: ", accounts);
+      setAccount(accounts[0]);
+      localStorage.setItem("connection_meta", accounts[0]);
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+    }
   };
+
+  useEffect(() => {
+    //Check for web3 wallet
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
+    const verifyUserInfo = async () => {
+      try {
+        let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
+        console.log(userInfo);
+        //Set wallet address & profile picture to global state for passing around.
+        setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
+        // New user verification boolean
+        setVerifyNewUserBool(userInfo.data.output.newUser)
+      } catch (err) {
+        console.error("Error verify user info:", err);
+      };
+    };
+
+    if (account) {
+      verifyUserInfo();
+    };
+  },[account])
+
+  useEffect(() => {
+    // Record transactions when sign up
+    async function recordSignupTransaction() {
+      try {
+        await axios.post(
+          `${BACKEND_URL}/transactions/points/add/`,
+          signUpPoints(userWalletAdd),
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    
+    if (verifyNewUserBool && userWalletAdd) {
+      console.log("new user created, redirect to onboarding page")
+      recordSignupTransaction();
+      navigate("/onboarding");
+    } else if (verifyNewUserBool === false) {
+      console.log("Existing user");
+      navigate("/dashboard");
+    };
+  },[verifyNewUserBool, userWalletAdd])
 
   return (
     <motion.div
@@ -65,12 +139,12 @@ export default function HomePage() {
           Your one-stop shop for buying, swapping and staking your Bitcoins 🪙
         </p>
       </main>
-      <NavLink
-        to="/dashboard"
+      <button
         className="btn w-36 border-0 bg-yellow-200 hover:translate-y-[-2px] hover:bg-yellow-300"
+        onClick={connectWallet}
       >
-        Get started →
-      </NavLink>
+        Connect Wallet
+      </button>
       {/* AUM Section */}
       <section className="mt-5 flex flex-col items-center sm:flex-row">
         <figure className="m-2 flex w-[400px] flex-col items-center rounded-lg bg-slate-100 p-3 hover:bg-slate-200">
