@@ -29,7 +29,6 @@ export default function RewardsPage() {
   const fetchPointsRanking = async () => {
     try {
       const response = await apiRequest.get("/users/points/ranking");
-      console.log("Points Ranking:", response.data.output);
       setPointsLeaderboard(response.data.output);
     } catch (err) {
       console.log(err);
@@ -39,7 +38,6 @@ export default function RewardsPage() {
   const fetchReferralRanking = async () => {
     try {
       const response = await apiRequest.get("/users/referrals/ranking");
-      console.log("Referral Ranking:", response.data.output);
       setReferralLeaderboard(response.data.output);
     } catch (err) {
       console.log(err);
@@ -51,7 +49,6 @@ export default function RewardsPage() {
       const response = await apiRequest.get(
         `/users/transactions/points/${user.id}`,
       );
-      console.log("Points History:", response.data.output);
       setPointsData(response.data.output);
     } catch (err) {
       console.log(err);
@@ -61,7 +58,6 @@ export default function RewardsPage() {
   const fetchReferralHistory = async () => {
     try {
       const response = await apiRequest.get(`/users/referrals/${user.id}`);
-      console.log("Referral History:", response.data.output);
       setReferralData(response.data.output);
     } catch (err) {
       console.log(err);
@@ -71,7 +67,6 @@ export default function RewardsPage() {
   const fetchUserData = async () => {
     try {
       const user = await getUserData(address);
-      console.log("UserData", user);
       setUser(user);
     } catch (error) {
       console.error("Error in useEffect:", error);

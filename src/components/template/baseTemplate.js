@@ -108,7 +108,6 @@ export default function BaseTemplate() {
   // Variables to re-render sidebar/header
   useEffect(() => {
     renderSideBarWithHeader();
-    console.log(account);
   }, [sidebarNavigation, dropdownNavigation, sidebarOpen, account]);
 
   // Check login state from connection meta
@@ -451,7 +450,7 @@ export default function BaseTemplate() {
 
               <main className="py-10">
                 <div className="px-4 sm:px-6 lg:px-8">
-                  <Outlet context={account}/>
+                  <Outlet context={account} />
                 </div>
               </main>
             </div>

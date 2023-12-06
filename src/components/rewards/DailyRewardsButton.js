@@ -11,11 +11,7 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   const [isClaimed, setIsClaimed] = useState(false);
   const [timeToClaim, setTimeToClaim] = useState(null);
 
-  // useEffect to check points history for user if there is a daily points collected on today
-  // if so -> set isClaimed to true
-
-  // if not do nothing,
-
+  // Check against db for rewards claim
   useEffect(() => {
     const fetchData = async () => {
       if (user.id) {
@@ -23,10 +19,10 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
           const checkClaimed = await apiRequest.get(
             `/transactions/points/dailyCheck/${user.id}`,
           );
-          console.log("Points Claimed:", checkClaimed.data);
+          console.error("Points already claimed:", checkClaimed.data.result);
           setIsClaimed(true);
         } catch (error) {
-          console.error("Points not claimed");
+          console.log("Points not claimed");
         }
       }
     };
@@ -40,6 +36,7 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
         `/transactions/points/add/${user.id}`,
         dailyLoginPoints(),
       );
+      console.log("Daily rewards points collected");
       fetchPointsHistory();
       fetchUserData();
       setIsClaimed(true);
@@ -47,7 +44,7 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
       console.log(err);
     }
   };
-
+  // Countdown timer to next cliam
   useEffect(() => {
     if (isClaimed) {
       const currentDate = new Date();
@@ -60,7 +57,6 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
       const timeDifference = nextDay.getTime() - currentDate.getTime();
       setTimeToClaim(timeDifference);
 
-      // Update time until next day every second
       const interval = setInterval(() => {
         setTimeToClaim(timeToClaim - 1000);
       }, 1000);
