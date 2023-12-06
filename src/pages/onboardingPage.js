@@ -9,7 +9,7 @@ import { ref as sRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { GlobalContext } from "../providers/globalProvider.js";
 import BACKEND_URL from "../constants.js";
 import { storage } from "../firebase/firebase.js";
-
+import {signUpPoints, referralPoints} from "../utilities/pointsMessages.js"
 
 export default function OnboardingPage() {
   const {
@@ -53,15 +53,22 @@ export default function OnboardingPage() {
         walletAddress: userWalletAdd,
         email: userEmail,
         userName: userName,
-        profilePicture: imageURL
+        profilePicture: imageURL,
+        referralCode: userReferralCode
       }
-
 
       // update BE with inserted data
       try {
+        // Edit user data
         const infoSubmit = await axios.post(`${BACKEND_URL}/users/editInfo`, editData);
-        //const recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, transactionsInfo)
-        if (infoSubmit) {
+        // Request referer wallet address
+        const queryReferrerUser = await axios.post(`${BACKEND_URL}/users/getUserDataViaReferralCode`, {referralCode: userReferralCode});
+        // Record transactions on referral
+        const recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, referralPoints(queryReferrerUser.data.output.walletAddress, userWalletAdd));
+        // Update referral table
+        const recordReferral = await axios.post(`${BACKEND_URL}/users/recordReferrerAndReferree/`, {walletAddress: userWalletAdd, referralCode: userReferralCode});
+        
+        if (infoSubmit && recordTransaction && recordReferral) {
           console.log(infoSubmit);
           navigate("/dashboard");
         }

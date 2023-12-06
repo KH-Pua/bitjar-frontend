@@ -10,6 +10,7 @@ import { formatWalletAddress } from "../../utilities/formatting";
 import { GlobalContext } from "../../providers/globalProvider.js";
 import BACKEND_URL from "../../constants.js";
 import { getUserData } from "../../utilities/apiRequests";
+import { signUpPoints } from "../../utilities/pointsMessages.js"
 
 //-----------Media-----------//
 import {
@@ -143,7 +144,6 @@ export default function BaseTemplate() {
   const verifyUserInfo = async () => {
     try {
       let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
-      //let recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, transactionsInfo)
       console.log(userInfo);
       //Set wallet address & profile picture to global state for passing around.
       setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
@@ -162,8 +162,20 @@ export default function BaseTemplate() {
   },[account])
 
   useEffect(() => {
+    async function recordSignupTransaction() {
+      try {
+        await axios.post(
+          `${BACKEND_URL}/transactions/points/add/`,
+          signUpPoints(userWalletAdd),
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     if (verifyNewUserBool && userWalletAdd) {
       console.log("new user created, redirect to onboarding page")
+      recordSignupTransaction();
       navigate("/onboarding");
     } else {
       console.log("Existing user");

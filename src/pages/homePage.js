@@ -8,6 +8,7 @@ import axios from "axios";
 //-----------Utilities-----------//
 import { GlobalContext } from "../providers/globalProvider.js";
 import BACKEND_URL from "../constants.js";
+import { signUpPoints } from "../utilities/pointsMessages.js"
 
 //-----------Media-----------//
 import logo from "../media/bitjar-logo.png";
@@ -66,8 +67,21 @@ export default function HomePage() {
   },[account])
 
   useEffect(() => {
+    // Record transactions when sign up
+    async function recordSignupTransaction() {
+      try {
+        await axios.post(
+          `${BACKEND_URL}/transactions/points/add/`,
+          signUpPoints(userWalletAdd),
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    
     if (verifyNewUserBool && userWalletAdd) {
       console.log("new user created, redirect to onboarding page")
+      recordSignupTransaction();
       navigate("/onboarding");
     } else if (verifyNewUserBool === false) {
       console.log("Existing user");
