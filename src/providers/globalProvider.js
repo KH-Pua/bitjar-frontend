@@ -6,10 +6,15 @@ import { MoonPayProvider } from "@moonpay/moonpay-react";
 export const GlobalContext = createContext();
 
 export default function GlobalProvider({ children }) {
-  //Declare state here
+
+  const [userWalletAdd, setUserWalletAdd] = useState("");
+  const [userProfilePicture, setUserProfilePicture] = useState("");
 
   const infoToPass = {
-    // Add other state or functions that you need to pass here
+    userWalletAdd,
+    setUserWalletAdd,
+    userProfilePicture,
+    setUserProfilePicture
   };
 
   return (

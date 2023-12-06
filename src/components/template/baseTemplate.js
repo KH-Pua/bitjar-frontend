@@ -1,11 +1,14 @@
 //-----------Libraries-----------//
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, useContext, Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import Web3 from "web3";
+import axios from "axios";
 
 //-----------Utilities-----------//
 import { formatWalletAddress } from "../../utilities/formatting";
+import { GlobalContext } from "../../providers/globalProvider.js";
+import BACKEND_URL from "../../constants.js";
 
 //-----------Media-----------//
 import {
@@ -34,6 +37,13 @@ function classNames(...classes) {
 let web3;
 
 export default function BaseTemplate() {
+  const {
+    userWalletAdd,
+    setUserWalletAdd,
+    userProfilePicture,
+    setUserProfilePicture
+
+  } = useContext(GlobalContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -45,6 +55,7 @@ export default function BaseTemplate() {
   const [userData, setUserData] = useState("");
 
   const [account, setAccount] = useState("");
+  const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
 
   const connectWallet = async () => {
     try {
@@ -87,12 +98,15 @@ export default function BaseTemplate() {
   };
 
   useEffect(() => {
+    // Wallet ID whenever page refreshes
+    setAccount(localStorage.getItem("connection_meta"));
+
+    //Check for web3 wallet
     if (window.ethereum) {
       web3 = new Web3(window.ethereum);
     }
 
     let route = location.pathname;
-
     let updatedNav = selectedPageButtonHandler(navigation, route);
     setSidebarNavigation(updatedNav);
     setDropdownNavigation(userNavigation);
@@ -108,12 +122,42 @@ export default function BaseTemplate() {
   // Variables to re-render sidebar/header
   useEffect(() => {
     renderSideBarWithHeader();
-    console.log(account);
   }, [sidebarNavigation, dropdownNavigation, sidebarOpen, account]);
+
+  useEffect(() => {
+    // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
+    const verifyUserInfo = async () => {
+      try {
+        let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
+        console.log(userInfo);
+        //Set wallet address & profile picture to global state for passing around.
+        setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
+        setUserProfilePicture(userInfo.data.output.dataValues.profilePicture)
+        // New user verification boolean
+        setVerifyNewUserBool(userInfo.data.output.newUser)
+      } catch (err) {
+        console.error("Error verify user info:", err);
+      };
+    };
+
+    if (account) {
+      verifyUserInfo();
+    };
+  },[account])
+
+  useEffect(() => {
+    if (verifyNewUserBool && userWalletAdd) {
+      console.log("new user created, redirect to onboarding page")
+      navigate("/onboarding");
+    } else {
+      console.log("Existing user");
+      renderSideBarWithHeader();
+    };
+  },[verifyNewUserBool, userWalletAdd])
 
   // Check login state from connection meta
   useEffect(() => {
-    setAccount(localStorage.getItem("connection_meta"));
+    
   }, []);
 
   const handleClick = (name) => {
@@ -399,7 +443,7 @@ export default function BaseTemplate() {
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-8 w-8 rounded-full bg-gray-50"
-                            src={userData.picture}
+                            src={userProfilePicture ? userProfilePicture : ""}
                             alt="img"
                           />
                           <span className="hidden lg:flex lg:items-center">

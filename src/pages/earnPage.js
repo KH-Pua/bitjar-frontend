@@ -45,14 +45,6 @@ export default function EarnPage() {
   const [earnPage, setEarnPage] = useState("");
 
   useEffect(() => {
-    // if (window.ethereum) {
-    //   // console.log("metamask detected");
-    //   web3 = new Web3(window.ethereum);
-    // }
-    // setAccount(localStorage.getItem("connection_meta"));
-  }, []);
-
-  useEffect(() => {
     console.log("wallet add", walletAdd)
     setAccount(walletAdd);
   },[walletAdd])
