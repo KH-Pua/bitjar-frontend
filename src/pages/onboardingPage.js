@@ -45,23 +45,6 @@ export default function OnboardingPage() {
           await uploadBytes(fileRef, file);
           imageURL = await getDownloadURL(fileRef);
 
-          // Call the backend API to store the image URL
-          // const imgUploadResponse = await axios.post(
-          //   `${BACKEND_URL}/propertyassets`,
-          //   {
-          //     property_id: response.data.id,
-          //     file_link: imageURL,
-          //   },
-          //   {
-          //     headers: {
-          //       Authorization: `Bearer ${token}`,
-          //     },
-          //   }
-          // );
-
-          // if (imgUploadResponse.status === 201) {
-          //   navigate("/managerDashboard/");
-          // }
       } catch (error) {
         console.error("Error handling photo upload:", error);
       }
@@ -97,7 +80,7 @@ export default function OnboardingPage() {
     <div className="flex flex-col sm:px-60">
       <header className="p-10">
         <h1 className="text-3xl font-bold text-black">
-          Welcome to BitJar, your one stop platform to buy, earn and swap BTC
+          Make your Bitcoin work harder with Bitjar
         </h1>
       </header>
       <main className="py-10">

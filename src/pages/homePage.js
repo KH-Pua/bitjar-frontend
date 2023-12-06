@@ -1,10 +1,12 @@
 //-----------Libraries-----------//
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import Web3 from "web3";
 import axios from "axios";
 
 //-----------Utilities-----------//
+import { GlobalContext } from "../providers/globalProvider.js";
 import BACKEND_URL from "../constants.js";
 
 //-----------Media-----------//
@@ -123,12 +125,12 @@ export default function HomePage() {
           Your one-stop shop for buying, swapping and staking your Bitcoins 🪙
         </p>
       </main>
-      <NavLink
-        to="/dashboard"
+      <button
         className="btn w-36 border-0 bg-yellow-200 hover:translate-y-[-2px] hover:bg-yellow-300"
+        onClick={connectWallet}
       >
-        Get started →
-      </NavLink>
+        Connect Wallet
+      </button>
       {/* AUM Section */}
       <section className="mt-5 flex flex-col items-center sm:flex-row">
         <figure className="m-2 flex w-[400px] flex-col items-center rounded-lg bg-slate-100 p-3 hover:bg-slate-200">
