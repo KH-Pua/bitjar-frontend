@@ -16,9 +16,6 @@ export default function RewardsPage() {
   //-----------HARDCODED DATA (TO UPDATE)-----------//
   const address = localStorage.getItem("connection_meta");
 
-  // Variables
-  const [isClaimed, setIsClaimed] = useState(false);
-
   // Data
   const [pointsLeaderboard, setPointsLeaderboard] = useState();
   const [referralLeaderboard, setReferralLeaderboard] = useState();
@@ -29,7 +26,6 @@ export default function RewardsPage() {
   const fetchPointsRanking = async () => {
     try {
       const response = await apiRequest.get("/users/points/ranking");
-      console.log("Points Ranking:", response.data.output);
       setPointsLeaderboard(response.data.output);
     } catch (err) {
       console.log(err);
@@ -39,7 +35,6 @@ export default function RewardsPage() {
   const fetchReferralRanking = async () => {
     try {
       const response = await apiRequest.get("/users/referrals/ranking");
-      console.log("Referral Ranking:", response.data.output);
       setReferralLeaderboard(response.data.output);
     } catch (err) {
       console.log(err);
@@ -51,7 +46,6 @@ export default function RewardsPage() {
       const response = await apiRequest.get(
         `/users/transactions/points/${user.id}`,
       );
-      console.log("Points History:", response.data.output);
       setPointsData(response.data.output);
     } catch (err) {
       console.log(err);
@@ -61,7 +55,6 @@ export default function RewardsPage() {
   const fetchReferralHistory = async () => {
     try {
       const response = await apiRequest.get(`/users/referrals/${user.id}`);
-      console.log("Referral History:", response.data.output);
       setReferralData(response.data.output);
     } catch (err) {
       console.log(err);
@@ -71,7 +64,6 @@ export default function RewardsPage() {
   const fetchUserData = async () => {
     try {
       const user = await getUserData(address);
-      console.log("UserData", user);
       setUser(user);
     } catch (error) {
       console.error("Error in useEffect:", error);
@@ -94,36 +86,51 @@ export default function RewardsPage() {
 
   return (
     <div className=" flex w-full flex-col items-center">
-      <header className="flex w-full flex-row justify-between">
-        <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
-        <DailyRewardsButton
-          user={user}
-          fetchPointsHistory={fetchPointsHistory}
-          fetchUserData={fetchUserData}
-        />
-      </header>
-      {/* Points progress bar */}
-      <div className="my-2 w-full rounded-lg bg-slate-200 p-2">
-        <ProgressBar userData={user && user} />
-      </div>
-      <main className="mt-3 grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
-        <figure className="flex h-[500px] flex-col items-center">
-          <h2 className="font-semibold">Points Leaderboard 🍯</h2>
-          <PointsTable data={pointsLeaderboard} />
-        </figure>
-        <figure className="flex h-[500px] flex-col items-center">
-          <h2 className="font-semibold">Referral Leaderboard 🥳</h2>
-          <ReferralTable data={referralLeaderboard} />
-        </figure>
-        <figure className="flex h-[500px] flex-col items-center">
-          <h2 className="font-semibold">Points History</h2>
-          <PointsHistoryTable data={pointsData} />
-        </figure>
-        <figure className="flex h-[500px] flex-col items-center">
-          <h2 className="font-semibold">Referral History</h2>
-          <ReferralHistoryTable data={referralData} />
-        </figure>
-      </main>
+      {user ? (
+        <>
+          <header className="flex w-full flex-row justify-between">
+            <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
+            <DailyRewardsButton
+              user={user && user}
+              fetchPointsHistory={fetchPointsHistory}
+              fetchUserData={fetchUserData}
+            />
+          </header>
+          {/* Points progress bar */}
+          <div className="my-2 w-full rounded-lg bg-slate-200 p-2">
+            <ProgressBar userData={user && user} />
+          </div>
+          <main className="mt-3 grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
+            <figure className="flex h-[500px] flex-col items-center">
+              <h2 className="font-semibold">Points Leaderboard 🍯</h2>
+              <PointsTable data={pointsLeaderboard} />
+            </figure>
+            <figure className="flex h-[500px] flex-col items-center">
+              <h2 className="font-semibold">Referral Leaderboard 🥳</h2>
+              <ReferralTable data={referralLeaderboard} />
+            </figure>
+            <figure className="flex h-[500px] flex-col items-center">
+              <h2 className="font-semibold">Points History</h2>
+              <PointsHistoryTable data={pointsData} />
+            </figure>
+            <figure className="flex h-[500px] flex-col items-center">
+              <h2 className="font-semibold">Referral History</h2>
+              <ReferralHistoryTable data={referralData} />
+            </figure>
+          </main>
+        </>
+      ) : (
+        <div className="h-screen w-full">
+          <header className="">
+            <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
+          </header>
+          <main className="flex h-full items-center justify-center ">
+            <button className="rounded-lg bg-yellow-200 p-3">
+              Connect Wallet
+            </button>
+          </main>
+        </div>
+      )}
     </div>
   );
 }
