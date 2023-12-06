@@ -3,7 +3,7 @@ import logo from "../../media/bitjar-logo.png";
 
 const PointsTable = ({ data }) => {
   return (
-    <div className=" w-[500px] overflow-y-auto rounded-lg bg-slate-200 px-2 pb-2 shadow-lg">
+    <div className=" w-full overflow-y-auto rounded-lg bg-slate-200 px-2 pb-2 shadow-lg">
       <table className="table">
         {/* head */}
         <thead className="">

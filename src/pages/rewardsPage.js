@@ -9,12 +9,11 @@ import PointsHistoryTable from "../components/rewards/PointsHistoryTable.js";
 import ReferralHistoryTable from "../components/rewards/ReferralHistoryTable.js";
 
 //-----------Utlities-----------//
-import { dailyLoginPoints } from "../utilities/pointsMessages.js";
-import { apiRequest } from "../utilities/apiRequests";
+import { apiRequest, getUserData } from "../utilities/apiRequests";
+import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
 
 export default function RewardsPage() {
   //-----------HARDCODED DATA (TO UPDATE)-----------//
-  const userId = 2;
   const address = localStorage.getItem("connection_meta");
 
   // Variables
@@ -25,6 +24,7 @@ export default function RewardsPage() {
   const [referralLeaderboard, setReferralLeaderboard] = useState();
   const [pointsData, setPointsData] = useState();
   const [referralData, setReferralData] = useState();
+  const [user, setUser] = useState("");
 
   const fetchPointsRanking = async () => {
     try {
@@ -49,7 +49,7 @@ export default function RewardsPage() {
   const fetchPointsHistory = async () => {
     try {
       const response = await apiRequest.get(
-        `/users/transactions/points/${userId}`,
+        `/users/transactions/points/${user.id}`,
       );
       console.log("Points History:", response.data.output);
       setPointsData(response.data.output);
@@ -60,7 +60,7 @@ export default function RewardsPage() {
 
   const fetchReferralHistory = async () => {
     try {
-      const response = await apiRequest.get(`/users/referrals/${userId}`);
+      const response = await apiRequest.get(`/users/referrals/${user.id}`);
       console.log("Referral History:", response.data.output);
       setReferralData(response.data.output);
     } catch (err) {
@@ -68,44 +68,45 @@ export default function RewardsPage() {
     }
   };
 
-  // GET - Retrieve all data
-  useEffect(() => {
-    fetchPointsRanking();
-    fetchReferralRanking();
-    fetchPointsHistory();
-    fetchReferralHistory();
-  }, []);
-
-  const collectDailySignInPoints = async () => {
+  const fetchUserData = async () => {
     try {
-      const response = await apiRequest.post(
-        `/users/transactions/points/add/${userId}`,
-        dailyLoginPoints(),
-      );
-      fetchPointsHistory();
-      setIsClaimed(true);
-    } catch (err) {
-      console.log(err);
+      const user = await getUserData(address);
+      console.log("UserData", user);
+      setUser(user);
+    } catch (error) {
+      console.error("Error in useEffect:", error);
     }
   };
 
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  // GET - Retrieve all data
+  useEffect(() => {
+    if (user) {
+      fetchPointsRanking();
+      fetchReferralRanking();
+      fetchPointsHistory();
+      fetchReferralHistory();
+    }
+  }, [user]);
+
   return (
-    <div className=" flex w-full flex-col">
-      <header className="flex flex-row justify-between">
+    <div className=" flex w-full flex-col items-center">
+      <header className="flex w-full flex-row justify-between">
         <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
-        <button
-          className="btn "
-          onClick={collectDailySignInPoints}
-          disabled={isClaimed}
-        >
-          Claim Daily Login Points {address}
-        </button>
+        <DailyRewardsButton
+          user={user}
+          fetchPointsHistory={fetchPointsHistory}
+          fetchUserData={fetchUserData}
+        />
       </header>
       {/* Points progress bar */}
-      <div className="w-full rounded-lg bg-slate-200 p-2">
-        <ProgressBar progress="40%" currentPoints="1000" nextTier="400" />
+      <div className="my-2 w-full rounded-lg bg-slate-200 p-2">
+        <ProgressBar userData={user && user} />
       </div>
-      <main className="mt-3 grid grid-cols-1 gap-2 xl:grid-cols-2">
+      <main className="mt-3 grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
         <figure className="flex h-[500px] flex-col items-center">
           <h2 className="font-semibold">Points Leaderboard 🍯</h2>
           <PointsTable data={pointsLeaderboard} />
