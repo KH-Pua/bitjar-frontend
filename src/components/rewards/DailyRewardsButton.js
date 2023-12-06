@@ -16,6 +16,24 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
 
   // if not do nothing,
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user.id) {
+        try {
+          const checkClaimed = await apiRequest.get(
+            `/transactions/points/dailyCheck/${user.id}`,
+          );
+          console.log("Points Claimed:", checkClaimed.data);
+          setIsClaimed(true);
+        } catch (error) {
+          console.error("Points not claimed");
+        }
+      }
+    };
+
+    fetchData();
+  }, [user.id]);
+
   const collectDailySignInPoints = async () => {
     try {
       const response = await apiRequest.post(
