@@ -6,15 +6,31 @@ import { useEffect, useState } from "react";
 
 import { apiRequest } from "../../utilities/apiRequests";
 import { dailyLoginPoints } from "../../utilities/pointsMessages.js";
+import PointNotification from "../details/PointNotification.js";
 
 const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   const [isClaimed, setIsClaimed] = useState(false);
   const [timeToClaim, setTimeToClaim] = useState(null);
+  const [renderNotification, setRenderNotification] = useState(false);
 
-  // useEffect to check points history for user if there is a daily points collected on today
-  // if so -> set isClaimed to true
+  // Check against db for rewards claim
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user.id) {
+        try {
+          const checkClaimed = await apiRequest.get(
+            `/transactions/points/dailyCheck/${user.id}`,
+          );
+          console.error("Points already claimed:", checkClaimed.data.result);
+          setIsClaimed(true);
+        } catch (error) {
+          console.log("Points not claimed");
+        }
+      }
+    };
 
-  // if not do nothing,
+    fetchData();
+  }, [user.id]);
 
   const collectDailySignInPoints = async () => {
     try {
@@ -22,14 +38,16 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
         `/transactions/points/add/${user.id}`,
         dailyLoginPoints(),
       );
+      console.log("Daily rewards points collected");
       fetchPointsHistory();
       fetchUserData();
       setIsClaimed(true);
+      setRenderNotification(true);
     } catch (err) {
       console.log(err);
     }
   };
-
+  // Countdown timer to next cliam
   useEffect(() => {
     if (isClaimed) {
       const currentDate = new Date();
@@ -42,7 +60,6 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
       const timeDifference = nextDay.getTime() - currentDate.getTime();
       setTimeToClaim(timeDifference);
 
-      // Update time until next day every second
       const interval = setInterval(() => {
         setTimeToClaim(timeToClaim - 1000);
       }, 1000);
@@ -61,15 +78,18 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   };
 
   return (
-    <button
-      className="rounded-lg bg-yellow-200 px-2 shadow-lg hover:translate-y-[-2px] hover:bg-yellow-300"
-      onClick={collectDailySignInPoints}
-      disabled={isClaimed}
-    >
-      {isClaimed
-        ? `Claim again in ${formatTimeToClaim(timeToClaim)}`
-        : "📆 Claim Daily Login!"}
-    </button>
+    <>
+      <button
+        className="rounded-lg bg-yellow-200 px-2 shadow-lg hover:translate-y-[-2px] hover:bg-yellow-300"
+        onClick={collectDailySignInPoints}
+        disabled={isClaimed}
+      >
+        {isClaimed
+          ? `Claim again in ${formatTimeToClaim(timeToClaim)}`
+          : "📆 Claim Daily Login!"}
+      </button>
+      {renderNotification && <PointNotification data={dailyLoginPoints()} />}
+    </>
   );
 };
 
