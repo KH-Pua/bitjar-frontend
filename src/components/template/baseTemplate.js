@@ -6,6 +6,7 @@ import Web3 from "web3";
 
 //-----------Utilities-----------//
 import { formatWalletAddress } from "../../utilities/formatting";
+import { getUserData } from "../../utilities/apiRequests";
 
 //-----------Media-----------//
 import {
@@ -75,6 +76,19 @@ export default function BaseTemplate() {
     { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
     { name: "Disconnect", onclick: disconnectWallet },
   ];
+
+  const fetchUserData = async () => {
+    try {
+      const user = await getUserData(account);
+      setUserData(user);
+    } catch (error) {
+      console.error("Error in useEffect:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [account]);
 
   // Set current to true if route matches nav
   const selectedPageButtonHandler = (array, route) => {
@@ -398,7 +412,7 @@ export default function BaseTemplate() {
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-8 w-8 rounded-full bg-gray-50"
-                            src={userData.picture}
+                            src={userData && userData.profilePicture}
                             alt="img"
                           />
                           <span className="hidden lg:flex lg:items-center">
