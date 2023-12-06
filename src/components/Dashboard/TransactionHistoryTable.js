@@ -29,18 +29,11 @@ export const TransactionHistoryTable = ({ userId }) => {
 
   return (
     <>
-      <button
-        onClick={() => {
-          console.log(userTransactionHistory);
-        }}
-      >
-        Hey
-      </button>
-      <div className="overflow-x-auto">
+      <div className="">
         <table className="table">
           {/* head */}
           <thead>
-            <tr className="">
+            <tr>
               <th>COIN</th>
               <th>PRODUCT</th>
               <th>AMOUNT</th>
@@ -58,8 +51,8 @@ export const TransactionHistoryTable = ({ userId }) => {
                   <td>{element.amount}</td>
                   <td>
                     <a
-                      // target="_blank"
                       href={`https://etherscan.io/tx/${element.transactionHash}`}
+                      target="_blank"
                     >
                       <LinkIcon className="h-6 w-6 text-gray-500" />
                     </a>
