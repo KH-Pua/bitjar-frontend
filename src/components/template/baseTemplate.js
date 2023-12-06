@@ -128,7 +128,14 @@ export default function BaseTemplate() {
     // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
     const verifyUserInfo = async () => {
       try {
+        transactionsInfo = {
+          walletAddress: account,
+          pointsAllocated: rewardPointsSchedule.signUp
+          actionName: 
+        }
         let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
+        let recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, {})
+        //RECORD TRANSACTIONS `${BACKEND_URL}/transactions/points/add/XXX`
         console.log(userInfo);
         //Set wallet address & profile picture to global state for passing around.
         setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
@@ -154,11 +161,6 @@ export default function BaseTemplate() {
       renderSideBarWithHeader();
     };
   },[verifyNewUserBool, userWalletAdd])
-
-  // Check login state from connection meta
-  useEffect(() => {
-    
-  }, []);
 
   const handleClick = (name) => {
     navigate("/dashboard");
