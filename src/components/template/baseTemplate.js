@@ -40,8 +40,6 @@ let web3;
 
 export default function BaseTemplate() {
   const {
-    userWalletAdd,
-    setUserWalletAdd,
     userProfilePicture,
     setUserProfilePicture
   } = useContext(GlobalContext);
@@ -53,7 +51,6 @@ export default function BaseTemplate() {
   const [template, setTemplate] = useState("");
   const [pathName, setPathName] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userData, setUserData] = useState("");
 
   const [account, setAccount] = useState("");
   const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
@@ -88,20 +85,6 @@ export default function BaseTemplate() {
     { name: "Disconnect", onclick: disconnectWallet },
   ];
 
-  const fetchUserData = async () => {
-    try {
-      const user = await getUserData(account);
-      setUserData(user);
-      console.log("userdata", user);
-    } catch (error) {
-      console.error("Error in useEffect:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, [account]);
-
   // Set current to true if route matches nav
   const selectedPageButtonHandler = (array, route) => {
     return array.map((navObj) => {
@@ -110,6 +93,18 @@ export default function BaseTemplate() {
       }
       return navObj;
     });
+  };
+
+  // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
+  const verifyUserInfo = async () => {
+    try {
+      let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
+      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture)
+      // New user verification boolean
+      setVerifyNewUserBool(userInfo.data.output.newUser)
+    } catch (err) {
+      console.error("Error verify user info:", err);
+    };
   };
 
   useEffect(() => {
@@ -122,6 +117,7 @@ export default function BaseTemplate() {
       web3 = new Web3(window.ethereum);
     }
 
+    //Handles button selection on the sidebar
     let route = location.pathname;
     let updatedNav = selectedPageButtonHandler(navigation, route);
     setSidebarNavigation(updatedNav);
@@ -129,31 +125,17 @@ export default function BaseTemplate() {
   }, []);
 
   useEffect(() => {
+    // Check current path name and set sidebar navigation button
     if (pathName) {
       let updatedNav = selectedPageButtonHandler(navigation, pathName);
       setSidebarNavigation(updatedNav);
     }
   }, [pathName]);
 
-  // Variables to re-render sidebar/header
   useEffect(() => {
+    // Variables to re-render sidebar/header
     renderSideBarWithHeader();
   }, [sidebarNavigation, dropdownNavigation, sidebarOpen, account, userProfilePicture]);
-
-  // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
-  const verifyUserInfo = async () => {
-    try {
-      let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
-      console.log(userInfo);
-      //Set wallet address & profile picture to global state for passing around.
-      setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
-      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture)
-      // New user verification boolean
-      setVerifyNewUserBool(userInfo.data.output.newUser)
-    } catch (err) {
-      console.error("Error verify user info:", err);
-    };
-  };
 
   useEffect(() => {
     if (account) {
@@ -166,14 +148,14 @@ export default function BaseTemplate() {
       try {
         await axios.post(
           `${BACKEND_URL}/transactions/points/add/`,
-          signUpPoints(userWalletAdd),
+          signUpPoints(account),
         );
       } catch (err) {
         console.log(err);
       }
     };
 
-    if (verifyNewUserBool && userWalletAdd) {
+    if (verifyNewUserBool) {
       console.log("new user created, redirect to onboarding page")
       recordSignupTransaction();
       navigate("/onboarding");
@@ -181,11 +163,7 @@ export default function BaseTemplate() {
       console.log("Existing user");
       renderSideBarWithHeader();
     };
-  },[verifyNewUserBool, userWalletAdd])
-
-  const handleClick = (name) => {
-    navigate("/");
-  };
+  },[verifyNewUserBool])
 
   const renderSideBarWithHeader = () => {
     if (sidebarNavigation && dropdownNavigation) {

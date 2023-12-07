@@ -47,6 +47,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    //Set time interval
     const interval = setInterval(() => {
       const randomIncrement = Math.floor(Math.random() * (500 - 10 + 1)) + 10;
 
@@ -60,7 +61,10 @@ export default function HomePage() {
     }, 1500);
 
     return () => clearInterval(interval, altInterval);
+
   }, []);
+
+
 
   useEffect(() => {
     // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
@@ -71,8 +75,10 @@ export default function HomePage() {
           { walletAddress: account },
         );
         console.log(userInfo);
+
         //Set wallet address & profile picture to global state for passing around.
         setUserWalletAdd(userInfo.data.output.dataValues.walletAddress);
+
         // New user verification boolean
         setVerifyNewUserBool(userInfo.data.output.newUser);
       } catch (err) {

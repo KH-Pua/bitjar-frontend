@@ -9,7 +9,7 @@ import { ref as sRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { GlobalContext } from "../providers/globalProvider.js";
 import BACKEND_URL from "../constants.js";
 import { storage } from "../firebase/firebase.js";
-import {signUpPoints, referralPoints} from "../utilities/pointsMessages.js"
+import {referralPoints} from "../utilities/pointsMessages.js"
 
 export default function OnboardingPage() {
   const {
@@ -26,7 +26,6 @@ export default function OnboardingPage() {
   const [file, setFile] = useState(null);
   const [fileInputInitialValue, setFileInputInitialValue] = useState("");
   const [imagePreviewURL, setImagePreviewURL] = useState("");
-
 
   const handleSubmit = async (e) => {
     console.log("enter handle submit")
