@@ -15,7 +15,6 @@ import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import InfoTable from "../components/rewards/InfoTable.js";
 import TierTable from "../components/rewards/TierTable.js";
-import { useState, useEffect } from "react";
 
 let web3;
 
@@ -43,6 +42,7 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    //Set time interval
     const interval = setInterval(() => {
       const randomIncrement = Math.floor(Math.random() * (500 - 10 + 1)) + 10;
 
@@ -56,13 +56,14 @@ export default function HomePage() {
     }, 1500);
 
     return () => clearInterval(interval, altInterval);
-  }, []);
-  
+  },[]);
+
+  useEffect(() => {
     //Check for web3 wallet
     if (window.ethereum) {
       web3 = new Web3(window.ethereum);
     }
-  }, []);
+  },[])
 
   useEffect(() => {
     // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
@@ -70,7 +71,7 @@ export default function HomePage() {
       try {
         let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
         console.log(userInfo);
-        //Set wallet address & profile picture to global state for passing around.
+        //Set wallet address to global state for passing to onboarding page.
         setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
         // New user verification boolean
         setVerifyNewUserBool(userInfo.data.output.newUser)
