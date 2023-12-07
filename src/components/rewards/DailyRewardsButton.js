@@ -35,8 +35,8 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   const collectDailySignInPoints = async () => {
     try {
       const response = await apiRequest.post(
-        `/transactions/points/add/${user.id}`,
-        dailyLoginPoints(),
+        `/transactions/points/add/`,
+        dailyLoginPoints(user.walletAddress),
       );
       console.log("Daily rewards points collected");
       fetchPointsHistory();
