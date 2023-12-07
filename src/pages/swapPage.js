@@ -1,20 +1,26 @@
-import { useState, useEffect, useContext } from "react";
-import { GlobalContext } from "../providers/globalProvider.js";
+//-----------Libraries-----------//
+import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 import Web3 from "web3";
+
+//-----------Components-----------//
+import SwapFrom from "../components/Swap/SwapFrom";
+import SwapTo from "../components/Swap/SwapTo";
+
+//-----------Utilties-----------//
+import { formatWalletAddress } from "../utilities/formatting";
 
 export default function SwapPage() {
   const [tokens, setTokens] = useState([]);
   const [currentTrade, setCurrentTrade] = useState({ from: null, to: null });
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
-  const [connected, setConnected] = useState(false);
-  const [account, setAccount] = useState(null);
   const [swapQuote, setSwapQuote] = useState(null);
-  const infoToPass = useContext(GlobalContext);
 
-  // Add your 0x API key here
+  // Constants
   const API_KEY = process.env.REACT_APP_0X_KEY;
+  const address = useOutletContext();
 
   // Headers for 0x API requests
   const headers = {
@@ -29,29 +35,18 @@ export default function SwapPage() {
       const response = await axios.get(
         "https://tokens.coingecko.com/uniswap/all.json",
       );
-      setTokens(response.data.tokens);
+
+      // Filter tokens by specific symbols (BTC, ETH, USDC)
+      const filteredTokens = response.data.tokens.filter((token) =>
+        ["WBTC", "WETH", "USDC", "ETH20", "DAI", "USDT"].includes(token.symbol),
+      );
+
+      setTokens(filteredTokens);
     };
     listAvailableTokens();
   }, []);
 
-  // Connect to MetaMask
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setAccount(accounts[0]);
-        setConnected(true);
-      } catch (error) {
-        console.error("Error connecting to MetaMask", error);
-      }
-    } else {
-      alert("Please install MetaMask");
-    }
-  };
-
-  // Select Token
+  // Set current trade
   const selectToken = (token, side) => {
     const updatedTrade = { ...currentTrade, [side]: token };
     setCurrentTrade(updatedTrade);
@@ -63,34 +58,42 @@ export default function SwapPage() {
     const params = {
       sellToken: currentTrade.from.address,
       buyToken: currentTrade.to.address,
-      sellAmount: Web3.utils.toWei(fromAmount, "ether"),
-      takerAddress: account,
+      sellAmount: fromAmount * 10 ** currentTrade.from.decimals,
+      takerAddress: address,
     };
+    setToAmount("fetching price...");
+    console.log("fetchpriceParams", params);
 
     try {
       const priceResponse = await axios.get(
         `https://api.0x.org/swap/v1/price?${new URLSearchParams(params)}`,
         headers,
       );
-      const amountInEther = Web3.utils.fromWei(
-        priceResponse.data.buyAmount.toString(),
-        "ether",
-      );
 
-      setToAmount(amountInEther.toString());
+      console.log("Price Response", priceResponse);
+      const convertedAmount =
+        priceResponse.data.buyAmount / 10 ** currentTrade.to.decimals;
+      setToAmount(convertedAmount);
     } catch (error) {
       console.error("Error fetching price or quote", error);
+      setToAmount("Error fetching price, try again");
     }
   };
 
+  // Automatically fetch price
+  useEffect(() => {
+    fetchPrice();
+  }, [currentTrade, fromAmount]);
+
+  // Fetch a firm quote - commitment to fill the market order
   const fetchQuote = async () => {
     if (!currentTrade.from || !currentTrade.to || !fromAmount) return;
 
     const params = {
       sellToken: currentTrade.from.address,
       buyToken: currentTrade.to.address,
-      sellAmount: Web3.utils.toWei(fromAmount, "ether"),
-      takerAddress: account,
+      sellAmount: fromAmount * 10 ** currentTrade.from.decimals,
+      takerAddress: address,
     };
 
     console.log(params);
@@ -101,7 +104,7 @@ export default function SwapPage() {
         headers,
       );
       setSwapQuote(quoteResponse.data);
-      console.log(swapQuote);
+      console.log("FetchQuote", swapQuote);
     } catch (error) {
       console.error("Error fetching quote", error);
     }
@@ -109,14 +112,14 @@ export default function SwapPage() {
 
   // Execute swap
   const executeSwap = async () => {
-    if (!swapQuote || !account) return;
+    if (!swapQuote || !address) return;
 
     // Use the existing provider from the MetaMask connection
     const web3 = new Web3(window.ethereum);
 
     try {
       await web3.eth.sendTransaction({
-        from: account,
+        from: address,
         to: swapQuote.to,
         data: swapQuote.data,
         value: swapQuote.value,
@@ -136,90 +139,39 @@ export default function SwapPage() {
     ));
   };
 
-  const handleAmountChange = (e) => {
-    setFromAmount(e.target.value);
-  };
-
   return (
-    <div className="mt-12 rounded-lg bg-white p-4 text-black shadow-md">
-      <h1 className="text-2xl font-bold">SwapPage</h1>
-      {connected ? (
-        <p className="mt-4">
-          Connected: <span className="font-semibold">{account}</span>
-        </p>
-      ) : (
-        <button
-          onClick={connectWallet}
-          className="mt-4 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        >
-          Connect Wallet
-        </button>
-      )}
+    <div className="mt-12 w-max rounded-lg bg-white p-4 text-black shadow-md">
+      <h1 className="text-2xl font-bold">Swap</h1>
+      <p className="mt-4">
+        Connected:
+        <span className="font-semibold">{formatWalletAddress(address)}</span>
+      </p>
+      {/* Swap Form */}
+      <main className="">
+        <div className="mt-3">
+          <h2 className="text-lg font-semibold">Swap from:</h2>
+          <SwapFrom
+            tokens={tokens && tokens}
+            selectToken={selectToken}
+            fromAmount={fromAmount}
+            setFromAmount={setFromAmount}
+          />
+        </div>
+        <div className="">
+          <h2 className="text-lg font-semibold">Swap to:</h2>
+          <SwapTo tokens={tokens && tokens} selectToken={selectToken} />
+        </div>
+        <div className="mt-3">
+          <p className="">Est amount: {toAmount}</p>
+        </div>
+      </main>
       <div className="mt-6">
-        <h2 className="text-xl font-semibold">Select Token:</h2>
-        <select
-          className="mt-2 block w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 leading-tight focus:border-gray-500 focus:bg-gray-600 focus:outline-none"
-          onChange={(e) =>
-            selectToken(
-              tokens.find((token) => token.symbol === e.target.value),
-              "from",
-            )
-          }
-          value={currentTrade.from ? currentTrade.from.symbol : ""}
-        >
-          <option disabled>Select a token</option>
-          {tokens.map((token, index) => (
-            <option key={index} value={token.symbol}>
-              {token.symbol}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mt-6">
-        <label className="block text-lg">From (Amount):</label>
-        <input
-          type="text"
-          value={fromAmount}
-          onChange={handleAmountChange}
-          className="mt-2 rounded border border-gray-300 p-2"
-        />
-      </div>
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold">Select Token:</h2>
-        <select
-          className="mt-2 block w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 leading-tight focus:border-gray-500 focus:bg-gray-600 focus:outline-none"
-          onChange={(e) =>
-            selectToken(
-              tokens.find((token) => token.symbol === e.target.value),
-              "to",
-            )
-          }
-          value={currentTrade.to ? currentTrade.to.symbol : ""}
-        >
-          <option disabled>Select a token</option>
-          {tokens.map((token, index) => (
-            <option key={index} value={token.symbol}>
-              {token.symbol}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mt-6">
-        <label className="block text-lg">To (Amount):</label>
-        <input
-          type="text"
-          value={toAmount}
-          readOnly
-          className="mt-2 rounded border border-gray-300 p-2"
-        />
-      </div>
-      <div className="mt-6">
-        <button
+        {/* <button
           onClick={fetchPrice}
           className="mr-4 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
         >
           Fetch Price
-        </button>
+        </button> */}
         <button
           onClick={fetchQuote}
           className="mr-4 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"

@@ -248,7 +248,7 @@ export default function DashboardPage() {
                 with BitJar
               </p>
               <p className="text-[2rem] font-semibold">
-                {totalHoldings != null && totalHoldings} USD
+                ${totalHoldings != null && totalHoldings.toLocaleString()}
               </p>
             </div>
             {/* <div>

@@ -38,4 +38,13 @@ const formatDate = (currentTime) => {
   return formattedDateTime;
 };
 
-export { formatWalletAddress, formatTimestamp, formatDate };
+const formatTimeToClaim = (time) => {
+  const hours = Math.floor(time / (1000 * 60 * 60));
+  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((time % (1000 * 60)) / 1000);
+  return `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+};
+
+export { formatWalletAddress, formatTimestamp, formatDate, formatTimeToClaim };

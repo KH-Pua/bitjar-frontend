@@ -1,19 +1,111 @@
 //-----------Libraries-----------//
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
+import Web3 from "web3";
+import axios from "axios";
+
+//-----------Utilities-----------//
+import { GlobalContext } from "../providers/globalProvider.js";
+import BACKEND_URL from "../constants.js";
+import { signUpPoints } from "../utilities/pointsMessages.js"
 
 //-----------Media-----------//
 import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import InfoTable from "../components/rewards/InfoTable.js";
 import TierTable from "../components/rewards/TierTable.js";
+import { useState, useEffect } from "react";
+
+let web3;
 
 export default function HomePage() {
+  const {
+    userWalletAdd,
+    setUserWalletAdd,
+  } = useContext(GlobalContext);
   const navigate = useNavigate();
+  const [assets, setAssets] = useState(42320232);
+  const [interest, setInterest] = useState(20322);
 
-  const navigateTodashboard = () => {
-    navigate("/dashboard");
+  const [account, setAccount] = useState("");
+  const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
+
+  const connectWallet = async () => {
+    try {
+      const accounts = await web3.eth.requestAccounts();
+      console.log("these are the accounts: ", accounts);
+      setAccount(accounts[0]);
+      localStorage.setItem("connection_meta", accounts[0]);
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+    }
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const randomIncrement = Math.floor(Math.random() * (500 - 10 + 1)) + 10;
+
+      setAssets((prevAmount) => prevAmount + randomIncrement);
+    }, 1000);
+
+    const altInterval = setInterval(() => {
+      const randomIncrement = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+
+      setInterest((prevAmount) => prevAmount + randomIncrement);
+    }, 1500);
+
+    return () => clearInterval(interval, altInterval);
+  }, []);
+  
+    //Check for web3 wallet
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
+    const verifyUserInfo = async () => {
+      try {
+        let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
+        console.log(userInfo);
+        //Set wallet address & profile picture to global state for passing around.
+        setUserWalletAdd(userInfo.data.output.dataValues.walletAddress)
+        // New user verification boolean
+        setVerifyNewUserBool(userInfo.data.output.newUser)
+      } catch (err) {
+        console.error("Error verify user info:", err);
+      };
+    };
+
+    if (account) {
+      verifyUserInfo();
+    };
+  },[account])
+
+  useEffect(() => {
+    // Record transactions when sign up
+    async function recordSignupTransaction() {
+      try {
+        await axios.post(
+          `${BACKEND_URL}/transactions/points/add/`,
+          signUpPoints(userWalletAdd),
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    
+    if (verifyNewUserBool && userWalletAdd) {
+      console.log("new user created, redirect to onboarding page")
+      recordSignupTransaction();
+      navigate("/onboarding");
+    } else if (verifyNewUserBool === false) {
+      console.log("Existing user");
+      navigate("/dashboard");
+    };
+  },[verifyNewUserBool, userWalletAdd])
 
   return (
     <motion.div
@@ -65,23 +157,23 @@ export default function HomePage() {
           Your one-stop shop for buying, swapping and staking your Bitcoins 🪙
         </p>
       </main>
-      <NavLink
-        to="/dashboard"
+      <button
         className="btn w-36 border-0 bg-yellow-200 hover:translate-y-[-2px] hover:bg-yellow-300"
+        onClick={connectWallet}
       >
-        Get started →
-      </NavLink>
+        Connect Wallet
+      </button>
       {/* AUM Section */}
       <section className="mt-5 flex flex-col items-center sm:flex-row">
         <figure className="m-2 flex w-[400px] flex-col items-center rounded-lg bg-slate-100 p-3 hover:bg-slate-200">
-          <h1 className="animate-pulse text-[64px] font-bold text-yellow-500">
-            $41,200,232
+          <h1 className=" text-[60px] font-bold text-yellow-500">
+            ${assets.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">in assets held on Bitjar</h2>
         </figure>
         <figure className="m-2 flex w-[400px] flex-col items-center rounded-lg bg-slate-100 p-3 hover:bg-slate-200">
-          <h1 className="animate-pulse text-[64px] font-bold text-yellow-500">
-            $42,232
+          <h1 className=" text-[60px] font-bold text-yellow-500">
+            ${interest.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">
             in interest paid out to customers
@@ -94,15 +186,15 @@ export default function HomePage() {
         <p className="tracking-tighter">Maximise your long-term holdings 📈</p>
 
         <article className="m-4 flex flex-col gap-3 sm:flex-row">
-          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg  bg-yellow-400 p-2">
+          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg bg-yellow-400 shadow-lg  hover:translate-y-[-3px]">
             <h1 className="text-[24px] font-bold text-white">Bitcoin</h1>
             <h2> 1.45% APY</h2>
           </figure>
-          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center  rounded-lg  bg-blue-200">
+          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg bg-blue-200  shadow-lg  hover:translate-y-[-3px]">
             <h1 className="text-[24px] font-bold text-white">Ethereum</h1>
             <h2> 3.04% APY</h2>
           </figure>
-          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg  bg-blue-400">
+          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg bg-blue-400 shadow-lg  hover:translate-y-[-3px]">
             <h1 className="text-[24px] font-bold text-white">USDC</h1>
             <h2> 5.05% APY</h2>
           </figure>
