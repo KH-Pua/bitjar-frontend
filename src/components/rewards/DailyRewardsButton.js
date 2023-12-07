@@ -72,12 +72,12 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   return (
     <>
       <button
-        className="rounded-lg bg-yellow-200 px-2 shadow-lg hover:translate-y-[-2px] hover:bg-yellow-300"
+        className="rounded-lg bg-yellow-300 px-[.5em] font-medium transition-all hover:translate-y-[-2px] hover:bg-yellow-400 lg:px-[1em]"
         onClick={collectDailySignInPoints}
         disabled={isClaimed}
       >
         {isClaimed
-          ? `Claim again in ${formatTimeToClaim(timeToClaim)}`
+          ? `Claim In ${formatTimeToClaim(timeToClaim)}`
           : "📆 Claim Daily Login!"}
       </button>
       {renderNotification && <PointNotification data={dailyLoginPoints()} />}
