@@ -38,7 +38,7 @@ const referralPoints = (userAddress, refereeAddress) => {
 };
 
 const purchasePoints = (userAddress, coin, purchaseAmount) => {
-  const pointsEarned = purchaseAmount / 10; // 1 point / $10 spent
+  const pointsEarned = parseInt(purchaseAmount) / 10; // 1 point / $10 spent
 
   return {
     actionName: `Purchased $${purchaseAmount} worth of ${coin}`,

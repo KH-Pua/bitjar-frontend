@@ -5,8 +5,8 @@ import axios from "axios";
 import Web3 from "web3";
 
 //-----------Components-----------//
-import SwapFrom from "../components/details/SwapFrom";
-import SwapTo from "../components/details/SwapTo";
+import SwapFrom from "../components/Swap/SwapFrom";
+import SwapTo from "../components/Swap/SwapTo";
 
 //-----------Utilties-----------//
 import { formatWalletAddress } from "../utilities/formatting";
