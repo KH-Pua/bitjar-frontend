@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { formatWalletAddress } from "../../utilities/formatting";
 
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+
 import logo from "../../media/bitjar-logo.png";
 import InfoTable from "./InfoTable";
 import TierTable from "./TierTable";
@@ -71,37 +73,38 @@ const ProgressBar = ({ userData }) => {
   return (
     <div>
       <header className="flex flex-row justify-between">
-        <h1 className="flex flex-row items-center">
+        <h1 className="flex flex-row items-center gap-[1em]">
           <div className="m-1 flex items-center gap-3">
             <div className="avatar">
-              <div className="mask mask-squircle h-16 w-16 bg-white">
+              <div className="h-16 w-16 rounded-full bg-white">
                 <img src={profilePicture ? profilePicture : logo} alt="DP" />
               </div>
             </div>
           </div>
           <div className="flex flex-col">
             <p className=" text-xl font-bold">
-              {userName && userName}{" "}
-              <span className="font-normal">
+              {userName && userName}
+              <span className="font-semibold text-slate-600">
                 {formatWalletAddress(userData && walletAddress)}
               </span>
             </p>
-            <p>
-              {currentTier} tier : {points} points
+            <p className="font-bold">
+              {currentTier} Tier : {points} Points
             </p>
             <p>
-              ({bonusPoints} bonus points added at end of season from{" "}
-              {multiplier}x multiplier)
+              (<span className="font-bold">{bonusPoints}</span> bonus points
+              added at end of season from {multiplier}x multiplier)
             </p>
           </div>
         </h1>
         <button
-          className="mb-auto animate-pulse text-xs hover:font-semibold"
+          className="mb-auto scale-100 text-[.9rem] transition-all hover:scale-95"
           onClick={() =>
             document.getElementById("points_info_modal").showModal()
           }
         >
-          How to earn points?
+          How To Earn Points?
+          <QuestionMarkCircleIcon className="ml-[.5em] inline h-6 w-6 -translate-y-[0.5px] text-slate-700" />
         </button>
         <dialog id="points_info_modal" className="modal">
           <div className="modal-box ">
@@ -123,15 +126,18 @@ const ProgressBar = ({ userData }) => {
           </div>
         </dialog>
       </header>
-      <div className="h-4 w-full rounded-full bg-gray-600">
+      <div className="my-[1em] h-4 w-full rounded-full bg-gray-600">
         <div
           className="h-full rounded-full bg-yellow-400"
           style={{ width: `${progress}` }}
         ></div>
       </div>
-      <p>
-        Earn {nextTierPoints} more points to reach{" "}
-        <span className="font-bold">{nextTier}</span> tier
+      <p className="text-right">
+        Earn{" "}
+        <span className="animate-pulse font-bold text-sky-800">
+          {nextTierPoints}
+        </span>{" "}
+        more points to reach <span className="font-bold">{nextTier} Tier!</span>
       </p>
     </div>
   );
