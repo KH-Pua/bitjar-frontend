@@ -73,7 +73,6 @@ export default function BaseTemplate() {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
-    { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
     { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
     { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
     { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
@@ -369,8 +368,8 @@ export default function BaseTemplate() {
                   aria-hidden="true"
                 />
 
-                <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                  <form
+                <div className="flex flex-1 flex-row-reverse gap-x-4 self-stretch lg:gap-x-6">
+                  {/* <form
                     className="relative flex flex-1"
                     action="#"
                     method="GET"
@@ -389,21 +388,21 @@ export default function BaseTemplate() {
                       type="search"
                       name="search"
                     />
-                  </form>
+                  </form> */}
                   <div className="flex items-center gap-x-4 lg:gap-x-6">
-                    <button
+                    {/* <button
                       type="button"
                       className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
                     >
                       <span className="sr-only">View notifications</span>
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
+                    </button> */}
 
                     {/* Separator */}
-                    <div
+                    {/* <div
                       className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
                       aria-hidden="true"
-                    />
+                    /> */}
 
                     {/* Profile dropdown */}
                     {!account ? (

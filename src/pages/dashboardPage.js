@@ -21,6 +21,7 @@ const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
   network: Network.ETH_MAINNET,
 };
+
 const alchemy = new Alchemy(settings);
 let web3;
 
@@ -42,7 +43,6 @@ export default function DashboardPage() {
 
   // Total Holdings and Total Earnings
   const [totalHoldings, setTotalHoldings] = useState(null);
-  // const [totalEarnings, setTotalEarnings] = useState(null);
 
   useEffect(() => {
     console.log("OUTSIDE ACCOUNT: ", account);
@@ -67,14 +67,6 @@ export default function DashboardPage() {
       getWalletAaveSupportedCoins(accountConfirmed);
     }
   }, [accountConfirmed]);
-
-  // const getUserId = async (walletaddress) => {
-  //   let userInformation = await axios.get(
-  //     `${BACKEND_URL}/users/userData/${walletaddress}`,
-  //   );
-  //   // console.log(`user information: ${userInformation.data.user.id}`);
-  //   setConfirmedUserId(userInformation.data.user.id);
-  // };
 
   const getUserTotalHoldings = async (walletaddress) => {
     let userInformation = await axios.get(
@@ -241,99 +233,75 @@ export default function DashboardPage() {
 
         {/* User Primary Information */}
         {!account ? null : (
-          <div className="flex w-full flex-row justify-start gap-[3em] pb-[2em]">
-            <div>
-              <h2 className="font-semibold text-slate-700">Total Holdings:</h2>
-              <p className="text-[.7rem] font-semibold text-slate-400">
-                with BitJar
-              </p>
-              <p className="text-[2rem] font-semibold">
+          <dl className="grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8">
+              <dt className="text-sm font-medium leading-6 text-gray-500">
+                Total Holdings with BitJar
+              </dt>
+              <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
                 ${totalHoldings != null && totalHoldings.toLocaleString()}
-              </p>
+              </dd>
             </div>
-            {/* <div>
-              <h2 className="font-semibold text-slate-700">Total Earnings:</h2>
-              <p className="text-[.7rem] font-semibold text-slate-400">
-                with Bitjar
-              </p>
-              <p className="text-[2rem] font-semibold"> xxx USD</p>
-            </div> */}
-          </div>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8">
+              <dt className="text-sm font-medium leading-6 text-gray-500">
+                Wallet Balance
+              </dt>
+              <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                {balance} ETH
+              </dd>
+            </div>
+          </dl>
         )}
         {/* User's Assets */}
         {!account ? null : (
-          <>
-            <div className=" pb-[2em]">
-              <h1 className="pb-[1em] text-xl font-bold">Assets</h1>
-              <div>
-                <h2 className="font-semibold text-slate-700">
-                  Wallet Balance:
-                </h2>
-                <div className="flex w-full flex-row justify-start ">
-                  <div>
-                    <p className="text-[1.5rem]  font-semibold">
-                      {balance} ETH
+          <div >
+            <h3 className="text-base font-semibold leading-6 text-gray-900">Supported Coin Balances</h3>
+            {imagesFlag ? null : (
+              <div className="mt-5 w-full animate-pulse flex flex-col justify-center text-center content-center font-bold text-slate-600">
+                <div className="px-6 py-6 sm:p-6 text-lg">
+                  LOADING . . .
+                </div>
+              </div>
+            )}
+            <dl className="mt-5 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden bg-white shadow md:grid-cols-3 md:divide-x md:divide-y-0">
+              {imagesFlag && coinImage 
+              ? walletTokens.map((element, index) => (
+                <div
+                key={element}
+                className="px-6 py-6 sm:p-6 flex"
+                >
+                <div className=" rounded-md p-3">
+                  {coinImage[element] ? (
+                    <img className="w-12 h-12" src={coinImage[element]} alt="logo" />
+                  ) : (
+                    <img src="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" alt="logo" />
+                  )}
+                </div>
+                <div>
+                  <p className="text-base font-medium text-grey-900">
+                    {element}
+                  </p>
+                  <div className="mt-1 flex items-baseline justify-between md:block lg:flex">
+                    <p className="text-2xl font-semibold text-grey-900">
+                      {`${tokenBalance[element]} ${element}`}
                     </p>
                   </div>
                 </div>
-              </div>
-            </div>
-          </>
-        )}
-        {!account ? null : (
-          <div className="h-full w-full pb-[1em]">
-            <h2 className="pb-[1em] font-semibold text-slate-700">
-              Supported Coin Balances:
-            </h2>
-            {/* Not sure how to express the Height as a proportion, % didnt work.. Hardcoded it for now */}
-            <div className="flex h-[13em] w-full flex-col flex-wrap justify-start gap-x-[.5em] gap-y-[.5em] overflow-x-scroll ">
-              {imagesFlag ? null : (
-                <div className="flex h-[100%] w-full animate-pulse flex-col justify-center text-center font-bold text-slate-600">
-                  LOADING. . .
                 </div>
-              )}
-              {imagesFlag && coinImage
-                ? walletTokens.map((element, index) => {
-                    console.log(`element is ${element}`);
-                    console.log(coinImage[element]);
-                    return (
-                      <div
-                        key={element}
-                        className="flex min-w-[10em] flex-col items-center rounded-md border bg-slate-100 py-[1em] lg:w-[8em]"
-                      >
-                        <div className="pb-[1em] font-bold">{element}</div>
-                        {coinImage[element] ? (
-                          <TokenCard imagesrc={coinImage[element]} />
-                        ) : (
-                          <TokenCard imagesrc="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" />
-                        )}
-                        <p className="pt-[1em] text-[.7rem] font-semibold text-slate-500">
-                          Balance:
-                        </p>
-                        <p>
-                          <span className="inline text-[1rem] font-semibold">
-                            {tokenBalance[element]}{" "}
-                          </span>
-                          <span className="inline text-[.8rem] font-bold">
-                            {element}
-                          </span>
-                        </p>
-                      </div>
-                    );
-                  })
-                : null}
-            </div>
+                )
+              ):null}
+            </dl>
           </div>
         )}
         {/* User's Transactions on BitJar */}
         {!account ? null : (
           <div className="pb-[2em]">
-            <h1 className="pb-[1em] text-xl font-bold">Transactions</h1>
-            <figure>
+            <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">Transactions</h1>
+            <div>
               {confirmedUserId && (
                 <TransactionHistoryTable userId={confirmedUserId} />
               )}
-            </figure>
+            </div>
           </div>
         )}
       </div>
