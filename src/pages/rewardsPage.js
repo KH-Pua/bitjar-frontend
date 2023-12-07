@@ -8,7 +8,7 @@ import ReferralTable from "../components/rewards/ReferralTable.js";
 import PointsHistoryTable from "../components/rewards/PointsHistoryTable.js";
 import ReferralHistoryTable from "../components/rewards/ReferralHistoryTable.js";
 
-//-----------Utlities-----------//
+//-----------Utilities-----------//
 import { apiRequest, getUserData } from "../utilities/apiRequests";
 import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
 
@@ -85,7 +85,7 @@ export default function RewardsPage() {
   }, [user]);
 
   return (
-    <div className=" flex w-full flex-col items-center">
+    <div className=" flex w-full flex-col items-center px-3">
       {user ? (
         <>
           <header className="flex w-full flex-row justify-between">
@@ -96,25 +96,38 @@ export default function RewardsPage() {
               fetchUserData={fetchUserData}
             />
           </header>
+
           {/* Points progress bar */}
-          <div className="my-2 w-full rounded-lg bg-slate-200 p-2">
+          <div className="my-2 mb-[2em] w-full rounded-md border bg-slate-100 px-[2em] py-[2em]">
             <ProgressBar userData={user && user} />
           </div>
-          <main className="mt-3 grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
+
+          <main className="mt-3 grid w-full grid-cols-1 gap-[2em] xl:grid-cols-2">
             <figure className="flex h-[500px] flex-col items-center">
-              <h2 className="font-semibold">Points Leaderboard 🍯</h2>
+              <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
+                Points Leaderboard 🍯
+              </h2>
               <PointsTable data={pointsLeaderboard} />
             </figure>
+
             <figure className="flex h-[500px] flex-col items-center">
-              <h2 className="font-semibold">Referral Leaderboard 🥳</h2>
+              <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
+                Referral Leaderboard 🥳
+              </h2>
               <ReferralTable data={referralLeaderboard} />
             </figure>
+
             <figure className="flex h-[500px] flex-col items-center">
-              <h2 className="font-semibold">Points History</h2>
+              <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
+                Points History
+              </h2>
               <PointsHistoryTable data={pointsData} />
             </figure>
+
             <figure className="flex h-[500px] flex-col items-center">
-              <h2 className="font-semibold">Referral History</h2>
+              <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
+                Referral History
+              </h2>
               <ReferralHistoryTable data={referralData} />
             </figure>
           </main>
