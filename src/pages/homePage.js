@@ -61,10 +61,7 @@ export default function HomePage() {
     }, 1500);
 
     return () => clearInterval(interval, altInterval);
-
   }, []);
-
-
 
   useEffect(() => {
     // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
@@ -161,7 +158,8 @@ export default function HomePage() {
           Make your Bitcoin work harder with Bitjar
         </h1>
         <p className="text-center tracking-tighter">
-          Your one-stop shop for buying, swapping and staking your Bitcoins 🪙
+          Your one-stop shop for buying, swapping and earning with your Bitcoins
+          🪙
         </p>
       </main>
       <button

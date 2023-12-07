@@ -12,6 +12,8 @@ import { GlobalContext } from "../providers/globalProvider.js";
 
 // Import Components
 import { TokenCard } from "../components/TokenCard/TokenCard.js";
+import { formatEthValue, formatCurrency } from "../utilities/formatting.js";
+import ProductCard from "../components/ProductCard/ProductCard.js";
 
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
@@ -43,13 +45,11 @@ export default function EarnPage() {
   const [usdcPoolData, setUsdcPoolData] = useState({});
 
   useEffect(() => {
-    console.log("wallet add", walletAdd)
     setAccount(walletAdd);
-  },[walletAdd])
+  }, [walletAdd]);
 
   useEffect(() => {
     if (account) {
-      console.log("run account fetch transactions and balance");
       fetchTransactions(account);
       fetchBalance(account);
     }
@@ -60,7 +60,7 @@ export default function EarnPage() {
     if (window.ethereum) {
       web3 = new Web3(window.ethereum);
     }
-  },[])
+  }, []);
 
   useEffect(() => {
     fetchPoolData("e880e828-ca59-4ec6-8d4f-27182a4dc23d").then((data) => {
@@ -104,6 +104,8 @@ export default function EarnPage() {
 
       // Approve the LendingPool contract to spend your WETH
       const amountInWei = web3.utils.toWei(wethAmount, "ether");
+
+      console.log(web3.utils.toWei(wethAmount, "ether"));
       await wethContract.methods
         .approve(lendingPoolAddress, amountInWei)
         .send({ from: account });
@@ -262,9 +264,10 @@ export default function EarnPage() {
         fromBlock: "0x0",
         fromAddress: address,
         category: ["erc721", "external", "erc20"],
-        maxCount: "0x2",
+        maxCount: "0x5",
       });
       setTransactions(response.transfers);
+      console.log(response.transfers);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
@@ -273,205 +276,141 @@ export default function EarnPage() {
   const fetchBalance = async (address) => {
     try {
       const balanceWei = await web3.eth.getBalance(address);
-      console.log(balanceWei);
       const balanceEth = web3.utils.fromWei(balanceWei, "ether");
-      console.log(balanceEth);
       setBalance(balanceEth);
     } catch (error) {
       console.error("Error fetching balance:", error);
     }
   };
 
-  const ProductCard = ({
-    title,
-    onDeposit,
-    onWithdraw,
-    onChange,
-    amount,
-    tvl,
-    apy,
-  }) => {
-    return (
-      <div className="rounded-lg bg-white px-4 py-5 shadow sm:p-6">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-        <div>TVL: ${tvl || "Loading..."}</div>
-        <div>APY: {apy ? apy.toFixed(2) : "Loading..."}%</div>
-        <div className="mt-4">
-          <input
-            type="text"
-            value={amount}
-            onChange={(e) => onChange(e)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2"
-            placeholder="Amount"
-          />
-          <div className="mt-4 flex justify-between">
-            <button
-              onClick={onDeposit}
-              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-              Deposit
-            </button>
-            <button
-              onClick={onWithdraw}
-              className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-            >
-              Withdraw
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const getWalletAllTokenBalances = async () => {
-    const address = "0x3472ccc4a932cc5c07740781286083048eb4a5f1"; // Using spencer's demo address currently cause my own wallet got no Tokens
-    // Get token balances
-    const balances = await alchemy.core.getTokenBalances(address);
-
-    /**
-     * Additional Functionality to remove all token balance = 0,
-     * followed by calling get token metadata function to convert the contractAddress to human-readable string
-     */
-    // Remove tokens with zero balance
-    const nonZeroBalances = balances.tokenBalances.filter((token) => {
-      return token.tokenBalance !== "0";
-    });
-
-    // Counter for SNo of final output
-    let i = 1;
-
-    // Loop through all tokens with non-zero balance
-    // use getTokenMetadata for human-readable format.
-    for (let token of nonZeroBalances) {
-      // Get balance of token
-      let balance = token.tokenBalance;
-
-      // Get metadata of token
-      const metadata = await alchemy.core.getTokenMetadata(
-        token.contractAddress,
-      );
-
-      // Compute token balance in human-readable format
-      balance = balance / Math.pow(10, metadata.decimals);
-      balance = balance.toFixed(2);
-
-      // Print name, balance, and symbol of token
-      console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
-      console.log(`Image is: ${metadata.logo}`);
-
-      // Store the Symbol to reference images
-      // Store the respective token balance
-      if (metadata.symbol) {
-        setWalletTokens((prevState) => {
-          return [...prevState, metadata.symbol];
-        });
-
-        setTokenBalance((prevState) => {
-          return { ...prevState, [metadata.symbol]: balance };
-        });
-      }
-
-      // save state as SYMBOL : ImageUrl
-      if (metadata.logo) {
-        setCoinImage((prevState) => {
-          return { ...prevState, [metadata.symbol]: metadata.logo };
-        });
-      }
-    }
-
-    setImagesFlag(true);
-
-  };
-  
   return (
     <div className="flex flex-col">
-      <h1 className="p-0 text-3xl font-bold text-black">EarnPage</h1>
+      <h1 className="p-0 text-3xl font-bold text-black">
+        Earn by staking or lending
+      </h1>
       {account && (
         <div>
           <h2>Wallet Address: {account}</h2>
-          <h2>Wallet ETH Balance: {balance} ETH</h2>
-          <h3>Last 2 Transactions:</h3>
-          <ul>
-            {transactions.map((tx, index) => (
-              <li key={index}>
-                {tx.hash} - {web3.utils.fromWei(tx.value, "ether")} ETH
-              </li>
-            ))}
-          </ul>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <ProductCard
-              title="WETH"
-              amount={wethAmount}
-              onChange={(e) => handleWethAmountChange(e)}
-              onDeposit={supplyWETH}
-              onWithdraw={withdrawWETH}
-              tvl={wethPoolData.tvlUsd}
-              apy={wethPoolData.apy}
-            />
-            <ProductCard
-              title="WBTC"
-              amount={wbtcAmount}
-              onChange={(e) => handleWbtcAmountChange(e)}
-              onDeposit={supplyWBTC}
-              onWithdraw={withdrawWBTC}
-              tvl={wbtcPoolData.tvlUsd}
-              apy={wbtcPoolData.apy}
-            />
-            <ProductCard
-              title="USDC"
-              amount={usdcAmount}
-              onChange={(e) => handleUsdcAmountChange(e)}
-              onDeposit={supplyUSDC}
-              onWithdraw={withdrawUSDC}
-              tvl={usdcPoolData.tvlUsd}
-              apy={usdcPoolData.apy}
-            />
-          </div>
-          <br />
-          <div className="flex justify-center gap-2">
-            <button
-              onClick={getWalletAllTokenBalances}
-              className="mt-10 rounded-md bg-indigo-400 p-2"
-            >
-              Get All Token Balances
-            </button>
-            <button
-              onClick={() => {
-                console.log(coinImage);
-              }}
-              className="mt-10 rounded-md bg-indigo-400 p-2"
-            >
-              Check Coin Images
-            </button>
+          <h2>Wallet ETH Balance: {formatEthValue(balance)} ETH</h2>
+
+          <div className="py-4">
+            <div className="sm:flex sm:items-center">
+              <div className="sm:flex-auto">
+                <h1 className="text-base font-semibold leading-6 text-gray-900">
+                  Opportunities
+                </h1>
+                <p className="mt-2 text-sm text-gray-700">
+                  Deposit your crypto to earn yield{" "}
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ProductCard
+                title="WETH"
+                description="Lend on Aave V3 protocol"
+                amount={wethAmount}
+                onChange={(e) => handleWethAmountChange(e)}
+                onDeposit={supplyWETH}
+                onWithdraw={withdrawWETH}
+                tvl={formatCurrency(wethPoolData.tvlUsd)}
+                apy={wethPoolData.apy}
+                currency="ETH"
+              />
+              <ProductCard
+                title="WBTC"
+                description="Lend on Aave V3 protocol"
+                amount={wbtcAmount}
+                onChange={(e) => handleWbtcAmountChange(e)}
+                onDeposit={supplyWBTC}
+                onWithdraw={withdrawWBTC}
+                tvl={formatCurrency(wbtcPoolData.tvlUsd)}
+                apy={wbtcPoolData.apy}
+                currency="BTC"
+              />
+              <ProductCard
+                title="USDC"
+                description="Lend on Aave V3 protocol"
+                amount={usdcAmount}
+                onChange={(e) => handleUsdcAmountChange(e)}
+                onDeposit={supplyUSDC}
+                onWithdraw={withdrawUSDC}
+                tvl={formatCurrency(usdcPoolData.tvlUsd)}
+                apy={usdcPoolData.apy}
+                currency="USDC"
+              />
+            </div>
+            <br />
           </div>
         </div>
       )}
-      {/* {Coins listing} */}
-      <div className="flex flex-row flex-wrap gap-x-[1em] gap-y-[.5em]">
-        {imagesFlag && coinImage && account
-          ? walletTokens.map((element, index) => {
-              console.log(`element is ${element}`);
-              // console.log(coinImage.element) // NOT SURE WHY THIS SYNTAX DOESNT WORK??
-              console.log(coinImage[element]);
-              return (
-                <div
-                  key={element}
-                  className="flex w-[20%] flex-col items-center rounded-md border bg-slate-100 py-[1em]"
-                >
-                  <div className="font-semibold">{element}</div>
-                  {coinImage[element] ? (
-                    <TokenCard imagesrc={coinImage[element]} />
-                  ) : (
-                    <TokenCard imagesrc="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" />
-                  )}
-                  <p>Balance:</p>
-                  <p>{tokenBalance[element]}</p>
-                </div>
-              );
-            })
-          : null}
+
+      {/* Transactions Table */}
+      <div className="py-4">
+        <div className="sm:flex sm:items-center">
+          <div className="sm:flex-auto">
+            <h1 className="text-base font-semibold leading-6 text-gray-900">
+              Blockchain Transactions
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
+              List of past 5 transactions ordered by block number
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th
+                      scope="col"
+                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3"
+                    >
+                      Block Number
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Value (ETH)
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3"
+                    >
+                      From
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3"
+                    >
+                      To
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white">
+                  {transactions.map((tx, index) => (
+                    <tr key={index} className="even:bg-gray-50">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                        {tx.blockNum}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {formatEthValue(tx.value)} ETH
+                      </td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                        {tx.from}
+                      </td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                        {tx.to}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-      {/* ... Other components ... */}
     </div>
   );
 }
