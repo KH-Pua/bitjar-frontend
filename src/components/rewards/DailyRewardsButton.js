@@ -1,12 +1,13 @@
 //-----------Libraries-----------//
-
 import { useEffect, useState } from "react";
 
-//-----------Utilities-----------//
+//-----------Components-----------//
+import PointNotification from "../details/PointNotification.js";
 
+//-----------Utilities-----------//
 import { apiRequest } from "../../utilities/apiRequests";
 import { dailyLoginPoints } from "../../utilities/pointsMessages.js";
-import PointNotification from "../details/PointNotification.js";
+import { formatTimeToClaim } from "../../utilities/formatting.js";
 
 const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   const [isClaimed, setIsClaimed] = useState(false);
@@ -67,15 +68,6 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
       return () => clearInterval(interval);
     }
   }, [isClaimed, timeToClaim]);
-
-  const formatTimeToClaim = (time) => {
-    const hours = Math.floor(time / (1000 * 60 * 60));
-    const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((time % (1000 * 60)) / 1000);
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  };
 
   return (
     <>
