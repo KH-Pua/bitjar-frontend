@@ -11,7 +11,7 @@ const ProductCard = ({
   amount,
   tvl,
   apy,
-  currency, // Assuming you have a prop to determine the currency
+  currency,
 }) => {
   // Function to choose the correct icon based on the currency
   const getCurrencyIcon = (currency) => {
@@ -23,7 +23,7 @@ const ProductCard = ({
       case "USDC":
         return usdcIcon;
       default:
-        return null; // Or a default icon
+        return null;
     }
   };
 
