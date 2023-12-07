@@ -31,18 +31,16 @@ export default function EarnPage() {
   const [wethAmount, setWethAmount] = useState("");
   const [wbtcAmount, setWbtcAmount] = useState("");
   const [usdcAmount, setUsdcAmount] = useState("");
+  const [sepoliaWbtcAmount, setSepoliaWbtcAmount] = useState("");
+
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState([]);
-
-  const [walletTokens, setWalletTokens] = useState([]);
-  const [tokenBalance, setTokenBalance] = useState({});
-  const [coinImage, setCoinImage] = useState({});
-  const [imagesFlag, setImagesFlag] = useState(false);
 
   // Add state for WETH and WBTC pool data
   const [wethPoolData, setWethPoolData] = useState({});
   const [wbtcPoolData, setWbtcPoolData] = useState({});
   const [usdcPoolData, setUsdcPoolData] = useState({});
+  const [sepoliaPoolData, setSepoliaPoolData] = useState({});
 
   useEffect(() => {
     setAccount(walletAdd);
@@ -75,6 +73,10 @@ export default function EarnPage() {
       console.log("USDC Pool Data: ", data);
       setUsdcPoolData(data);
     });
+    fetchPoolData("aa70268e-4b52-42bf-a116-608b370f9501").then((data) => {
+      console.log("USDC Pool Data: ", data);
+      setSepoliaPoolData(data);
+    });
   }, []);
 
   const handleWethAmountChange = (e) => {
@@ -87,6 +89,10 @@ export default function EarnPage() {
 
   const handleUsdcAmountChange = (e) => {
     setUsdcAmount(e.target.value);
+  };
+
+  const handleSepoliaWbtcAmountChange = (e) => {
+    setSepoliaWbtcAmount(e.target.value);
   };
 
   const supplyWETH = async () => {
@@ -258,6 +264,58 @@ export default function EarnPage() {
     }
   };
 
+  const supplySepoliaWBTC = async () => {
+    if (!account || !sepoliaWbtcAmount) return;
+
+    try {
+      const wbtcTokenAddress = ""; // to be replaced
+      const lendingPoolAddress = ""; // to be replaced
+
+      const wbtcContract = new web3.eth.Contract(erc20ABI, wbtcTokenAddress);
+      const lendingPoolContract = new web3.eth.Contract(
+        aaveLendingPoolABI,
+        lendingPoolAddress,
+      );
+
+      // Convert the amount to satoshi for WBTC
+      const amountInSatoshi = toSatoshi(wbtcAmount);
+      await wbtcContract.methods
+        .approve(lendingPoolAddress, amountInSatoshi)
+        .send({ from: account });
+
+      await lendingPoolContract.methods
+        .deposit(wbtcTokenAddress, amountInSatoshi, account, 0)
+        .send({ from: account });
+
+      console.log("Deposited", wbtcAmount, "WBTC to Aave v3");
+    } catch (error) {
+      console.error("Error in supplying WBTC:", error);
+    }
+  };
+
+  const withdrawSepoliaWBTC = async () => {
+    if (!account || !sepoliaWbtcAmount) return;
+
+    try {
+      const sepoliaWbtcTokenAddress = ""; // to be replaced
+      const lendingPoolAddress = ""; // to be replaced
+
+      const lendingPoolContract = new web3.eth.Contract(
+        aaveLendingPoolABI,
+        lendingPoolAddress,
+      );
+
+      const amountInSatoshi = toSatoshi(sepoliaWbtcAmount);
+      await lendingPoolContract.methods
+        .withdraw(sepoliaWbtcTokenAddress, amountInSatoshi, account)
+        .send({ from: account });
+
+      console.log("Withdrew", sepoliaWbtcAmount, "Sepolia WBTC from Bitjar");
+    } catch (error) {
+      console.error("Error in withdrawing Sepolia WBTC:", error);
+    }
+  };
+
   const fetchTransactions = async (address) => {
     try {
       const response = await alchemy.core.getAssetTransfers({
@@ -285,13 +343,27 @@ export default function EarnPage() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="p-0 text-3xl font-bold text-black">
-        Earn by staking or lending
-      </h1>
+      <h1 className="text-3xl font-bold leading-6 text-gray-900">Earn</h1>
       {account && (
         <div>
-          <h2>Wallet Address: {account}</h2>
-          <h2>Wallet ETH Balance: {formatEthValue(balance)} ETH</h2>
+          <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+              <dt className="truncate text-sm font-medium text-gray-500">
+                Wallet Address
+              </dt>
+              <dd className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
+                {account}
+              </dd>
+            </div>
+            <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+              <dt className="truncate text-sm font-medium text-gray-500">
+                Wallet ETH Balance
+              </dt>
+              <dd className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
+                {formatEthValue(balance)} ETH
+              </dd>
+            </div>
+          </dl>
 
           <div className="py-4">
             <div className="sm:flex sm:items-center">
@@ -337,6 +409,17 @@ export default function EarnPage() {
                 tvl={formatCurrency(usdcPoolData.tvlUsd)}
                 apy={usdcPoolData.apy}
                 currency="USDC"
+              />
+              <ProductCard
+                title="SEPOLIA WBTC"
+                description="Lend on Bitjar testnet vault"
+                amount={usdcAmount}
+                onChange={(e) => handleUsdcAmountChange(e)}
+                onDeposit={supplyUSDC}
+                onWithdraw={withdrawUSDC}
+                tvl={formatCurrency(usdcPoolData.tvlUsd)}
+                apy={usdcPoolData.apy}
+                currency="BTC"
               />
             </div>
             <br />
