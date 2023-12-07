@@ -15,7 +15,6 @@ import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import InfoTable from "../components/rewards/InfoTable.js";
 import TierTable from "../components/rewards/TierTable.js";
-import { useState, useEffect } from "react";
 
 let web3;
 
@@ -43,6 +42,11 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    //Check for web3 wallet
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
+
     const interval = setInterval(() => {
       const randomIncrement = Math.floor(Math.random() * (500 - 10 + 1)) + 10;
 
@@ -56,12 +60,6 @@ export default function HomePage() {
     }, 1500);
 
     return () => clearInterval(interval, altInterval);
-  }, []);
-  
-    //Check for web3 wallet
-    if (window.ethereum) {
-      web3 = new Web3(window.ethereum);
-    }
   }, []);
 
   useEffect(() => {
