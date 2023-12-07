@@ -1,3 +1,15 @@
+// Format number to currency format (e.g., 1000000000 to $1,000,000,000)
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+};
+// Format Ethereum value to a maximum of 4 decimal points
+const formatEthValue = (value) => {
+  return parseFloat(value).toFixed(4);
+};
+
 // Format to first + last 4 characters of a wallet
 const formatWalletAddress = (address) => {
   return `${address.substring(0, 4)}...${address.slice(-4)}`;
@@ -47,4 +59,11 @@ const formatTimeToClaim = (time) => {
     .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
-export { formatWalletAddress, formatTimestamp, formatDate, formatTimeToClaim };
+export {
+  formatWalletAddress,
+  formatTimestamp,
+  formatDate,
+  formatTimeToClaim,
+  formatCurrency,
+  formatEthValue,
+};

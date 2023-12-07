@@ -12,6 +12,7 @@
     "@web3-onboard/injected-wallets": "^2.10.10",
     "alchemy-sdk": "^3.1.0",
     "axios": "^1.6.2",
+    "cryptocurrency-icons": "^0.18.1",
     "ethers": "^6.9.0",
     "firebase": "^10.7.0",
     "framer-motion": "^10.6.8",
