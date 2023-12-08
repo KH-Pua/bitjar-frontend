@@ -19,6 +19,7 @@ import { signUpPoints } from "../utilities/pointsMessages.js";
 import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import gabicon from "../media/InvestorIcons/wonderpal.png";
+import sqicon from "../media/InvestorIcons/gharliera-logo.jpg";
 import githiredlogo from "../media/CompanyIcons/githiredLogo.png";
 import paireduplogo from "../media/CompanyIcons/pairedUpLogo.png";
 import moontradelogo from "../media/CompanyIcons/Eclipse.png";
@@ -162,8 +163,8 @@ export default function HomePage() {
           </NavLink>
         </nav>
       </header>
-      <main className="mt-[130px] flex flex-col items-center justify-center p-3">
-        <img src={logogif} alt="BitJar Logo" className=" h-44" />
+      <main className="mt-[4.5em] flex flex-col items-center justify-center p-3 lg:mt-[130px]">
+        <img src={logogif} alt="BitJar Logo" className=" mb-[2em] h-[14rem]" />
         <h1 className="text-center text-[42px] font-bold tracking-tighter text-black">
           Make your Bitcoin work harder with Bitjar
         </h1>
@@ -179,7 +180,7 @@ export default function HomePage() {
         Sign Up / Sign In with Wallet
       </button>
       {/* AUM Section */}
-      <section className="mt-5 flex flex-col items-center sm:flex-row">
+      <section className="mt-5 flex flex-col items-center pt-[1em] sm:flex-row">
         <figure className="m-2 flex w-[500px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
           <h1 className=" text-[60px] font-bold text-yellow-400">
             ${assets.toLocaleString()}
@@ -196,21 +197,23 @@ export default function HomePage() {
         </figure>
       </section>
       {/* Products Section */}
-      <section className="mt-5 flex flex-col items-center justify-center">
+      <section className="mt-5 flex flex-col items-center justify-center pt-[3em]">
         <h1 className="text-[42px] font-bold tracking-tighter">
           Deposit & Earn
         </h1>
-        <p className="tracking-tighter">Outperform HODL-ing the asset 📈</p>
+        <p className="pb-[1em] tracking-tighter">
+          Outperform HODL-ing the asset 📈
+        </p>
         <ProductInfo />
         <NavLink
           to="/earn"
-          className="btn w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
+          className="btn mt-[1em] w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
         >
           Earn Crypto →
         </NavLink>
       </section>
       {/* Rewards Section */}
-      <section className="m-4 flex flex-col items-center justify-center">
+      <section className="m-4 flex flex-col items-center justify-center pt-[4em]">
         <article className=" m-4 flex flex-col items-center justify-center">
           <h1 className="text-[42px] font-bold tracking-tighter">
             Rewards Galore
@@ -219,7 +222,7 @@ export default function HomePage() {
           <figure className=" mt-4">
             <InfoTable />
           </figure>
-          <p className="tracking-tighter">
+          <p className="pt-[2em] tracking-tighter">
             Reach higher tiers to get bonus points 💰
           </p>
           <figure className=" mt-4 ">
@@ -228,23 +231,23 @@ export default function HomePage() {
         </article>
         <NavLink
           to="/dashboard"
-          className="btn w-72 border-0 bg-yellow-200 text-lg hover:translate-y-[-2px] hover:bg-yellow-300"
+          className="btn w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
         >
           Score points →
         </NavLink>
       </section>
       {/* Backers Section */}
-      <section className="m-4 flex flex-col items-center justify-center">
+      <section className="m-4 flex flex-col items-center justify-center pt-[4em]">
         <article className=" flex flex-col items-center justify-center">
           <h1 className="text-[42px] font-bold tracking-tighter">
             Backed by institutional partners
           </h1>
-          <p className="tracking-tighter">
+          <p className="pb-[2em] tracking-tighter">
             Over 420,000,000 in SHIBA raised since inception 💰
           </p>
           <div className="mt-4 flex flex-row justify-center">
             <ProfileImage src="/logos/spy.png" label="Spy Investments" />
-            <ProfileImage src="/logos/sq.png" label="SQ Partners" />
+            <ProfileImage src={sqicon} label="SQ Partners" />
             <ProfileImage src="/logos/kee.png" label="Kee Capital" />
             <ProfileImage src={gabicon} label="G Combinator" />
           </div>
@@ -252,12 +255,12 @@ export default function HomePage() {
       </section>
 
       {/* Engineers Section */}
-      <section className="m-4 flex flex-col items-center justify-center">
+      <section className="m-4 flex flex-col items-center justify-center pt-[3em]">
         <article className=" flex flex-col items-center justify-center">
           <h1 className="text-[42px] font-bold tracking-tighter">
             Built by the best engineers
           </h1>
-          <p className="tracking-tighter">
+          <p className="pb-[1em] tracking-tighter">
             Best-in-class infrastructure and design 👾
           </p>
           <div className="mt-4 flex flex-row justify-center">
@@ -271,7 +274,7 @@ export default function HomePage() {
         </article>
       </section>
 
-      <footer className="bottom-2 flex w-full justify-center p-2">
+      <footer className="bottom-2 mt-[5em] flex w-full justify-center p-[1em]">
         <p className="text-sm">
           © 2023 Bitjar -{" "}
           <a

@@ -35,7 +35,7 @@ const ReferralTable = ({ data }) => {
               <tr>
                 <td>
                   <div className="avatar">
-                    <div className="mask mask-circle my-[1em] mr-[1em] h-12 w-12 bg-white">
+                    <div className="mask mask-circle my-[1em] mr-[1em] h-[4em] w-[4em] bg-white">
                       <img
                         src={row.profilePicture ? row.profilePicture : logo}
                         alt="DP"

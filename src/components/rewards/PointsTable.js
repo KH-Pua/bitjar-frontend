@@ -9,11 +9,12 @@ import { useState, useEffect } from "react";
 import { RefererOutput } from "./RefererOutput";
 
 import logo from "../../media/bitjar-logo.png";
+import { RankingOutput } from "./RankingOutput";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const PointsTable = ({ data }) => {
   const [windowWidth, setWindowWidth] = useState(null);
-  const [userRefererList, setUserRefererList] = useState(null);
+  const [userRefererList, setUserRefererList] = useState(null); // also dead code
 
   const reportWindowSize = () => {
     let widthOutput = window.innerWidth;
@@ -32,14 +33,6 @@ const PointsTable = ({ data }) => {
     setUserRefererList((prevState) => {
       return { ...prevState, [address]: referer.output };
     });
-
-    // await axios
-    //   .post(`${BACKEND_URL}/users/getUserRefererIfAny`, {
-    //     walletAddress: address,
-    //   })
-    //   .then((response) => {
-    //     console.log(response);
-    //   });
   };
 
   return (
@@ -60,16 +53,21 @@ const PointsTable = ({ data }) => {
 
           {/* body */}
           {data &&
-            data.map((row) => (
+            data.map((row, index) => (
               <tbody key={row.id} className="border-b-[1px] border-slate-300">
                 <tr>
                   <td>
-                    <div className="avatar">
-                      <div className="mask mask-circle my-[1em] mr-[1em] h-12 w-12 bg-white">
-                        <img
-                          src={row.profilePicture ? row.profilePicture : logo}
-                          alt="DP"
-                        />
+                    <div className="relative">
+                      {index === 0 || index === 1 || index === 2 ? (
+                        <RankingOutput index={index + 1} />
+                      ) : null}
+                      <div className="avatar">
+                        <div className="mask mask-circle my-[1em] mr-[1em] h-[4rem] w-[4rem] bg-white">
+                          <img
+                            src={row.profilePicture ? row.profilePicture : logo}
+                            alt="DP"
+                          />
+                        </div>
                       </div>
                     </div>
                   </td>
