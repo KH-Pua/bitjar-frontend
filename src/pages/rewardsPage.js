@@ -13,10 +13,9 @@ import { apiRequest, getUserData } from "../utilities/apiRequests";
 import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
 
 export default function RewardsPage() {
-  //-----------HARDCODED DATA (TO UPDATE)-----------//
   const address = localStorage.getItem("connection_meta");
 
-  // Data
+  //-----------Data-----------//
   const [pointsLeaderboard, setPointsLeaderboard] = useState();
   const [referralLeaderboard, setReferralLeaderboard] = useState();
   const [pointsData, setPointsData] = useState();
@@ -52,7 +51,7 @@ export default function RewardsPage() {
 
   const fetchReferralHistory = async () => {
     try {
-      const response = await apiRequest.get(`/users/referrals/${user.id}`);
+      const response = await apiRequest.get(`/users/referrals/${address}`);
       setReferralData(response.data.output);
     } catch (err) {
       console.log(err);
