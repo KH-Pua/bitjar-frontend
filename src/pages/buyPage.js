@@ -13,6 +13,8 @@ import PointNotification from "../components/details/PointNotification.js";
 
 export default function BuyPage() {
   const address = useOutletContext();
+
+  //-----------Data-----------//
   const [transaction, setTransaction] = useState({
     coinName: "", // To be converted into coinId by backend
     paymentStatus: "",
@@ -26,9 +28,8 @@ export default function BuyPage() {
   });
   const [paymentData, setPaymentData] = useState();
 
+  //-----------State Toggles-----------//
   const [renderNotification, setRenderNotification] = useState(false);
-
-  //https://buy.moonpay.com/transaction_receipt?transactionId=45532524-1446-49f0-ab11-5eb4c9c2bd6b
 
   // Data transformation from Moonpay props -> db columns
   const recordPaymentConfirmation = (paymentData) => {
@@ -91,8 +92,21 @@ export default function BuyPage() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="p-0 text-3xl font-bold text-black">Buy</h1>
-      <div>
+      <h1 className="text-3xl font-bold text-black">Buy</h1>
+      <div className="flex flex-col items-center justify-center">
+        <p className="translate-y-3">
+          {" "}
+          Crypto purchases powered by
+          <a
+            href="https://www.moonpay.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="font-bold text-purple-800"
+          >
+            {" "}
+            MoonPay🌙
+          </a>
+        </p>
         <MoonPayBuyWidget
           variant="embedded"
           baseCurrencyCode="usd"
