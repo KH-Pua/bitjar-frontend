@@ -18,6 +18,7 @@ import { signUpPoints } from "../utilities/pointsMessages.js";
 //-----------Media-----------//
 import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
+import btcIcon from "cryptocurrency-icons/svg/color/btc.svg";
 import gabicon from "../media/InvestorIcons/wonderpal.png";
 import sqicon from "../media/InvestorIcons/gharliera-logo.jpg";
 import githiredlogo from "../media/CompanyIcons/githiredLogo.png";
@@ -168,9 +169,13 @@ export default function HomePage() {
         <h1 className="text-center text-[42px] font-bold tracking-tighter text-black">
           Make your Bitcoin work harder with Bitjar
         </h1>
-        <p className="text-center tracking-tighter">
+        <p className="flex flex-row text-center tracking-tighter">
           Your one-stop shop for buying, swapping and earning with your Bitcoins
-          🪙
+          <img
+            src={btcIcon}
+            alt="bitcoin"
+            className="ml-1 h-[18px] translate-y-[3px] animate-pulse"
+          ></img>
         </p>
       </main>
       <button

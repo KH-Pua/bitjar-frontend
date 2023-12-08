@@ -9,7 +9,7 @@ import { apiRequest } from "../../utilities/apiRequests";
 import { dailyLoginPoints } from "../../utilities/pointsMessages.js";
 import { formatTimeToClaim } from "../../utilities/formatting.js";
 
-const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
+const DailyRewardsButton = ({ address, fetchPointsHistory, fetchUserData }) => {
   const [isClaimed, setIsClaimed] = useState(false);
   const [timeToClaim, setTimeToClaim] = useState(null);
   const [renderNotification, setRenderNotification] = useState(false);
@@ -30,10 +30,10 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   // Check against db for rewards claim
   useEffect(() => {
     const fetchData = async () => {
-      if (user.id) {
+      if (address) {
         try {
           const checkClaimed = await apiRequest.get(
-            `/transactions/points/dailyCheck/${user.id}`,
+            `/transactions/points/dailyCheck/${address}`,
           );
           console.error("Points already claimed:", checkClaimed.data.result);
           setIsClaimed(true);
@@ -44,13 +44,13 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
     };
 
     fetchData();
-  }, [user.id]);
+  }, [address]);
 
   const collectDailySignInPoints = async () => {
     try {
       const response = await apiRequest.post(
         `/transactions/points/add/`,
-        dailyLoginPoints(user.walletAddress),
+        dailyLoginPoints(address),
       );
       console.log("Daily rewards points collected");
       fetchPointsHistory();
