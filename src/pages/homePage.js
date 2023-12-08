@@ -4,6 +4,11 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import Web3 from "web3";
 import axios from "axios";
+//-----------Components-----------//
+import InfoTable from "../components/rewards/InfoTable.js";
+import TierTable from "../components/rewards/TierTable.js";
+import ProductInfo from "../components/ProductCard/ProductInfo.js";
+import ProfileImage from "../components/details/ProfileImage.js";
 
 //-----------Utilities-----------//
 import { GlobalContext } from "../providers/globalProvider.js";
@@ -13,9 +18,13 @@ import { signUpPoints } from "../utilities/pointsMessages.js";
 //-----------Media-----------//
 import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
-import InfoTable from "../components/rewards/InfoTable.js";
-import TierTable from "../components/rewards/TierTable.js";
-import ProductInfo from "../components/ProductCard/ProductInfo.js";
+import gabicon from "../media/InvestorIcons/wonderpal.png";
+import githiredlogo from "../media/CompanyIcons/githiredLogo.png";
+import paireduplogo from "../media/CompanyIcons/pairedUpLogo.png";
+import moontradelogo from "../media/CompanyIcons/Eclipse.png";
+import globalgemslogo from "../media/CompanyIcons/globalgems.png";
+import powderfullogo from "../media/CompanyIcons/og-image.jpg";
+import sessionslogo from "../media/CompanyIcons/sessions.png";
 
 let web3;
 
@@ -207,13 +216,13 @@ export default function HomePage() {
             Rewards galore
           </h1>
           <p className="tracking-tighter">Score points with every action 🎯</p>
-          <figure className=" m-2">
+          <figure className=" mt-4">
             <InfoTable />
           </figure>
           <p className="tracking-tighter">
             Reach higher tiers to get bonus points 💰
           </p>
-          <figure className=" m-2 ">
+          <figure className=" mt-4 ">
             <TierTable />
           </figure>
         </article>
@@ -224,40 +233,45 @@ export default function HomePage() {
           Score points →
         </NavLink>
       </section>
-
       {/* Backers Section */}
       <section className="m-4 flex flex-col items-center justify-center">
-        <article className="m-4 flex flex-col items-center justify-center">
+        <article className=" flex flex-col items-center justify-center">
           <h1 className="text-[42px] font-bold tracking-tighter">
             Backed by institutional partners
           </h1>
-
-          <div className="flex flex-wrap justify-center">
-            <div className="m-2">
-              <img
-                src="/logos/spy.png"
-                alt="Spy Investments"
-                className="h-20"
-              />
-              <p className="tracking-tighter">Spy Investments</p>
-            </div>
-            <div className="m-2">
-              <img src="/logos/sq.png" alt="SQ Partners" className="h-20" />
-              <p className="tracking-tighter">SQ Partners</p>
-            </div>
-            <div className="m-2">
-              <img src="/logos/kee.png" alt="Kee Capital" className="h-20" />
-              <p className="tracking-tighter">Kee Capital</p>
-            </div>
-            <div className="m-2">
-              <img src="/logos/gab.png" alt="G Combinator" className="h-20" />
-              <p className="tracking-tighter">G Combinator</p>
-            </div>
+          <p className="tracking-tighter">
+            Over 420,000,000 in SHIBA raised since inception 💰
+          </p>
+          <div className="mt-4 flex flex-row justify-center">
+            <ProfileImage src="/logos/spy.png" label="Spy Investments" />
+            <ProfileImage src="/logos/sq.png" label="SQ Partners" />
+            <ProfileImage src="/logos/kee.png" label="Kee Capital" />
+            <ProfileImage src={gabicon} label="G Combinator" />
           </div>
         </article>
       </section>
 
-      <footer className="bottom-0 flex w-full justify-center p-2">
+      {/* Engineers Section */}
+      <section className="m-4 flex flex-col items-center justify-center">
+        <article className=" flex flex-col items-center justify-center">
+          <h1 className="text-[42px] font-bold tracking-tighter">
+            Built by the best engineers
+          </h1>
+          <p className="tracking-tighter">
+            Best-in-class infrastructure and design 👾
+          </p>
+          <div className="mt-4 flex flex-row justify-center">
+            <ProfileImage src={sessionslogo} label="Sessions" />
+            <ProfileImage src={powderfullogo} label="Powderful" />
+            <ProfileImage src={globalgemslogo} label="globalgems" />
+            <ProfileImage src={moontradelogo} label="Moontrade" />
+            <ProfileImage src={paireduplogo} label="Paired Up" />
+            <ProfileImage src={githiredlogo} label="GitHired" />
+          </div>
+        </article>
+      </section>
+
+      <footer className="bottom-2 flex w-full justify-center p-2">
         <p className="text-sm">
           © 2023 Bitjar -{" "}
           <a
