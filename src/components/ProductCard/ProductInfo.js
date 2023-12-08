@@ -34,7 +34,7 @@ const ProductInfo = () => {
   }, []);
 
   return (
-    <article className="m-4 flex flex-col gap-3 sm:flex-row">
+    <article className="m-4 flex flex-col gap-3 md:flex-row">
       {cryptoData.map((crypto) => (
         <figure
           key={crypto.name}
@@ -48,7 +48,7 @@ const ProductInfo = () => {
           <h1 className="mt-[1em] text-[24px] font-bold text-black lg:mt-[2em]">
             {crypto.name}
           </h1>
-          <h2>{crypto.apy.toFixed(2)}% APY</h2>
+          <h2>{crypto.apy.toFixed(2)}% APY*</h2>
         </figure>
       ))}
     </article>

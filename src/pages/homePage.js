@@ -169,14 +169,17 @@ export default function HomePage() {
         <h1 className="text-center text-[42px] font-bold tracking-tighter text-black">
           Make your Bitcoin work harder with Bitjar
         </h1>
-        <p className="flex flex-row text-center tracking-tighter">
-          Your one-stop shop for buying, swapping and earning with your Bitcoins
-          <img
-            src={btcIcon}
-            alt="bitcoin"
-            className="ml-1 h-[18px] translate-y-[3px] animate-pulse"
-          ></img>
-        </p>
+        <div className="text-center tracking-tighter">
+          <p className="">
+            Your one-stop shop for buying, swapping, and earning with your
+            Bitcoin
+            <img
+              src={btcIcon}
+              alt="bitcoin"
+              className="ml-1 inline h-[18px] translate-y-[-3px]"
+            />
+          </p>
+        </div>
       </main>
       <button
         className="btn w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
@@ -185,8 +188,8 @@ export default function HomePage() {
         Sign Up / Sign In with Wallet
       </button>
       {/* AUM Section */}
-      <section className="mt-5 flex flex-col items-center pt-[1em] sm:flex-row">
-        <figure className="m-2 flex w-[500px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
+      <section className="mt-5 flex flex-col items-center pt-[1em] lg:flex-row">
+        <figure className="m-2 flex w-[400px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
           <h1 className=" text-[60px] font-bold text-yellow-400">
             ${assets.toLocaleString()}
           </h1>
@@ -194,7 +197,7 @@ export default function HomePage() {
             in assets deposited through Bitjar
           </h2>
         </figure>
-        <figure className="m-2 flex w-[500px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
+        <figure className="m-2 flex w-[400px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 ">
           <h1 className=" text-[60px] font-bold text-yellow-400">
             ${interest.toLocaleString()}
           </h1>
@@ -210,6 +213,12 @@ export default function HomePage() {
           Outperform HODL-ing the asset 📈
         </p>
         <ProductInfo />
+        <p className="flex w-11/12 max-w-[600px] text-center text-[10px]">
+          * Annual Percentage Yield (APY) is the current projected rate of
+          interest on your cryptocurrency investment over a year. APR is subject
+          to change at any time and the estimated earnings may be different from
+          the actual earnings generated.
+        </p>
         <NavLink
           to="/earn"
           className="btn mt-[1em] w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
@@ -244,7 +253,7 @@ export default function HomePage() {
       {/* Backers Section */}
       <section className="m-4 flex flex-col items-center justify-center pt-[4em]">
         <article className=" flex flex-col items-center justify-center">
-          <h1 className="text-[42px] font-bold tracking-tighter">
+          <h1 className="text-center text-[42px] font-bold tracking-tighter">
             Backed by institutional partners
           </h1>
           <p className="pb-[2em] tracking-tighter">
@@ -262,13 +271,13 @@ export default function HomePage() {
       {/* Engineers Section */}
       <section className="m-4 flex flex-col items-center justify-center pt-[3em]">
         <article className=" flex flex-col items-center justify-center">
-          <h1 className="text-[42px] font-bold tracking-tighter">
+          <h1 className="text-center text-[42px] font-bold tracking-tighter">
             Built by the best engineers
           </h1>
           <p className="pb-[1em] tracking-tighter">
             Best-in-class infrastructure and design 👾
           </p>
-          <div className="mt-4 flex flex-row justify-center">
+          <div className="mt-4 grid grid-cols-3 gap-y-3 md:grid-cols-6">
             <ProfileImage src={sessionslogo} label="Sessions" />
             <ProfileImage src={powderfullogo} label="Powderful" />
             <ProfileImage src={globalgemslogo} label="globalgems" />
