@@ -12,7 +12,7 @@ import { storage } from "../firebase/firebase.js";
 import {referralPoints} from "../utilities/pointsMessages.js"
 
 export default function OnboardingPage() {
-  const userWalletAdd = useContext(GlobalContext);
+  const {userWalletAdd} = useContext(GlobalContext);
   const navigate = useNavigate();
   const STORAGE_KEY = "profilepic"
 
@@ -28,6 +28,7 @@ export default function OnboardingPage() {
   const handleSubmit = async (e) => {
     console.log("enter handle submit")
     e.preventDefault();
+    console.log(userWalletAdd);
     if (userName && userEmail && userWalletAdd) {
 
       let imageURL
@@ -58,14 +59,18 @@ export default function OnboardingPage() {
       try {
         // Edit user data
         const infoSubmit = await axios.post(`${BACKEND_URL}/users/editInfo`, editData);
-        // Request referer wallet address
-        const queryReferrerUser = await axios.post(`${BACKEND_URL}/users/getUserDataViaReferralCode`, {referralCode: userReferralCode});
-        // Record transactions on referral
-        const recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, referralPoints(queryReferrerUser.data.output.walletAddress, userWalletAdd));
-        // Update referral table
-        const recordReferral = await axios.post(`${BACKEND_URL}/users/recordReferrerAndReferree/`, {walletAddress: userWalletAdd, referralCode: userReferralCode});
-        
-        if (infoSubmit && recordTransaction && recordReferral) {
+
+        // If user input referral code
+        if (userReferralCode) {
+          // Request referer wallet address
+          const queryReferrerUser = await axios.post(`${BACKEND_URL}/users/getUserDataViaReferralCode`, {referralCode: userReferralCode});
+          // Record transactions on referral
+          const recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, referralPoints(queryReferrerUser.data.output.walletAddress, userWalletAdd));
+          // Update referral table
+          const recordReferral = await axios.post(`${BACKEND_URL}/users/recordReferrerAndReferree/`, {walletAddress: userWalletAdd, referralCode: userReferralCode});
+        }
+
+        if (infoSubmit) {
           console.log(infoSubmit);
           navigate("/dashboard");
         }
