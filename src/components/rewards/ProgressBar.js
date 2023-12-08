@@ -21,11 +21,9 @@ const ProgressBar = ({ userData }) => {
 
   function reportWindowSize() {
     let widthOutput = window.innerWidth;
-
     setWindowWidth(widthOutput);
   }
-
-  window.onresize = reportWindowSize;
+  window.addEventListener("resize", reportWindowSize);
 
   const { userName, walletAddress, points, profilePicture } = userData;
 
@@ -139,8 +137,8 @@ const ProgressBar = ({ userData }) => {
           Earn{" "}
           <span className="animate-pulse font-bold text-sky-800">
             {nextTierPoints}
-          </span>{" "}
-          more points to reach{" "}
+          </span>
+          more points to reach
           <span className="font-bold">{nextTier} Tier!</span>
         </p>
 
@@ -150,8 +148,7 @@ const ProgressBar = ({ userData }) => {
             document.getElementById("points_info_modal").showModal()
           }
         >
-          {windowWidth <= 1024 && "How To Earn Points"}
-          {/* How To Earn Points */}
+          {windowWidth <= 1024 ? null : "How To Earn Points"}
           <QuestionMarkCircleIcon className="ml-[.5em] inline h-5 w-5 -translate-y-[0.5px] text-slate-600" />
         </button>
       </div>
