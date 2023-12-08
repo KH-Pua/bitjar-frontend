@@ -1,19 +1,17 @@
 //-----------Libraries-----------//
-import { useState, useEffect, useContext } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import { GlobalContext } from "../providers/globalProvider.js";
+import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 
 // Web3 Imports - Can be refactored in the future after we got all the methods out
 import Web3 from "web3";
 import { Network, Alchemy } from "alchemy-sdk";
 
-// Import Components
-import { TokenCard } from "../components/TokenCard/TokenCard.js";
+//-----------Components-----------//
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
-// Import Utils
+//-----------Utilities-----------//
 import { AAVE_ETH_CHAIN_COINLIST } from "../utilities/aaveEthChainAssetList.js";
 
 // Web3 settings
@@ -29,10 +27,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function DashboardPage() {
   const account = useOutletContext();
-  const infoToPass = useContext(GlobalContext);
-  const [confirmedUserId, setConfirmedUserId] = useState(null);
 
-  const [accountConfirmed, setAccountConfirmed] = useState(null);
   const [balance, setBalance] = useState("0");
 
   // States for AAVE Support Token Balances
@@ -45,11 +40,8 @@ export default function DashboardPage() {
   const [totalHoldings, setTotalHoldings] = useState(null);
 
   useEffect(() => {
-    console.log("OUTSIDE ACCOUNT: ", account);
     if (window.ethereum && account) {
-      console.log("metamask detected");
       web3 = new Web3(window.ethereum);
-      setAccountConfirmed(account);
     }
   }, []);
 
@@ -57,31 +49,19 @@ export default function DashboardPage() {
   // 1. Display ETH balance as numerical value
   // 2. Get all Tokens and Display
   useEffect(() => {
-    if (accountConfirmed) {
-      console.log("fetchingbalance for :", accountConfirmed);
-      fetchBalance(accountConfirmed);
-      getUserTotalHoldings(accountConfirmed);
+    if (account) {
+      fetchBalance(account);
+      getUserTotalHoldings(account);
     }
 
-    if (accountConfirmed && tokenBalance == null) {
-      getWalletAaveSupportedCoins(accountConfirmed);
+    if (account && tokenBalance == null) {
+      getWalletAaveSupportedCoins(account);
     }
-  }, [accountConfirmed]);
+  }, [account]);
 
   const getUserTotalHoldings = async (walletaddress) => {
-    let userInformation = await axios.get(
-      `${BACKEND_URL}/users/userData/${walletaddress}`,
-    );
-    // console.log(`user information: ${userInformation.data.user.id}`);
-    setConfirmedUserId(userInformation.data.user.id);
-
-    let userId = userInformation.data.user.id;
-    console.log("the userID is: ", userId);
-
-    // Get User's past transactions on bitjar
-    const pastBitjarTransactions = await axios.post(
-      `${BACKEND_URL}/users/getUserPastTransactions`,
-      { userId: userId },
+    const pastBitjarTransactions = await axios.get(
+      `${BACKEND_URL}/transactions/products/${account}`,
     );
 
     const userPastBitjarTransactions = pastBitjarTransactions.data.data;
@@ -103,11 +83,8 @@ export default function DashboardPage() {
     let coinData = {};
 
     // Get Latest Coin Information from CMC
-    console.log("Running CMC API Calls?");
     await Promise.all(
       Object.keys(coinSymbolsList).map(async (symbol) => {
-        // console.log(`symbol is ${symbol}`);
-        // console.log(`the symbol is: "${coinSymbolsList[symbol]}"`);
         let information = await axios.post(
           `${BACKEND_URL}/users/getCoinLatestInfo`,
           {
@@ -130,14 +107,8 @@ export default function DashboardPage() {
 
     // Calculate Total Holdings
     let totalHoldings = 0.0;
-    // console.log(
-    //   `initialise calculateTotalHoldings for: ${JSON.stringify(
-    //     walletCoinAmount,
-    //   )} and ${JSON.stringify(latestCoinPrices)}`,
-    // );
     for (const key in walletCoinAmount) {
       let sum = walletCoinAmount[`${key}`] * latestCoinPrices[`${key}`];
-      // console.log(sum);
       totalHoldings += sum;
     }
     let holdings = parseFloat(totalHoldings.toFixed(2));
@@ -148,15 +119,13 @@ export default function DashboardPage() {
     try {
       const balanceWei = await web3.eth.getBalance(address);
       const balanceEth = web3.utils.fromWei(balanceWei, "ether");
-      setBalance(balanceEth);
+      setBalance(parseFloat(balanceEth).toFixed(8));
     } catch (error) {
       console.error("Error fetching balance:", error);
     }
   };
 
   const getWalletAaveSupportedCoins = async (account) => {
-    console.log(`here is the list of aave: ${AAVE_ETH_CHAIN_COINLIST}`);
-    let PromiseList = [];
     let tokenContractList = [];
 
     // For ERC-20 Tokens
@@ -164,18 +133,11 @@ export default function DashboardPage() {
       let tokenContractAddress = AAVE_ETH_CHAIN_COINLIST[key];
       tokenContractList.push(tokenContractAddress);
     }
-    console.log(tokenContractList);
-
-    // const eth_balance = await alchemy.core.getBalance(account, "latest");
-    // console.log(eth_balance);
 
     const data = await alchemy.core.getTokenBalances(
       account,
       tokenContractList,
     );
-
-    console.log("Token balance for Address");
-    console.log(data);
 
     let i = 1;
 
@@ -254,53 +216,57 @@ export default function DashboardPage() {
         )}
         {/* User's Assets */}
         {!account ? null : (
-          <div >
-            <h3 className="text-base font-semibold leading-6 text-gray-900">Supported Coin Balances</h3>
+          <div>
+            <h3 className="text-base font-semibold leading-6 text-gray-900">
+              Supported Coin Balances
+            </h3>
             {imagesFlag ? null : (
-              <div className="mt-5 w-full animate-pulse flex flex-col justify-center text-center content-center font-bold text-slate-600">
-                <div className="px-6 py-6 sm:p-6 text-lg">
-                  LOADING . . .
-                </div>
+              <div className="mt-5 flex w-full animate-pulse flex-col content-center justify-center text-center font-bold text-slate-600">
+                <div className="px-6 py-6 text-lg sm:p-6">LOADING . . .</div>
               </div>
             )}
             <dl className="mt-5 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden bg-white shadow md:grid-cols-3 md:divide-x md:divide-y-0">
-              {imagesFlag && coinImage 
-              ? walletTokens.map((element, index) => (
-                <div
-                key={element}
-                className="px-6 py-6 sm:p-6 flex"
-                >
-                <div className=" rounded-md p-3">
-                  {coinImage[element] ? (
-                    <img className="w-12 h-12" src={coinImage[element]} alt="logo" />
-                  ) : (
-                    <img src="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg" alt="logo" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-base font-medium text-grey-900">
-                    {element}
-                  </p>
-                  <div className="mt-1 flex items-baseline justify-between md:block lg:flex">
-                    <p className="text-2xl font-semibold text-grey-900">
-                      {`${tokenBalance[element]} ${element}`}
-                    </p>
-                  </div>
-                </div>
-                </div>
-                )
-              ):null}
+              {imagesFlag && coinImage
+                ? walletTokens.map((element, index) => (
+                    <div key={element} className="flex px-6 py-6 sm:p-6">
+                      <div className=" rounded-md p-3">
+                        {coinImage[element] ? (
+                          <img
+                            className="h-12 w-12"
+                            src={coinImage[element]}
+                            alt="logo"
+                          />
+                        ) : (
+                          <img
+                            src="https://icon-library.com/images/cancel-icon-transparent/cancel-icon-transparent-5.jpg"
+                            alt="logo"
+                          />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-grey-900 text-base font-medium">
+                          {element}
+                        </p>
+                        <div className="mt-1 flex items-baseline justify-between md:block lg:flex">
+                          <p className="text-grey-900 text-2xl font-semibold">
+                            {`${tokenBalance[element]} ${element}`}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
             </dl>
           </div>
         )}
         {/* User's Transactions on BitJar */}
         {!account ? null : (
           <div className="pb-[2em]">
-            <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">Transactions</h1>
+            <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">
+              Transactions
+            </h1>
             <div>
-              {confirmedUserId && (
-                <TransactionHistoryTable userId={confirmedUserId} />
-              )}
+              {account && <TransactionHistoryTable account={account} />}
             </div>
           </div>
         )}

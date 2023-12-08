@@ -1,19 +1,18 @@
 //-----------Libraries-----------//
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import Web3 from "web3";
 import { Network, Alchemy } from "alchemy-sdk";
-import erc20ABI from "../utilities/erc20.abi.json";
 
 //-----------Components-----------//
-import aaveLendingPoolABI from "../utilities/aaveLendingPoolABI.json";
 import { fetchPoolData } from "../components/api/defillama.js";
-import { GlobalContext } from "../providers/globalProvider.js";
+import ProductCard from "../components/ProductCard/ProductCard.js";
+import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 
 //-----------Utilities-----------//
-import { TokenCard } from "../components/TokenCard/TokenCard.js";
 import { formatEthValue, formatCurrency } from "../utilities/formatting.js";
-import ProductCard from "../components/ProductCard/ProductCard.js";
+import erc20ABI from "../utilities/erc20.abi.json";
+import aaveLendingPoolABI from "../utilities/aaveLendingPoolABI.json";
 
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
@@ -25,9 +24,7 @@ const alchemy = new Alchemy(settings);
 let web3;
 
 export default function EarnPage() {
-  const walletAdd = useOutletContext();
-  const infoToPass = useContext(GlobalContext);
-  const [account, setAccount] = useState("");
+  const account = useOutletContext();
   const [wethAmount, setWethAmount] = useState("");
   const [wbtcAmount, setWbtcAmount] = useState("");
   const [usdcAmount, setUsdcAmount] = useState("");
@@ -41,10 +38,6 @@ export default function EarnPage() {
   const [wbtcPoolData, setWbtcPoolData] = useState({});
   const [usdcPoolData, setUsdcPoolData] = useState({});
   const [sepoliaPoolData, setSepoliaPoolData] = useState({});
-
-  useEffect(() => {
-    setAccount(walletAdd);
-  }, [walletAdd]);
 
   useEffect(() => {
     if (account) {
@@ -79,20 +72,8 @@ export default function EarnPage() {
     });
   }, []);
 
-  const handleWethAmountChange = (e) => {
-    setWethAmount(e.target.value);
-  };
-
-  const handleWbtcAmountChange = (e) => {
-    setWbtcAmount(e.target.value);
-  };
-
-  const handleUsdcAmountChange = (e) => {
-    setUsdcAmount(e.target.value);
-  };
-
-  const handleSepoliaWbtcAmountChange = (e) => {
-    setSepoliaWbtcAmount(e.target.value);
+  const handleAmountChange = (e, setter) => {
+    setter(e.target.value);
   };
 
   const supplyWETH = async () => {
@@ -381,7 +362,7 @@ export default function EarnPage() {
                 title="WETH"
                 description="Lend on Aave V3 protocol"
                 amount={wethAmount}
-                onChange={(e) => handleWethAmountChange(e)}
+                onChange={(e) => handleAmountChange(e, setWethAmount)}
                 onDeposit={supplyWETH}
                 onWithdraw={withdrawWETH}
                 tvl={formatCurrency(wethPoolData.tvlUsd)}
@@ -392,7 +373,7 @@ export default function EarnPage() {
                 title="WBTC"
                 description="Lend on Aave V3 protocol"
                 amount={wbtcAmount}
-                onChange={(e) => handleWbtcAmountChange(e)}
+                onChange={(e) => handleAmountChange(e, setWbtcAmount)}
                 onDeposit={supplyWBTC}
                 onWithdraw={withdrawWBTC}
                 tvl={formatCurrency(wbtcPoolData.tvlUsd)}
@@ -403,7 +384,7 @@ export default function EarnPage() {
                 title="USDC"
                 description="Lend on Aave V3 protocol"
                 amount={usdcAmount}
-                onChange={(e) => handleUsdcAmountChange(e)}
+                onChange={(e) => handleAmountChange(e, setUsdcAmount)}
                 onDeposit={supplyUSDC}
                 onWithdraw={withdrawUSDC}
                 tvl={formatCurrency(usdcPoolData.tvlUsd)}
@@ -413,8 +394,8 @@ export default function EarnPage() {
               <ProductCard
                 title="SEPOLIA WBTC"
                 description="Lend on Bitjar testnet vault"
-                amount={usdcAmount}
-                onChange={(e) => handleUsdcAmountChange(e)}
+                amount={sepoliaWbtcAmount}
+                onChange={(e) => handleAmountChange(e, setSepoliaWbtcAmount)}
                 onDeposit={supplyUSDC}
                 onWithdraw={withdrawUSDC}
                 tvl={formatCurrency(usdcPoolData.tvlUsd)}
@@ -424,6 +405,16 @@ export default function EarnPage() {
             </div>
             <br />
           </div>
+        </div>
+      )}
+
+      {/* User's Transactions on BitJar */}
+      {!account ? null : (
+        <div className="pb-[2em]">
+          <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">
+            Transactions
+          </h1>
+          <div>{account && <TransactionHistoryTable account={account} />}</div>
         </div>
       )}
 
