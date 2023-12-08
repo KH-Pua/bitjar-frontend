@@ -38,14 +38,16 @@ const ProductInfo = () => {
       {cryptoData.map((crypto) => (
         <figure
           key={crypto.name}
-          className="flex h-[350px] w-[250px] flex-col items-center justify-center bg-teal-400 shadow-lg hover:translate-y-[-3px]"
+          className="flex h-[350px] w-[250px] flex-col items-center justify-center border bg-slate-50 shadow-md transition-all hover:translate-y-[-5px]"
         >
           <img
             src={crypto.icon}
             alt={`${crypto.name} icon`}
-            className="h-20 w-20"
+            className="h-[10em] w-[10em]"
           />
-          <h1 className="text-[24px] font-bold text-white">{crypto.name}</h1>
+          <h1 className="mt-[1em] text-[24px] font-bold text-black lg:mt-[2em]">
+            {crypto.name}
+          </h1>
           <h2>{crypto.apy.toFixed(2)}% APY</h2>
         </figure>
       ))}
