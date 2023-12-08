@@ -1,69 +1,105 @@
+// Import Utilities
 import { formatWalletAddress } from "../../utilities/formatting";
-import logo from "../../media/bitjar-logo.png";
 
-import { useState } from "react";
+// Import Libraries
+import axios from "axios";
+import { useState, useEffect } from "react";
+
+// Import Components
+import { RefererOutput } from "./RefererOutput";
+
+import logo from "../../media/bitjar-logo.png";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const PointsTable = ({ data }) => {
-  const [windowHeight, setWindowHeight] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
+  const [userRefererList, setUserRefererList] = useState(null);
 
-  // console.log(`window size ${window.matchMedia("(max-width: 700px)").matches}`);
-
-  function reportWindowSize() {
-    let heightOutput = window.innerHeight;
+  const reportWindowSize = () => {
     let widthOutput = window.innerWidth;
-
-    setWindowHeight(heightOutput);
     setWindowWidth(widthOutput);
-  }
+    console.log(`width output is ${widthOutput}`);
+  };
+  window.addEventListener("resize", reportWindowSize);
+  // window.onresize = reportWindowSize; // Weird, earlier commit this worked. now it crashes saying React refreshing too much
 
-  window.onresize = reportWindowSize;
+  // Dead code, but leaving it here to talk about during the code review, as to why this code is not feasible
+  const getUserReferer = async (address) => {
+    let referer = await axios.post(`${BACKEND_URL}/users/getUserRefererIfAny`, {
+      walletAddress: address,
+    });
+
+    setUserRefererList((prevState) => {
+      return { ...prevState, [address]: referer.output };
+    });
+
+    // await axios
+    //   .post(`${BACKEND_URL}/users/getUserRefererIfAny`, {
+    //     walletAddress: address,
+    //   })
+    //   .then((response) => {
+    //     console.log(response);
+    //   });
+  };
 
   return (
-    <div className="overflow-y-auto bg-white px-[1em]">
-      {/* <table className="table"> */}
-      <table className="text-left">
-        {/* head */}
-        <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
-          <tr>
-            <th className="table-header lg:w-[25%]"></th>
-            <th className="table-header pr-[3em]">Username</th>
-            {windowWidth <= 1024 ? null : (
-              <th className="table-header  pr-[5em]">Wallet</th>
-            )}
-            <th className="table-header  pl-[1em] pr-[3em]">Points</th>
-          </tr>
-        </thead>
+    <>
+      <div className="overflow-y-auto bg-white px-[.5em]">
+        <table className="text-left">
+          {/* head */}
+          <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
+            <tr>
+              <th className="table-header lg:w-[25%]"></th>
+              <th className="table-header pr-[3em]">Username</th>
+              {windowWidth <= 1024 ? null : (
+                <th className="table-header pr-[5em]">Wallet</th>
+              )}
+              <th className="table-header pl-[1em] pr-[3em]">Points</th>
+            </tr>
+          </thead>
 
-        {/* body */}
-        {data &&
-          data.map((row) => (
-            // Not sure why I can't put border-b-[1px]
-            <tbody key={row.id} className="border-b-[1px] border-slate-300">
-              <tr>
-                <td>
-                  <div className="avatar">
-                    <div className="mask mask-circle my-[1em] mr-[1em] h-12 w-12 bg-white">
-                      <img
-                        src={row.profilePicture ? row.profilePicture : logo}
-                        alt="DP"
-                      />
+          {/* body */}
+          {data &&
+            data.map((row) => (
+              <tbody key={row.id} className="border-b-[1px] border-slate-300">
+                <tr>
+                  <td>
+                    <div className="avatar">
+                      <div className="mask mask-circle my-[1em] mr-[1em] h-12 w-12 bg-white">
+                        <img
+                          src={row.profilePicture ? row.profilePicture : logo}
+                          alt="DP"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                <td className="font-semibold text-slate-800">
-                  {row.userName ? row.userName : "-"}
-                </td>
-                {windowWidth <= 1024 ? null : (
-                  <td>{formatWalletAddress(row.walletAddress)}</td>
-                )}
-                <td className="pl-[1em] font-semibold">{row.points}</td>
-              </tr>
-            </tbody>
-          ))}
-      </table>
-    </div>
+                  {/* This part is pretty interesting, will talk about it during code review */}
+                  <td>
+                    {row.userName ? (
+                      <div className="flex flex-col gap-0">
+                        <div className="font-semibold text-slate-900">
+                          {row.userName}
+                        </div>
+                        <RefererOutput walletaddress={row.walletAddress} />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-0">
+                        <div className="font-semibold text-slate-800">-</div>
+                        <RefererOutput walletaddress={row.walletAddress} />
+                      </div>
+                    )}
+                  </td>
+                  {windowWidth <= 1024 ? null : (
+                    <td>{formatWalletAddress(row.walletAddress)}</td>
+                  )}
+                  <td className="pl-[1em] font-semibold">{row.points}</td>
+                </tr>
+              </tbody>
+            ))}
+        </table>
+      </div>
+    </>
   );
 };
 

@@ -178,23 +178,23 @@ export default function HomePage() {
         </p>
       </main>
       <button
-        className="btn w-72 border-0 bg-yellow-200 text-lg hover:translate-y-[-2px] hover:bg-yellow-300"
+        className="btn w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
         onClick={connectWallet}
       >
         Sign Up / Sign In with Wallet
       </button>
       {/* AUM Section */}
       <section className="mt-5 flex flex-col items-center sm:flex-row">
-        <figure className="m-2 flex w-[500px] flex-col items-center bg-teal-100 p-3 shadow-sm hover:bg-yellow-200">
-          <h1 className=" text-[60px] font-bold text-yellow-500">
+        <figure className="m-2 flex w-[500px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
+          <h1 className=" text-[60px] font-bold text-yellow-400">
             ${assets.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">
             in assets deposited through Bitjar
           </h2>
         </figure>
-        <figure className="m-2 flex w-[500px] flex-col items-center bg-teal-100 p-3 shadow-sm hover:bg-yellow-200">
-          <h1 className=" text-[60px] font-bold text-yellow-500">
+        <figure className="m-2 flex w-[500px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
+          <h1 className=" text-[60px] font-bold text-yellow-400">
             ${interest.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">of crypto earned by users</h2>
@@ -209,7 +209,7 @@ export default function HomePage() {
         <ProductInfo />
         <NavLink
           to="/earn"
-          className="btn w-72 border-0 bg-yellow-200 text-lg hover:translate-y-[-2px] hover:bg-yellow-300"
+          className="btn w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
         >
           Earn Crypto →
         </NavLink>
@@ -218,7 +218,7 @@ export default function HomePage() {
       <section className="m-4 flex flex-col items-center justify-center">
         <article className=" m-4 flex flex-col items-center justify-center">
           <h1 className="text-[42px] font-bold tracking-tighter">
-            Rewards galore
+            Rewards Galore
           </h1>
           <p className="tracking-tighter">Score points with every action 🎯</p>
           <figure className=" mt-4">

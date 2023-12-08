@@ -14,6 +14,19 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
   const [timeToClaim, setTimeToClaim] = useState(null);
   const [renderNotification, setRenderNotification] = useState(false);
 
+  const [windowHeight, setWindowHeight] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  function reportWindowSize() {
+    let heightOutput = window.innerHeight;
+    let widthOutput = window.innerWidth;
+
+    setWindowHeight(heightOutput);
+    setWindowWidth(widthOutput);
+  }
+
+  window.onresize = reportWindowSize;
+
   // Check against db for rewards claim
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +90,11 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
         disabled={isClaimed}
       >
         {isClaimed
-          ? `Claim In ${formatTimeToClaim(timeToClaim)}`
+          ? `${
+              windowWidth <= 1024
+                ? `${formatTimeToClaim(timeToClaim)}`
+                : `Claim In ${formatTimeToClaim(timeToClaim)}`
+            }`
           : "📆 Claim Daily Login!"}
       </button>
       {renderNotification && <PointNotification data={dailyLoginPoints()} />}

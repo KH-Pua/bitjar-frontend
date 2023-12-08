@@ -17,6 +17,16 @@ const ProgressBar = ({ userData }) => {
   const [multiplier, setMultiplier] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
 
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  function reportWindowSize() {
+    let widthOutput = window.innerWidth;
+
+    setWindowWidth(widthOutput);
+  }
+
+  window.onresize = reportWindowSize;
+
   const { userName, walletAddress, points, profilePicture } = userData;
 
   const calculateProgress = (currentPoints) => {
@@ -97,15 +107,7 @@ const ProgressBar = ({ userData }) => {
             </p>
           </div>
         </h1>
-        <button
-          className="mb-auto scale-100 text-[.9rem] transition-all hover:scale-95"
-          onClick={() =>
-            document.getElementById("points_info_modal").showModal()
-          }
-        >
-          How To Earn Points?
-          <QuestionMarkCircleIcon className="ml-[.5em] inline h-6 w-6 -translate-y-[0.5px] text-slate-700" />
-        </button>
+
         <dialog id="points_info_modal" className="modal">
           <div className="modal-box ">
             <form method="dialog">
@@ -132,13 +134,27 @@ const ProgressBar = ({ userData }) => {
           style={{ width: `${progress}` }}
         ></div>
       </div>
-      <p className="text-right">
-        Earn{" "}
-        <span className="animate-pulse font-bold text-sky-800">
-          {nextTierPoints}
-        </span>{" "}
-        more points to reach <span className="font-bold">{nextTier} Tier!</span>
-      </p>
+      <div className="text-right">
+        <p className="">
+          Earn{" "}
+          <span className="animate-pulse font-bold text-sky-800">
+            {nextTierPoints}
+          </span>{" "}
+          more points to reach{" "}
+          <span className="font-bold">{nextTier} Tier!</span>
+        </p>
+
+        <button
+          className="mb-auto scale-100 text-[.9rem] text-slate-600 transition-all hover:scale-95"
+          onClick={() =>
+            document.getElementById("points_info_modal").showModal()
+          }
+        >
+          {windowWidth <= 1024 && "How To Earn Points"}
+          {/* How To Earn Points */}
+          <QuestionMarkCircleIcon className="ml-[.5em] inline h-5 w-5 -translate-y-[0.5px] text-slate-600" />
+        </button>
+      </div>
     </div>
   );
 };
