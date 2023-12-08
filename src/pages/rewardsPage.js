@@ -43,9 +43,7 @@ export default function RewardsPage() {
 
   const fetchPointsHistory = async () => {
     try {
-      const response = await apiRequest.get(
-        `/users/transactions/points/${user.id}`,
-      );
+      const response = await apiRequest.get(`/transactions/points/${address}`);
       setPointsData(response.data.output);
     } catch (err) {
       console.log(err);
@@ -91,7 +89,7 @@ export default function RewardsPage() {
           <header className="flex w-full flex-row justify-between">
             <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
             <DailyRewardsButton
-              user={user && user}
+              address={address && address}
               fetchPointsHistory={fetchPointsHistory}
               fetchUserData={fetchUserData}
             />

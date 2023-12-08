@@ -123,10 +123,8 @@ export default function BuyPage() {
           }}
         />
       </div>
+      <h2 className="pb-[.5em] text-[1rem] font-semibold">Payment History</h2>
       <figure className="flex h-[500px] flex-col items-center">
-        <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
-          Payment History
-        </h2>
         <PaymentHistoryTable data={paymentData} />
       </figure>
       {renderNotification && (
