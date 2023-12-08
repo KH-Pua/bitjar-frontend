@@ -3,7 +3,7 @@ import { formatWalletAddress } from "../../utilities/formatting";
 
 // Import Libraries
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // Import Components
 import { RefererOutput } from "./RefererOutput";
@@ -19,10 +19,8 @@ const PointsTable = ({ data }) => {
   const reportWindowSize = () => {
     let widthOutput = window.innerWidth;
     setWindowWidth(widthOutput);
-    console.log(`width output is ${widthOutput}`);
   };
   window.addEventListener("resize", reportWindowSize);
-  // window.onresize = reportWindowSize; // Weird, earlier commit this worked. now it crashes saying React refreshing too much
 
   // Dead code, but leaving it here to talk about during the code review, as to why this code is not feasible
   const getUserReferer = async (address) => {
@@ -37,7 +35,7 @@ const PointsTable = ({ data }) => {
 
   return (
     <>
-      <div className="overflow-y-auto bg-white px-[.5em]">
+      <div className="overflow-y-auto bg-white pr-[.5em]">
         <table className="text-left">
           {/* head */}
           <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
@@ -47,7 +45,7 @@ const PointsTable = ({ data }) => {
               {windowWidth <= 1024 ? null : (
                 <th className="table-header pr-[5em]">Wallet</th>
               )}
-              <th className="table-header pl-[1em] pr-[3em]">Points</th>
+              <th className="table-header pl-[1em] pr-[2.5em]">Points</th>
             </tr>
           </thead>
 

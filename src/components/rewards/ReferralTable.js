@@ -15,7 +15,7 @@ const ReferralTable = ({ data }) => {
   window.addEventListener("resize", reportWindowSize);
 
   return (
-    <div className="overflow-y-auto bg-white px-[1em]">
+    <div className="overflow-y-auto bg-white pr-[.5em]">
       <table className="text-left">
         {/* head */}
         <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
