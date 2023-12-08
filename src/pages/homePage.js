@@ -15,6 +15,7 @@ import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import InfoTable from "../components/rewards/InfoTable.js";
 import TierTable from "../components/rewards/TierTable.js";
+import ProductInfo from "../components/ProductCard/ProductInfo.js";
 
 let web3;
 
@@ -22,7 +23,7 @@ export default function HomePage() {
   const { userWalletAdd, setUserWalletAdd } = useContext(GlobalContext);
   const navigate = useNavigate();
   const [assets, setAssets] = useState(42320232);
-  const [interest, setInterest] = useState(20322);
+  const [interest, setInterest] = useState(250123);
 
   const [account, setAccount] = useState("");
   const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
@@ -47,6 +48,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    //Set time interval
     const interval = setInterval(() => {
       const randomIncrement = Math.floor(Math.random() * (500 - 10 + 1)) + 10;
 
@@ -71,8 +73,10 @@ export default function HomePage() {
           { walletAddress: account },
         );
         console.log(userInfo);
+
         //Set wallet address & profile picture to global state for passing around.
         setUserWalletAdd(userInfo.data.output.dataValues.walletAddress);
+
         // New user verification boolean
         setVerifyNewUserBool(userInfo.data.output.newUser);
       } catch (err) {
@@ -155,56 +159,45 @@ export default function HomePage() {
           Make your Bitcoin work harder with Bitjar
         </h1>
         <p className="text-center tracking-tighter">
-          Your one-stop shop for buying, swapping and staking your Bitcoins 🪙
+          Your one-stop shop for buying, swapping and earning with your Bitcoins
+          🪙
         </p>
       </main>
       <button
-        className="btn w-36 border-0 bg-yellow-200 hover:translate-y-[-2px] hover:bg-yellow-300"
+        className="btn w-72 border-0 bg-yellow-200 text-lg hover:translate-y-[-2px] hover:bg-yellow-300"
         onClick={connectWallet}
       >
-        Connect Wallet
+        Sign Up / Sign In with Wallet
       </button>
       {/* AUM Section */}
       <section className="mt-5 flex flex-col items-center sm:flex-row">
-        <figure className="m-2 flex w-[400px] flex-col items-center rounded-lg bg-slate-100 p-3 hover:bg-slate-200">
+        <figure className="m-2 flex w-[500px] flex-col items-center bg-teal-100 p-3 shadow-sm hover:bg-yellow-200">
           <h1 className=" text-[60px] font-bold text-yellow-500">
             ${assets.toLocaleString()}
           </h1>
-          <h2 className="tracking-tighter">in assets held on Bitjar</h2>
+          <h2 className="tracking-tighter">
+            in assets deposited through Bitjar
+          </h2>
         </figure>
-        <figure className="m-2 flex w-[400px] flex-col items-center rounded-lg bg-slate-100 p-3 hover:bg-slate-200">
+        <figure className="m-2 flex w-[500px] flex-col items-center bg-teal-100 p-3 shadow-sm hover:bg-yellow-200">
           <h1 className=" text-[60px] font-bold text-yellow-500">
             ${interest.toLocaleString()}
           </h1>
-          <h2 className="tracking-tighter">
-            in interest paid out to customers
-          </h2>
+          <h2 className="tracking-tighter">of crypto earned by users</h2>
         </figure>
       </section>
       {/* Products Section */}
       <section className="mt-5 flex flex-col items-center justify-center">
-        <h1 className="text-[42px] font-bold tracking-tighter">Click & earn</h1>
-        <p className="tracking-tighter">Maximise your long-term holdings 📈</p>
-
-        <article className="m-4 flex flex-col gap-3 sm:flex-row">
-          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg bg-yellow-400 shadow-lg  hover:translate-y-[-3px]">
-            <h1 className="text-[24px] font-bold text-white">Bitcoin</h1>
-            <h2> 1.45% APY</h2>
-          </figure>
-          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg bg-blue-200  shadow-lg  hover:translate-y-[-3px]">
-            <h1 className="text-[24px] font-bold text-white">Ethereum</h1>
-            <h2> 3.04% APY</h2>
-          </figure>
-          <figure className="flex h-[350px] w-[250px] flex-col items-center justify-center rounded-lg bg-blue-400 shadow-lg  hover:translate-y-[-3px]">
-            <h1 className="text-[24px] font-bold text-white">USDC</h1>
-            <h2> 5.05% APY</h2>
-          </figure>
-        </article>
+        <h1 className="text-[42px] font-bold tracking-tighter">
+          Deposit & Earn
+        </h1>
+        <p className="tracking-tighter">Outperform HODL-ing the asset 📈</p>
+        <ProductInfo />
         <NavLink
           to="/earn"
-          className="btn w-36 border-0 bg-yellow-200 hover:translate-y-[-2px] hover:bg-yellow-300"
+          className="btn w-72 border-0 bg-yellow-200 text-lg hover:translate-y-[-2px] hover:bg-yellow-300"
         >
-          Earn Interest →
+          Earn Crypto →
         </NavLink>
       </section>
       {/* Rewards Section */}
@@ -214,46 +207,74 @@ export default function HomePage() {
             Rewards galore
           </h1>
           <p className="tracking-tighter">Score points with every action 🎯</p>
-          <figure className=" m-2 rounded-lg bg-slate-100">
+          <figure className=" m-2">
             <InfoTable />
           </figure>
           <p className="tracking-tighter">
             Reach higher tiers to get bonus points 💰
           </p>
-          <figure className=" m-2 rounded-lg bg-slate-100 ">
+          <figure className=" m-2 ">
             <TierTable />
           </figure>
         </article>
         <NavLink
           to="/dashboard"
-          className="btn w-36 border-0 bg-yellow-200 hover:translate-y-[-2px] hover:bg-yellow-300"
+          className="btn w-72 border-0 bg-yellow-200 text-lg hover:translate-y-[-2px] hover:bg-yellow-300"
         >
           Score points →
         </NavLink>
       </section>
 
-      {/* Rewards Section */}
+      {/* Backers Section */}
       <section className="m-4 flex flex-col items-center justify-center">
-        <article className=" m-4 flex flex-col items-center justify-center">
+        <article className="m-4 flex flex-col items-center justify-center">
           <h1 className="text-[42px] font-bold tracking-tighter">
             Backed by institutional partners
           </h1>
-          <p className="tracking-tighter">Spencer Investments </p>
-          <p className="tracking-tighter">SQ Venture Partners</p>
-          <p className="tracking-tighter">Kee Capital</p>
-          <p className="tracking-tighter">G Combinator</p>
+
+          <div className="flex flex-wrap justify-center">
+            <div className="m-2">
+              <img
+                src="/logos/spy.png"
+                alt="Spy Investments"
+                className="h-20"
+              />
+              <p className="tracking-tighter">Spy Investments</p>
+            </div>
+            <div className="m-2">
+              <img src="/logos/sq.png" alt="SQ Partners" className="h-20" />
+              <p className="tracking-tighter">SQ Partners</p>
+            </div>
+            <div className="m-2">
+              <img src="/logos/kee.png" alt="Kee Capital" className="h-20" />
+              <p className="tracking-tighter">Kee Capital</p>
+            </div>
+            <div className="m-2">
+              <img src="/logos/gab.png" alt="G Combinator" className="h-20" />
+              <p className="tracking-tighter">G Combinator</p>
+            </div>
+          </div>
         </article>
       </section>
+
       <footer className="bottom-0 flex w-full justify-center p-2">
-        <p className="text-xs">
+        <p className="text-sm">
           © 2023 Bitjar -{" "}
           <a
             href="https://github.com/KH-Pua/bitjar-frontend"
             target="_blank"
-            className=" hover:underline"
+            className=" text-sm hover:underline"
             rel="noreferrer"
           >
-            Github
+            Github -{" "}
+          </a>
+          <a
+            href="https://twitter.com/bitjarxyz"
+            target="_blank"
+            className=" text-sm hover:underline"
+            rel="noreferrer"
+          >
+            Twitter
           </a>
         </p>
       </footer>

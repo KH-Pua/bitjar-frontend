@@ -40,8 +40,6 @@ let web3;
 
 export default function BaseTemplate() {
   const {
-    userWalletAdd,
-    setUserWalletAdd,
     userProfilePicture,
     setUserProfilePicture,
   } = useContext(GlobalContext);
@@ -53,7 +51,6 @@ export default function BaseTemplate() {
   const [template, setTemplate] = useState("");
   const [pathName, setPathName] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userData, setUserData] = useState("");
 
   const [account, setAccount] = useState("");
   const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
@@ -76,7 +73,6 @@ export default function BaseTemplate() {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: false },
-    { name: "Market", href: "/market", icon: ChartBarIcon, current: false },
     { name: "Earn", href: "/earn", icon: CurrencyDollarIcon, current: false },
     { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
     { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
@@ -88,20 +84,6 @@ export default function BaseTemplate() {
     { name: "Disconnect", onclick: disconnectWallet },
   ];
 
-  const fetchUserData = async () => {
-    try {
-      const user = await getUserData(account);
-      setUserData(user);
-      console.log("userdata", user);
-    } catch (error) {
-      console.error("Error in useEffect:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, [account]);
-
   // Set current to true if route matches nav
   const selectedPageButtonHandler = (array, route) => {
     return array.map((navObj) => {
@@ -110,6 +92,18 @@ export default function BaseTemplate() {
       }
       return navObj;
     });
+  };
+
+  // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
+  const verifyUserInfo = async () => {
+    try {
+      let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
+      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture)
+      // New user verification boolean
+      setVerifyNewUserBool(userInfo.data.output.newUser)
+    } catch (err) {
+      console.error("Error verify user info:", err);
+    };
   };
 
   useEffect(() => {
@@ -122,6 +116,7 @@ export default function BaseTemplate() {
       web3 = new Web3(window.ethereum);
     }
 
+    //Handles button selection on the sidebar
     let route = location.pathname;
     let updatedNav = selectedPageButtonHandler(navigation, route);
     setSidebarNavigation(updatedNav);
@@ -129,14 +124,15 @@ export default function BaseTemplate() {
   }, []);
 
   useEffect(() => {
+    // Check current path name and set sidebar navigation button
     if (pathName) {
       let updatedNav = selectedPageButtonHandler(navigation, pathName);
       setSidebarNavigation(updatedNav);
     }
   }, [pathName]);
 
-  // Variables to re-render sidebar/header
   useEffect(() => {
+    // Variables to re-render sidebar/header
     renderSideBarWithHeader();
   }, [
     sidebarNavigation,
@@ -145,6 +141,7 @@ export default function BaseTemplate() {
     account,
     userProfilePicture,
   ]);
+
 
   // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
   const verifyUserInfo = async () => {
@@ -175,26 +172,23 @@ export default function BaseTemplate() {
       try {
         await axios.post(
           `${BACKEND_URL}/transactions/points/add/`,
-          signUpPoints(userWalletAdd),
+          signUpPoints(account),
         );
       } catch (err) {
         console.log(err);
       }
     }
 
-    if (verifyNewUserBool && userWalletAdd) {
-      console.log("new user created, redirect to onboarding page");
+    if (verifyNewUserBool) {
+      console.log("new user created, redirect to onboarding page")
       recordSignupTransaction();
       navigate("/onboarding");
     } else {
       console.log("Existing user");
       renderSideBarWithHeader();
     }
-  }, [verifyNewUserBool, userWalletAdd]);
+  },[verifyNewUserBool])
 
-  const handleClick = (name) => {
-    navigate("/");
-  };
 
   const renderSideBarWithHeader = () => {
     if (sidebarNavigation && dropdownNavigation) {
@@ -400,8 +394,8 @@ export default function BaseTemplate() {
                   aria-hidden="true"
                 />
 
-                <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                  <form
+                <div className="flex flex-1 flex-row-reverse gap-x-4 self-stretch lg:gap-x-6">
+                  {/* <form
                     className="relative flex flex-1"
                     action="#"
                     method="GET"
@@ -420,21 +414,21 @@ export default function BaseTemplate() {
                       type="search"
                       name="search"
                     />
-                  </form>
+                  </form> */}
                   <div className="flex items-center gap-x-4 lg:gap-x-6">
-                    <button
+                    {/* <button
                       type="button"
                       className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
                     >
                       <span className="sr-only">View notifications</span>
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
+                    </button> */}
 
                     {/* Separator */}
-                    <div
+                    {/* <div
                       className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
                       aria-hidden="true"
-                    />
+                    /> */}
 
                     {/* Profile dropdown */}
                     {!account ? (
