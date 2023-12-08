@@ -42,7 +42,6 @@ export default function DashboardPage() {
 
   // Total Holdings and Total Earnings
   const [totalHoldings, setTotalHoldings] = useState(null);
-  // const [totalEarnings, setTotalEarnings] = useState(null);
 
   useEffect(() => {
     console.log("OUTSIDE ACCOUNT: ", account);
@@ -67,14 +66,6 @@ export default function DashboardPage() {
       getWalletAaveSupportedCoins(accountConfirmed);
     }
   }, [accountConfirmed]);
-
-  // const getUserId = async (walletaddress) => {
-  //   let userInformation = await axios.get(
-  //     `${BACKEND_URL}/users/userData/${walletaddress}`,
-  //   );
-  //   // console.log(`user information: ${userInformation.data.user.id}`);
-  //   setConfirmedUserId(userInformation.data.user.id);
-  // };
 
   const getUserTotalHoldings = async (walletaddress) => {
     let userInformation = await axios.get(
