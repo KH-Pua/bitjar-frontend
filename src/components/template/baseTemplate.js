@@ -39,10 +39,8 @@ function classNames(...classes) {
 let web3;
 
 export default function BaseTemplate() {
-  const {
-    userProfilePicture,
-    setUserProfilePicture,
-  } = useContext(GlobalContext);
+  const { userProfilePicture, setUserProfilePicture } =
+    useContext(GlobalContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -97,13 +95,16 @@ export default function BaseTemplate() {
   // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
   const verifyUserInfo = async () => {
     try {
-      let userInfo = await axios.post(`${BACKEND_URL}/users/getInfoViaWalletAdd`, {walletAddress: account});
-      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture)
+      let userInfo = await axios.post(
+        `${BACKEND_URL}/users/getInfoViaWalletAdd`,
+        { walletAddress: account },
+      );
+      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture);
       // New user verification boolean
-      setVerifyNewUserBool(userInfo.data.output.newUser)
+      setVerifyNewUserBool(userInfo.data.output.newUser);
     } catch (err) {
       console.error("Error verify user info:", err);
-    };
+    }
   };
 
   useEffect(() => {
@@ -142,25 +143,6 @@ export default function BaseTemplate() {
     userProfilePicture,
   ]);
 
-
-  // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
-  const verifyUserInfo = async () => {
-    try {
-      let userInfo = await axios.post(
-        `${BACKEND_URL}/users/getInfoViaWalletAdd`,
-        { walletAddress: account },
-      );
-      console.log(userInfo);
-      //Set wallet address & profile picture to global state for passing around.
-      setUserWalletAdd(userInfo.data.output.dataValues.walletAddress);
-      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture);
-      // New user verification boolean
-      setVerifyNewUserBool(userInfo.data.output.newUser);
-    } catch (err) {
-      console.error("Error verify user info:", err);
-    }
-  };
-
   useEffect(() => {
     if (account) {
       verifyUserInfo();
@@ -180,15 +162,14 @@ export default function BaseTemplate() {
     }
 
     if (verifyNewUserBool) {
-      console.log("new user created, redirect to onboarding page")
+      console.log("new user created, redirect to onboarding page");
       recordSignupTransaction();
       navigate("/onboarding");
     } else {
       console.log("Existing user");
       renderSideBarWithHeader();
     }
-  },[verifyNewUserBool])
-
+  }, [verifyNewUserBool]);
 
   const renderSideBarWithHeader = () => {
     if (sidebarNavigation && dropdownNavigation) {
