@@ -99,7 +99,7 @@ export default function RewardsPage() {
             <ProgressBar userData={user && user} />
           </div>
 
-          <main className="mt-3 grid w-full grid-cols-1 gap-[2em] xl:grid-cols-2">
+          <main className="mt-3 grid w-full grid-cols-1 gap-y-[3em] xl:grid-cols-2">
             <figure className="flex h-[500px] flex-col items-center">
               <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
                 Points Leaderboard 🍯
@@ -131,7 +131,7 @@ export default function RewardsPage() {
         </>
       ) : (
         <div className="h-screen w-full">
-          <header className="">
+          <header>
             <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
           </header>
           <main className="flex h-full items-center justify-center ">
