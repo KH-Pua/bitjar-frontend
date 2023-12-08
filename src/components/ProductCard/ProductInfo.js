@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import btcIcon from "cryptocurrency-icons/svg/color/btc.svg";
 import ethIcon from "cryptocurrency-icons/svg/color/eth.svg";
 import usdcIcon from "cryptocurrency-icons/svg/color/usdc.svg";
-import { fetchPoolData } from "../../components/api/defillama";
+import { fetchPoolData } from "../../utilities/defillama";
 
 const ProductInfo = () => {
   const [cryptoData, setCryptoData] = useState([]);

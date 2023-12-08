@@ -13,6 +13,9 @@ import { ConnectWalletDefault } from "../components/ConnectWalletDefault/Connect
 
 //-----------Utilities-----------//
 import { AAVE_ETH_CHAIN_COINLIST } from "../utilities/aaveEthChainAssetList.js";
+import { getUserData } from "../utilities/apiRequests.js";
+import { HoldingsTable } from "../components/Dashboard/HoldingsTable.js";
+import { formatEthValue } from "../utilities/formatting.js";
 
 // Web3 settings
 const settings = {
@@ -27,7 +30,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function DashboardPage() {
   const account = useOutletContext();
-
+  const [user, setUser] = useState("");
   const [balance, setBalance] = useState("0");
 
   // States for AAVE Support Token Balances
@@ -40,10 +43,20 @@ export default function DashboardPage() {
   const [totalHoldings, setTotalHoldings] = useState(null);
 
   useEffect(() => {
+    fetchUserData();
     if (window.ethereum && account) {
       web3 = new Web3(window.ethereum);
     }
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const user = await getUserData(account);
+      setUser(user);
+    } catch (error) {
+      console.error("Error in useEffect:", error);
+    }
+  };
 
   // When wallet is connected and account address is saved:
   // 1. Display ETH balance as numerical value
@@ -61,10 +74,11 @@ export default function DashboardPage() {
 
   const getUserTotalHoldings = async (walletaddress) => {
     const pastBitjarTransactions = await axios.get(
-      `${BACKEND_URL}/transactions/products/${account}`,
+      `${BACKEND_URL}/users/holdings/${account}`,
     );
+    console.log("Bitjartx", pastBitjarTransactions);
 
-    const userPastBitjarTransactions = pastBitjarTransactions.data.data;
+    const userPastBitjarTransactions = pastBitjarTransactions.data.output;
 
     let coinSymbolsList = [];
     let walletCoinAmount = {};
@@ -119,7 +133,7 @@ export default function DashboardPage() {
     try {
       const balanceWei = await web3.eth.getBalance(address);
       const balanceEth = web3.utils.fromWei(balanceWei, "ether");
-      setBalance(parseFloat(balanceEth).toFixed(8));
+      setBalance(formatEthValue(balanceEth));
     } catch (error) {
       console.error("Error fetching balance:", error);
     }
@@ -190,13 +204,15 @@ export default function DashboardPage() {
         {!account ? (
           <ConnectWalletDefault />
         ) : (
-          <h1 className="p-0 text-3xl font-bold text-black">Dashboard</h1>
+          <h1 className=" text-3xl font-bold text-black">
+            Welcome back {user.userName && user.userName}
+          </h1>
         )}
 
         {/* User Primary Information */}
         {!account ? null : (
-          <dl className="grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-2">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8">
+          <dl className="grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-3 lg:grid-cols-3">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-8 sm:px-6 xl:px-8">
               <dt className="text-sm font-medium leading-6 text-gray-500">
                 Total Holdings with BitJar
               </dt>
@@ -204,12 +220,20 @@ export default function DashboardPage() {
                 ${totalHoldings != null && totalHoldings.toLocaleString()}
               </dd>
             </div>
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-8 sm:px-6 xl:px-8">
               <dt className="text-sm font-medium leading-6 text-gray-500">
                 Wallet Balance
               </dt>
               <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
                 {balance} ETH
+              </dd>
+            </div>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-8 sm:px-6 xl:px-8">
+              <dt className="text-sm font-medium leading-6 text-gray-500">
+                Silver Tier
+              </dt>
+              <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                {user.points} Points
               </dd>
             </div>
           </dl>
@@ -263,10 +287,11 @@ export default function DashboardPage() {
         {!account ? null : (
           <div className="pb-[2em]">
             <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">
-              Transactions
+              Current Holdings
             </h1>
             <div>
               {account && <TransactionHistoryTable account={account} />}
+              {account && <HoldingsTable account={account} />}
             </div>
           </div>
         )}
