@@ -1,6 +1,6 @@
 //-----------Libraries-----------//
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 //-----------Components-----------//
 import { RefererOutput } from "./RefererOutput";
@@ -10,19 +10,18 @@ import { formatWalletAddress } from "../../utilities/formatting";
 
 //-----------Media-----------//
 import logo from "../../media/bitjar-logo.png";
+import { RankingOutput } from "./RankingOutput";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const PointsTable = ({ data }) => {
   const [windowWidth, setWindowWidth] = useState(null);
-  const [userRefererList, setUserRefererList] = useState(null);
+  const [userRefererList, setUserRefererList] = useState(null); // also dead code
 
   const reportWindowSize = () => {
     let widthOutput = window.innerWidth;
     setWindowWidth(widthOutput);
-    console.log(`width output is ${widthOutput}`);
   };
   window.addEventListener("resize", reportWindowSize);
-  // window.onresize = reportWindowSize; // Weird, earlier commit this worked. now it crashes saying React refreshing too much
 
   // Dead code, but leaving it here to talk about during the code review, as to why this code is not feasible
   const getUserReferer = async (address) => {
@@ -33,19 +32,11 @@ const PointsTable = ({ data }) => {
     setUserRefererList((prevState) => {
       return { ...prevState, [address]: referer.output };
     });
-
-    // await axios
-    //   .post(`${BACKEND_URL}/users/getUserRefererIfAny`, {
-    //     walletAddress: address,
-    //   })
-    //   .then((response) => {
-    //     console.log(response);
-    //   });
   };
 
   return (
     <>
-      <div className="overflow-y-auto bg-white px-[.5em]">
+      <div className="overflow-y-auto bg-white pr-[.5em]">
         <table className="text-left">
           {/* head */}
           <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
@@ -55,22 +46,27 @@ const PointsTable = ({ data }) => {
               {windowWidth <= 1024 ? null : (
                 <th className="table-header pr-[5em]">Wallet</th>
               )}
-              <th className="table-header pl-[1em] pr-[3em]">Points</th>
+              <th className="table-header pl-[1em] pr-[2.5em]">Points</th>
             </tr>
           </thead>
 
           {/* body */}
           {data &&
-            data.map((row) => (
+            data.map((row, index) => (
               <tbody key={row.id} className="border-b-[1px] border-slate-300">
                 <tr>
                   <td>
-                    <div className="avatar">
-                      <div className="mask mask-circle my-[1em] mr-[1em] h-12 w-12 bg-white">
-                        <img
-                          src={row.profilePicture ? row.profilePicture : logo}
-                          alt="DP"
-                        />
+                    <div className="relative">
+                      {index === 0 || index === 1 || index === 2 ? (
+                        <RankingOutput index={index + 1} />
+                      ) : null}
+                      <div className="avatar">
+                        <div className="mask mask-circle my-[1em] mr-[1em] h-[4rem] w-[4rem] bg-white">
+                          <img
+                            src={row.profilePicture ? row.profilePicture : logo}
+                            alt="DP"
+                          />
+                        </div>
                       </div>
                     </div>
                   </td>
