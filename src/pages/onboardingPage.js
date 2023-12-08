@@ -12,9 +12,7 @@ import { storage } from "../firebase/firebase.js";
 import {referralPoints} from "../utilities/pointsMessages.js"
 
 export default function OnboardingPage() {
-  const {
-    userWalletAdd,
-  } = useContext(GlobalContext);
+  const userWalletAdd = useContext(GlobalContext);
   const navigate = useNavigate();
   const STORAGE_KEY = "profilepic"
 
@@ -53,7 +51,7 @@ export default function OnboardingPage() {
         email: userEmail,
         userName: userName,
         profilePicture: imageURL,
-        referralCode: userReferralCode
+        //referralCode: userReferralCode
       }
 
       // update BE with inserted data
@@ -83,14 +81,14 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex flex-col sm:px-60">
-      <header className="p-10">
+    <div>
+      <header className="p-10 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-black">
           Make your Bitcoin work harder with Bitjar
         </h1>
       </header>
-      <main className="py-10">
-        <div className="px-4 sm:px-6 lg:px-8">
+      <main>
+        <div className="px-10 pb-10 sm:px-6 lg:px-8">
           <form onSubmit={handleSubmit}>
             <div className="space-y-12">
               <div className="border-b border-gray-900/10 pb-12">
@@ -108,7 +106,7 @@ export default function OnboardingPage() {
                       htmlFor="cover-photo"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Listing photo
+                      Profile Photo
                     </label>
                     <div className="mt-2 flex h-48 w-48 content-center justify-center rounded-full border border-dashed border-gray-900/25 px-6 py-10 text-center">
                       {imagePreviewURL ? (
