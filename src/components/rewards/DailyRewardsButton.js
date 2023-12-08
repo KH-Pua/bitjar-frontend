@@ -9,18 +9,31 @@ import { apiRequest } from "../../utilities/apiRequests";
 import { dailyLoginPoints } from "../../utilities/pointsMessages.js";
 import { formatTimeToClaim } from "../../utilities/formatting.js";
 
-const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
+const DailyRewardsButton = ({ address, fetchPointsHistory, fetchUserData }) => {
   const [isClaimed, setIsClaimed] = useState(false);
   const [timeToClaim, setTimeToClaim] = useState(null);
   const [renderNotification, setRenderNotification] = useState(false);
 
+  const [windowHeight, setWindowHeight] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  function reportWindowSize() {
+    let heightOutput = window.innerHeight;
+    let widthOutput = window.innerWidth;
+
+    setWindowHeight(heightOutput);
+    setWindowWidth(widthOutput);
+  }
+
+  window.onresize = reportWindowSize;
+
   // Check against db for rewards claim
   useEffect(() => {
     const fetchData = async () => {
-      if (user.id) {
+      if (address) {
         try {
           const checkClaimed = await apiRequest.get(
-            `/transactions/points/dailyCheck/${user.id}`,
+            `/transactions/points/dailyCheck/${address}`,
           );
           console.error("Points already claimed:", checkClaimed.data.result);
           setIsClaimed(true);
@@ -31,13 +44,13 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
     };
 
     fetchData();
-  }, [user.id]);
+  }, [address]);
 
   const collectDailySignInPoints = async () => {
     try {
       const response = await apiRequest.post(
         `/transactions/points/add/`,
-        dailyLoginPoints(user.walletAddress),
+        dailyLoginPoints(address),
       );
       console.log("Daily rewards points collected");
       fetchPointsHistory();
@@ -77,7 +90,11 @@ const DailyRewardsButton = ({ user, fetchPointsHistory, fetchUserData }) => {
         disabled={isClaimed}
       >
         {isClaimed
-          ? `Claim In ${formatTimeToClaim(timeToClaim)}`
+          ? `${
+              windowWidth <= 1024
+                ? `${formatTimeToClaim(timeToClaim)}`
+                : `Claim In ${formatTimeToClaim(timeToClaim)}`
+            }`
           : "📆 Claim Daily Login!"}
       </button>
       {renderNotification && <PointNotification data={dailyLoginPoints()} />}

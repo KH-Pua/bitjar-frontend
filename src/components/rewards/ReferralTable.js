@@ -2,39 +2,55 @@ import { formatWalletAddress } from "../../utilities/formatting";
 //-----------Media-----------//
 import logo from "../../media/bitjar-logo.png";
 
+import { useState } from "react";
+
 const ReferralTable = ({ data }) => {
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  function reportWindowSize() {
+    let widthOutput = window.innerWidth;
+    setWindowWidth(widthOutput);
+  }
+
+  window.addEventListener("resize", reportWindowSize);
+
   return (
-    <div className="w-full overflow-x-auto rounded-lg bg-slate-200 px-2 pb-2 shadow-lg">
-      <table className="table">
+    <div className="overflow-y-auto bg-white px-[1em]">
+      <table className="text-left">
         {/* head */}
-        <thead>
+        <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
           <tr>
-            <th></th>
-            <th>Username</th>
-            <th>Wallet</th>
-            <th>Referrals</th>
+            <th className="table-header lg:w-[25%]"></th>
+            <th className="table-header pr-[3em]">Username</th>
+            {windowWidth <= 1024 ? null : (
+              <th className="table-header pr-[5em]">Wallet</th>
+            )}
+            <th className="table-header pr-[2em]">Referrals</th>
           </tr>
         </thead>
         {/* body */}
         {data &&
           data.map((row) => (
-            <tbody key={row.id}>
+            <tbody key={row.id} className="border-b-[1px] border-slate-300">
               <tr>
                 <td>
-                  <div className="flex items-center gap-3">
-                    <div className="avatar">
-                      <div className="mask mask-squircle h-12 w-12 bg-slate-100">
-                        <img
-                          src={row.profilePicture ? row.profilePicture : logo}
-                          alt="DP"
-                        />
-                      </div>
+                  <div className="avatar">
+                    <div className="mask mask-circle my-[1em] mr-[1em] h-12 w-12 bg-white">
+                      <img
+                        src={row.profilePicture ? row.profilePicture : logo}
+                        alt="DP"
+                      />
                     </div>
                   </div>
                 </td>
-                <td>{row.userName ? row.userName : "-"}</td>
-                <td>{formatWalletAddress(row.walletAddress)}</td>
-                <td>{row.referralCount}</td>
+
+                <td className="font-semibold text-slate-900">
+                  {row.userName ? row.userName : "-"}
+                </td>
+                {windowWidth <= 1024 ? null : (
+                  <td>{formatWalletAddress(row.walletAddress)}</td>
+                )}
+                <td className="pl-[2em] font-semibold">{row.referralCount}</td>
               </tr>
             </tbody>
           ))}
