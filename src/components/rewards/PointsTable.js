@@ -1,13 +1,14 @@
-// Import Utilities
-import { formatWalletAddress } from "../../utilities/formatting";
-
-// Import Libraries
+//-----------Libraries-----------//
 import axios from "axios";
 import { useState } from "react";
 
-// Import Components
+//-----------Components-----------//
 import { RefererOutput } from "./RefererOutput";
 
+//-----------Utilities-----------//
+import { formatWalletAddress } from "../../utilities/formatting";
+
+//-----------Media-----------//
 import logo from "../../media/bitjar-logo.png";
 import { RankingOutput } from "./RankingOutput";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

@@ -2,20 +2,19 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-// Import Icons
-import { LinkIcon } from "@heroicons/react/24/outline";
+import { formatApyToPercent } from "../../utilities/formatting";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-export const TransactionHistoryTable = ({ account }) => {
-  const [userTransactionHistory, setUserTransactionHistory] = useState(null);
+export const HoldingsTable = ({ account }) => {
+  const [holdings, setHoldings] = useState(null);
 
   useEffect(() => {
     if (account) {
       axios
-        .get(`${BACKEND_URL}/transactions/products/${account}`, {}) //
+        .get(`${BACKEND_URL}/users/holdings/${account}`) //
         .then((response) => {
-          setUserTransactionHistory(response.data.data);
+          setHoldings(response.data.output);
         })
         .catch((err) => {
           console.log(err);
@@ -40,15 +39,15 @@ export const TransactionHistoryTable = ({ account }) => {
                 Amount
               </th>
               <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell">
-                Txn Address
+                APY%
               </th>
             </tr>
           </thead>
           {/* body */}
           <tbody className="divide-y divide-gray-200 bg-white">
             {account &&
-              userTransactionHistory &&
-              userTransactionHistory.map((element) => (
+              holdings &&
+              holdings.map((element) => (
                 <tr key={element.id}>
                   <td className="py-3 pl-4 text-sm font-medium text-gray-900">
                     {element.coin.coinName}
@@ -59,14 +58,8 @@ export const TransactionHistoryTable = ({ account }) => {
                   <td className="px-3 py-4 text-sm text-gray-500">
                     {element.amount}
                   </td>
-                  <td>
-                    <a
-                      href={`https://etherscan.io/tx/${element.transactionHash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <LinkIcon className="h-6 w-6 text-gray-500" />
-                    </a>
+                  <td className="px-3 py-4 text-sm text-gray-500">
+                    {formatApyToPercent(element.product.apr)}%
                   </td>
                 </tr>
               ))}

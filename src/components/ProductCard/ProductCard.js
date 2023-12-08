@@ -3,11 +3,12 @@ import btcIcon from "cryptocurrency-icons/svg/color/btc.svg";
 import usdcIcon from "cryptocurrency-icons/svg/color/usdc.svg";
 
 const ProductCard = ({
+  id,
   title,
   description,
   onDeposit,
   onWithdraw,
-  onChange,
+  handleChange,
   amount,
   tvl,
   apy,
@@ -43,9 +44,10 @@ const ProductCard = ({
         <div>APY: {apy ? apy.toFixed(2) : "Loading..."}%</div>
         <div className="mt-4">
           <input
+            id={id}
             type="text"
             value={amount}
-            onChange={(e) => onChange(e)}
+            onChange={handleChange}
             className="w-full rounded-md border border-gray-300 px-3 py-2"
             placeholder="Amount"
           />
