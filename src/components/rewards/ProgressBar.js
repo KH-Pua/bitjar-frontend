@@ -136,10 +136,10 @@ const ProgressBar = ({ userData }) => {
         <p className="">
           Earn{" "}
           <span className="animate-pulse font-bold text-sky-800">
-            {nextTierPoints}
+            {nextTierPoints.toFixed(2)}{" "}
           </span>
           more points to reach
-          <span className="font-bold">{nextTier} Tier!</span>
+          <span className="font-bold"> {nextTier} Tier!</span>
         </p>
 
         <button
