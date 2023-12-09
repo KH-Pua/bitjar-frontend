@@ -131,41 +131,58 @@ export default function HomePage() {
         duration: 0.8,
         ease: "easeInOut",
       }}
-      className="flex flex-col items-center justify-center "
+      className="flex w-full flex-col items-center justify-center"
     >
-      <header className="fixed top-0 z-50 flex w-11/12 flex-row items-center justify-between bg-white opacity-90 sm:w-10/12">
-        <figure className="flex flex-row items-center hover:scale-[1.03]">
-          <img src={logo} alt="BitJar Logo" className="h-16" />
-          <h1 className="translate-y-2 text-[36px] font-semibold tracking-tight">
-            Bitjar
-          </h1>
+      <header className="sticky top-0 z-50 flex h-auto w-full flex-row justify-between gap-8 bg-white px-[1em] py-[.5em] align-bottom opacity-90 lg:px-[10em]">
+        <figure className=" flex w-full flex-row items-center hover:scale-[1.03]">
+          <div>
+            <img
+              src={logo}
+              alt="BitJar Logo"
+              className="w-[4em] -translate-y-1"
+            />
+          </div>
+          <div>
+            <h1 className="w-full translate-y-2 text-[2rem] font-semibold tracking-tight lg:text-[2.5rem]">
+              Bitjar
+            </h1>
+          </div>
         </figure>
-        <nav className="flex flex-row gap-3">
-          <NavLink to="/" className="hover:translate-y-[-2px] hover:underline">
-            Home
-          </NavLink>
-          <NavLink
-            to="/buy"
-            className="hover:translate-y-[-2px] hover:underline"
-          >
-            Buy
-          </NavLink>
-          <NavLink
-            to="/earn"
-            className="hover:translate-y-[-2px] hover:underline"
-          >
-            Earn
-          </NavLink>
-          <NavLink
-            to="/rewards"
-            className="hover:translate-y-[-2px] hover:underline"
-          >
-            Rewards
-          </NavLink>
-        </nav>
+        <div className="flex flex-col justify-center ">
+          <nav className="flex flex-row gap-2 ">
+            <NavLink
+              to="/"
+              className="hover:translate-y-[-2px] hover:underline "
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/buy"
+              className="hover:translate-y-[-2px] hover:underline"
+            >
+              Buy
+            </NavLink>
+            <NavLink
+              to="/earn"
+              className="hover:translate-y-[-2px] hover:underline"
+            >
+              Earn
+            </NavLink>
+            <NavLink
+              to="/rewards"
+              className="hover:translate-y-[-2px] hover:underline"
+            >
+              Rewards
+            </NavLink>
+          </nav>
+        </div>
       </header>
-      <main className="mt-[4.5em] flex flex-col items-center justify-center p-3 lg:mt-[130px]">
-        <img src={logogif} alt="BitJar Logo" className=" mb-[2em] h-[14rem]" />
+      <main className="mt-[4.5em] flex flex-col items-center justify-center p-3 lg:mt-[3em]">
+        <img
+          src={logogif}
+          alt="BitJar Logo"
+          className=" mb-[2em] h-[14rem] lg:h-[18rem]"
+        />
         <h1 className="text-center text-[42px] font-bold tracking-tighter text-black">
           Make your Bitcoin work harder with Bitjar
         </h1>
@@ -188,17 +205,17 @@ export default function HomePage() {
         Sign Up / Sign In with Wallet
       </button>
       {/* AUM Section */}
-      <section className="mt-5 flex flex-col items-center pt-[1em] lg:flex-row">
-        <figure className="m-2 flex w-[400px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
-          <h1 className=" text-[60px] font-bold text-yellow-400">
+      <section className="mt-5 flex w-full flex-col items-center justify-center pt-[1em] lg:flex-row">
+        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[30%]">
+          <h1 className=" text-[3rem] font-bold text-yellow-400 lg:text-[4rem]">
             ${assets.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">
             in assets deposited through Bitjar
           </h2>
         </figure>
-        <figure className="m-2 flex w-[400px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 ">
-          <h1 className=" text-[60px] font-bold text-yellow-400">
+        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[30%] ">
+          <h1 className=" text-[3rem] font-bold text-yellow-400 lg:text-[4rem]">
             ${interest.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">of crypto earned by users</h2>
@@ -251,15 +268,15 @@ export default function HomePage() {
         </NavLink>
       </section>
       {/* Backers Section */}
-      <section className="m-4 flex flex-col items-center justify-center pt-[4em]">
-        <article className=" flex flex-col items-center justify-center">
+      <section className="m-4 flex w-full flex-col items-center justify-center pt-[4em]">
+        <article className="flex w-full flex-col items-center justify-center">
           <h1 className="text-center text-[42px] font-bold tracking-tighter">
             Backed by institutional partners
           </h1>
           <p className="pb-[2em] tracking-tighter">
             Over 420,000,000 in SHIBA raised since inception 💰
           </p>
-          <div className="mt-4 flex flex-row justify-center">
+          <div className="mt-4 flex w-full flex-row justify-center">
             <ProfileImage src="/logos/spy.png" label="Spy Investments" />
             <ProfileImage src={sqicon} label="SQ Partners" />
             <ProfileImage src="/logos/kee.png" label="Kee Capital" />
