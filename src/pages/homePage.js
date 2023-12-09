@@ -19,6 +19,8 @@ import { signUpPoints } from "../utilities/pointsMessages.js";
 import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import btcIcon from "cryptocurrency-icons/svg/color/btc.svg";
+import spencerIcon from "../media/InvestorIcons/punk.jpg";
+
 import gabicon from "../media/InvestorIcons/wonderpal.png";
 import sqicon from "../media/InvestorIcons/gharliera-logo.jpg";
 import githiredlogo from "../media/CompanyIcons/githiredLogo.png";
@@ -260,7 +262,7 @@ export default function HomePage() {
             Over 420,000,000 in SHIBA raised since inception 💰
           </p>
           <div className="mt-4 flex flex-row justify-center">
-            <ProfileImage src="/logos/spy.png" label="Spy Investments" />
+            <ProfileImage src={spencerIcon} label="Spy Investments" />
             <ProfileImage src={sqicon} label="SQ Partners" />
             <ProfileImage src="/logos/kee.png" label="Kee Capital" />
             <ProfileImage src={gabicon} label="G Combinator" />

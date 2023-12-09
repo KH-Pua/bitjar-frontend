@@ -53,6 +53,7 @@ export default function DashboardPage() {
     try {
       const user = await getUserData(account);
       setUser(user);
+      console.log("Userdata", user);
     } catch (error) {
       console.error("Error in useEffect:", error);
     }
@@ -205,7 +206,7 @@ export default function DashboardPage() {
           <ConnectWalletDefault />
         ) : (
           <h1 className=" text-3xl font-bold text-black">
-            Welcome back {user.userName && user.userName}
+            Welcome back{user.userName ? `, ${user.userName}` : ""}
           </h1>
         )}
 
