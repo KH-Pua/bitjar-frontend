@@ -97,20 +97,18 @@ export default function BaseTemplate() {
   // On mount - get account, check registered, updates route
   useEffect(() => {
     // Wallet ID whenever page refreshes
-    setAccount(localStorage.getItem("connection_meta"));
+    setAccount(localStorage.getItem("connection_meta")); //Check for web3 wallet
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
+
+    //Handles button selection on the sidebar
+    let route = location.pathname;
+    let updatedNav = selectedPageButtonHandler(navigation, route);
+    setSidebarNavigation(updatedNav);
+    setDropdownNavigation(userNavigation);
     if (account) {
       verifyUserInfo();
-
-      //Check for web3 wallet
-      if (window.ethereum) {
-        web3 = new Web3(window.ethereum);
-      }
-
-      //Handles button selection on the sidebar
-      let route = location.pathname;
-      let updatedNav = selectedPageButtonHandler(navigation, route);
-      setSidebarNavigation(updatedNav);
-      setDropdownNavigation(userNavigation);
     }
   }, [account]);
 
