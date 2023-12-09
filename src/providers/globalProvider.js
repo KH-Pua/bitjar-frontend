@@ -1,19 +1,31 @@
 import React, { useState, createContext, useEffect } from "react";
 import axios from "axios";
 import BACKEND_URL from "../constants";
+import { MoonPayProvider } from "@moonpay/moonpay-react";
 
 export const GlobalContext = createContext();
 
 export default function GlobalProvider({ children }) {
-  //Declare state here
+
+  const [userWalletAdd, setUserWalletAdd] = useState("");
+  const [userProfilePicture, setUserProfilePicture] = useState("");
 
   const infoToPass = {
-    // Add other state or functions that you need to pass here
+    userWalletAdd,
+    setUserWalletAdd,
+    userProfilePicture,
+    setUserProfilePicture
   };
 
   return (
     <GlobalContext.Provider value={infoToPass}>
-      {children}
+      <MoonPayProvider
+        apiKey={process.env.REACT_APP_MOONPAY_KEY}
+        environment="sandbox"
+        debug
+      >
+        {children}
+      </MoonPayProvider>
     </GlobalContext.Provider>
   );
 }

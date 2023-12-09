@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* CTA-BUTTONS */
+.connectWalletBtn {
+  @apply scale-100 rounded-md bg-yellow-300 px-[1em] py-2 font-bold transition-all hover:bg-yellow-400 active:scale-95;
+}
+
+.disconnectWalletBtn {
+  @apply scale-100 rounded-md bg-slate-200 px-[1em] py-2 font-semibold transition-all hover:bg-slate-300 active:scale-95;
+}
+
+.pri-cta-btn {
+  @apply scale-100 rounded-md bg-indigo-400 px-[1em] py-2 font-bold transition-all hover:bg-indigo-500 active:scale-95;
+}
+
+/* Scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  @apply bg-slate-300;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  @apply bg-slate-500;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-600;
+}
+
+/* Table Formatting */
+.table-header {
+  @apply py-[1em] text-[1rem] font-semibold;
+}

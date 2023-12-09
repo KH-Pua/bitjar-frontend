@@ -5,14 +5,23 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
+    "@moonpay/moonpay-js": "^0.3.1",
+    "@moonpay/moonpay-react": "^1.4.1",
     "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@web3-onboard/core": "^2.21.2",
+    "@web3-onboard/injected-wallets": "^2.10.10",
+    "alchemy-sdk": "^3.1.0",
     "axios": "^1.6.2",
+    "cryptocurrency-icons": "^0.18.1",
+    "ethers": "^6.9.0",
     "firebase": "^10.7.0",
     "framer-motion": "^10.6.8",
+    "qs": "^6.11.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.20.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "web3": "^4.2.2"
   },
   "scripts": {
     "start": "react-scripts start",
