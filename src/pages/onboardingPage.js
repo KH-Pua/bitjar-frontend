@@ -10,7 +10,6 @@ import { ref as sRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase/firebase.js";
 
 //-----------Utilities-----------//
-import BACKEND_URL from "../constants.js";
 import { referralPoints } from "../utilities/pointsMessages.js";
 
 //-----------Media-----------//

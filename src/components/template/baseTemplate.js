@@ -1,12 +1,11 @@
 //-----------Libraries-----------//
-import { useState, useEffect, useContext, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import Web3 from "web3";
 
 //-----------Utilities-----------//
 import { formatWalletAddress } from "../../utilities/formatting";
-import { GlobalContext } from "../../providers/globalProvider.js";
 import { apiRequest } from "../../utilities/apiRequests.js";
 import { signUpPoints } from "../../utilities/pointsMessages.js";
 
@@ -29,6 +28,8 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 import logo from "../../media/bitjar-logo.png";
+import bitjar from "../../media/BitJar-gif.gif";
+
 import OnboardingModal from "./OnboardingModal.js";
 
 function classNames(...classes) {
@@ -38,8 +39,6 @@ function classNames(...classes) {
 let web3;
 
 export default function BaseTemplate() {
-  const { userProfilePicture, setUserProfilePicture } =
-    useContext(GlobalContext);
   const location = useLocation();
 
   const [sidebarNavigation, setSidebarNavigation] = useState("");
@@ -49,6 +48,7 @@ export default function BaseTemplate() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [account, setAccount] = useState("");
+  const [profilePicture, setProfilePicture] = useState("");
   const [verifyNewUserBool, setVerifyNewUserBool] = useState(null);
 
   const connectWallet = async () => {
@@ -86,7 +86,7 @@ export default function BaseTemplate() {
       let userInfo = await apiRequest.post(`/users/getInfoViaWalletAdd`, {
         walletAddress: account,
       });
-      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture);
+      setProfilePicture(userInfo.data.output.dataValues.profilePicture);
       // New user verification boolean
       setVerifyNewUserBool(userInfo.data.output.newUser);
     } catch (err) {
@@ -98,28 +98,22 @@ export default function BaseTemplate() {
   useEffect(() => {
     // Wallet ID whenever page refreshes
     setAccount(localStorage.getItem("connection_meta"));
-    verifyUserInfo();
-
-    //Check for web3 wallet
-    if (window.ethereum) {
-      web3 = new Web3(window.ethereum);
-    }
-
-    //Handles button selection on the sidebar
-    let route = location.pathname;
-    let updatedNav = selectedPageButtonHandler(navigation, route);
-    setSidebarNavigation(updatedNav);
-    setDropdownNavigation(userNavigation);
-  }, []);
-
-  // VerifyUser Info
-  useEffect(() => {
     if (account) {
       verifyUserInfo();
+
+      //Check for web3 wallet
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+      }
+
+      //Handles button selection on the sidebar
+      let route = location.pathname;
+      let updatedNav = selectedPageButtonHandler(navigation, route);
+      setSidebarNavigation(updatedNav);
+      setDropdownNavigation(userNavigation);
     }
   }, [account]);
 
-  //
   useEffect(() => {
     async function recordSignupTransaction() {
       try {
@@ -169,7 +163,7 @@ export default function BaseTemplate() {
     dropdownNavigation,
     sidebarOpen,
     account,
-    userProfilePicture,
+    profilePicture,
   ]);
 
   const renderSideBarWithHeader = () => {
@@ -445,7 +439,7 @@ export default function BaseTemplate() {
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-8 w-8 rounded-full bg-gray-50"
-                            src={userProfilePicture ? userProfilePicture : ""}
+                            src={profilePicture ? profilePicture : bitjar}
                             alt="img"
                           />
                           <span className="hidden lg:flex lg:items-center">

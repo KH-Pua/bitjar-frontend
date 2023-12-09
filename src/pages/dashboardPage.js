@@ -53,7 +53,6 @@ export default function DashboardPage() {
     try {
       const user = await getUserData(account);
       setUser(user);
-      console.log("Userdata", user);
     } catch (error) {
       console.error("Error in useEffect:", error);
     }
@@ -90,8 +89,6 @@ export default function DashboardPage() {
       coinSymbolsList.push(coinSymbol);
       walletCoinAmount[coinSymbol] = userPastBitjarTransactions[coin].amount;
     }
-
-    console.log(`walletCoinAmount is ${JSON.stringify(walletCoinAmount)}`);
 
     let coinData = {};
 
@@ -197,7 +194,6 @@ export default function DashboardPage() {
     }
 
     setImagesFlag(true);
-    console.log("All Images Loaded");
   };
 
   return (
