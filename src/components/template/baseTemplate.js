@@ -1,15 +1,13 @@
 //-----------Libraries-----------//
 import { useState, useEffect, useContext, Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 import Web3 from "web3";
-import axios from "axios";
 
 //-----------Utilities-----------//
 import { formatWalletAddress } from "../../utilities/formatting";
 import { GlobalContext } from "../../providers/globalProvider.js";
-import BACKEND_URL from "../../constants.js";
-import { getUserData } from "../../utilities/apiRequests";
+import { apiRequest } from "../../utilities/apiRequests.js";
 import { signUpPoints } from "../../utilities/pointsMessages.js";
 
 //-----------Media-----------//
@@ -31,6 +29,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 import logo from "../../media/bitjar-logo.png";
+import OnboardingModal from "./OnboardingModal.js";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -41,7 +40,6 @@ let web3;
 export default function BaseTemplate() {
   const { userProfilePicture, setUserProfilePicture } =
     useContext(GlobalContext);
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [sidebarNavigation, setSidebarNavigation] = useState("");
@@ -51,7 +49,7 @@ export default function BaseTemplate() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [account, setAccount] = useState("");
-  const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
+  const [verifyNewUserBool, setVerifyNewUserBool] = useState(null);
 
   const connectWallet = async () => {
     try {
@@ -78,27 +76,16 @@ export default function BaseTemplate() {
   ];
 
   const userNavigation = [
-    { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
+    // { name: "Switch wallet", onclick: "" }, -- not in use
     { name: "Disconnect", onclick: disconnectWallet },
   ];
 
-  // Set current to true if route matches nav
-  const selectedPageButtonHandler = (array, route) => {
-    return array.map((navObj) => {
-      if (navObj.href === route) {
-        navObj.current = true;
-      }
-      return navObj;
-    });
-  };
-
-  // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
+  // Verify user info. If is new user, create account + redirect to onbording, else re-render sidebarWithHeader.
   const verifyUserInfo = async () => {
     try {
-      let userInfo = await axios.post(
-        `${BACKEND_URL}/users/getInfoViaWalletAdd`,
-        { walletAddress: account },
-      );
+      let userInfo = await apiRequest.post(`/users/getInfoViaWalletAdd`, {
+        walletAddress: account,
+      });
       setUserProfilePicture(userInfo.data.output.dataValues.profilePicture);
       // New user verification boolean
       setVerifyNewUserBool(userInfo.data.output.newUser);
@@ -107,6 +94,7 @@ export default function BaseTemplate() {
     }
   };
 
+  // On mount - get account, check registered, updates route
   useEffect(() => {
     // Wallet ID whenever page refreshes
     setAccount(localStorage.getItem("connection_meta"));
@@ -123,6 +111,47 @@ export default function BaseTemplate() {
     setSidebarNavigation(updatedNav);
     setDropdownNavigation(userNavigation);
   }, []);
+
+  // VerifyUser Info
+  useEffect(() => {
+    if (account) {
+      verifyUserInfo();
+    }
+  }, [account]);
+
+  //
+  useEffect(() => {
+    async function recordSignupTransaction() {
+      try {
+        await apiRequest.post(
+          `/transactions/points/add/`,
+          signUpPoints(account),
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    if (verifyNewUserBool) {
+      console.log("New user created, launch onboarding");
+      recordSignupTransaction();
+    } else {
+      console.log("Existing user");
+      renderSideBarWithHeader();
+    }
+  }, [verifyNewUserBool]);
+
+  //-----------Page layout functions-----------//
+
+  // Set current to true if route matches nav
+  const selectedPageButtonHandler = (array, route) => {
+    return array.map((navObj) => {
+      if (navObj.href === route) {
+        navObj.current = true;
+      }
+      return navObj;
+    });
+  };
 
   useEffect(() => {
     // Check current path name and set sidebar navigation button
@@ -143,39 +172,12 @@ export default function BaseTemplate() {
     userProfilePicture,
   ]);
 
-  useEffect(() => {
-    if (account) {
-      verifyUserInfo();
-    }
-  }, [account]);
-
-  useEffect(() => {
-    async function recordSignupTransaction() {
-      try {
-        await axios.post(
-          `${BACKEND_URL}/transactions/points/add/`,
-          signUpPoints(account),
-        );
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    if (verifyNewUserBool) {
-      console.log("new user created, redirect to onboarding page");
-      recordSignupTransaction();
-      navigate("/onboarding");
-    } else {
-      console.log("Existing user");
-      renderSideBarWithHeader();
-    }
-  }, [verifyNewUserBool]);
-
   const renderSideBarWithHeader = () => {
     if (sidebarNavigation && dropdownNavigation) {
       setTemplate(
         <>
           <div>
+            {verifyNewUserBool && <OnboardingModal address={account} />}
             <Transition.Root show={sidebarOpen} as={Fragment}>
               <Dialog
                 as="div"
