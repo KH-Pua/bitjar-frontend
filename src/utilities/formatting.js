@@ -5,6 +5,12 @@ const formatCurrency = (amount) => {
     currency: "USD",
   }).format(amount);
 };
+
+// Format APY from float to percentage value
+const formatApyToPercent = (value) => {
+  return parseFloat(value).toFixed(4) * 100;
+};
+
 // Format Ethereum value to a maximum of 4 decimal points
 const formatEthValue = (value) => {
   return parseFloat(value).toFixed(4);
@@ -66,4 +72,5 @@ export {
   formatTimeToClaim,
   formatCurrency,
   formatEthValue,
+  formatApyToPercent,
 };

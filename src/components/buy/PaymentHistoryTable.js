@@ -25,7 +25,7 @@ const PaymentHistoryTable = ({ data }) => {
         {/* head */}
         <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
           <tr>
-            <th className="table-header lg:w-[25%]">Timestamp</th>
+            <th className="table-header pl-[1em] lg:w-[25%]">Timestamp</th>
             <th className="table-header pr-[3em]">Payment Status</th>
             <th className="table-header pr-[3em]">Purchase Amount (USD)</th>
             <th className="table-header pr-[3em]">Coin bought</th>
@@ -40,7 +40,9 @@ const PaymentHistoryTable = ({ data }) => {
             // Not sure why I can't put border-b-[1px]
             <tbody key={row.id} className="border-b-[1px] border-slate-300">
               <tr>
-                <td>{formatTimestamp(row.createdAt)}</td>
+                <td className="py-[1em] pl-[1em]">
+                  {formatTimestamp(row.createdAt)}
+                </td>
                 <td>{row.paymentStatus}</td>
                 <td>{row.fiatAmountUsd}</td>
                 <td>{row.coin.coinSymbol}</td>

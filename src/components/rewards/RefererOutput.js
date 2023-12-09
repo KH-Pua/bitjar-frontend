@@ -32,24 +32,14 @@ export const RefererOutput = ({ walletaddress }) => {
 
   return (
     <>
-      {
-        refererName && refererName != "xx" ? (
-          <div className="text-[.7rem] font-medium text-slate-500">
-            Invited By:
-            <p className=" inline text-[.8rem] font-semibold text-slate-600">
-              <div className="-mt-1">{refererName && refererName}</div>
-            </p>
+      {refererName && refererName != "xx" ? (
+        <div className="text-[.7rem] font-medium text-slate-500">
+          Invited By:
+          <div className=" inline text-[.8rem] font-semibold text-slate-600">
+            <p className="-mt-1">{refererName && refererName}</p>
           </div>
-        ) : null
-        // <div className="text-[.7rem] font-medium text-slate-500">
-        //   <p className="inline text-[.8rem] font-semibold text-slate-600">
-        //     <div>
-        //       <br />
-        //       <br />
-        //     </div>
-        //   </p>
-        // </div>
-      }
+        </div>
+      ) : null}
     </>
   );
 };

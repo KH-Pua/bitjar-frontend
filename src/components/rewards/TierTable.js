@@ -27,7 +27,7 @@ const TierTable = ({ data }) => {
             <td>2.0x</td>
           </tr>
           <tr>
-            <td>Diamond</td>
+            <td>Diamond 💎</td>
             <td>100,000</td>
             <td>3.0x</td>
           </tr>
