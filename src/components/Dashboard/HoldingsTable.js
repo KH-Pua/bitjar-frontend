@@ -45,8 +45,8 @@ export const HoldingsTable = ({ account }) => {
           </thead>
           {/* body */}
           <tbody className="divide-y divide-gray-200 bg-white">
-            {account &&
-              holdings &&
+            {account && 
+              holdings ?
               holdings.map((element) => (
                 <tr key={element.id}>
                   <td className="py-3 pl-4 text-sm font-medium text-gray-900">
@@ -62,7 +62,14 @@ export const HoldingsTable = ({ account }) => {
                     {formatApyToPercent(element.product.apr)}%
                   </td>
                 </tr>
-              ))}
+              ))
+              : 
+              <tr>
+                <td className="px-3 py-3 text-base font-medium text-gray-900 col-span-4">
+                   No holding at the moment
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
