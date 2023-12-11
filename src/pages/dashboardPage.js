@@ -338,10 +338,7 @@ export default function DashboardPage() {
             <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">
               Current Holdings
             </h1>
-            <div>
-              {/* {account && <TransactionHistoryTable account={account} />} */}
-              {account && <HoldingsTable account={account} />}
-            </div>
+            <div>{account && <HoldingsTable account={account} />}</div>  
           </div>
         )}
       </div>
