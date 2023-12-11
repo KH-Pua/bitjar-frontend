@@ -92,6 +92,7 @@ const ProgressBar = ({ userData }) => {
           <div className="flex flex-col">
             <p className=" text-xl font-bold">
               {userName && userName}
+              {"  "}
               <span className="font-semibold text-slate-600">
                 {formatWalletAddress(userData && walletAddress)}
               </span>

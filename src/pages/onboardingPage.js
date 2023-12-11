@@ -1,20 +1,24 @@
+//-----------NOT IN USE-----------//
+
 //-----------Libraries-----------//
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { PhotoIcon } from '@heroicons/react/24/solid'
 import axios from "axios";
+
+//-----------Firebase-----------//
 import { ref as sRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/firebase.js";
 
 //-----------Utilities-----------//
-import { GlobalContext } from "../providers/globalProvider.js";
-import BACKEND_URL from "../constants.js";
-import { storage } from "../firebase/firebase.js";
-import {referralPoints} from "../utilities/pointsMessages.js"
+import { referralPoints } from "../utilities/pointsMessages.js";
+
+//-----------Media-----------//
+import { PhotoIcon } from "@heroicons/react/24/solid";
 
 export default function OnboardingPage() {
-  const {userWalletAdd} = useContext(GlobalContext);
   const navigate = useNavigate();
-  const STORAGE_KEY = "profilepic"
+  const userWalletAdd = 2;
+  const STORAGE_KEY = "profilepic";
 
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -25,24 +29,24 @@ export default function OnboardingPage() {
   const [fileInputInitialValue, setFileInputInitialValue] = useState("");
   const [imagePreviewURL, setImagePreviewURL] = useState("");
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setImagePreviewURL(URL.createObjectURL(e.target.files[0]));
+  };
+
   const handleSubmit = async (e) => {
-    console.log("enter handle submit")
+    console.log("enter handle submit");
     e.preventDefault();
     console.log(userWalletAdd);
     if (userName && userEmail && userWalletAdd) {
-
-      let imageURL
+      let imageURL;
 
       // Verified the id of the created listing, then upload photo to Firebase
       try {
-          const fileRef = sRef(
-            storage,
-            `${STORAGE_KEY}/${userWalletAdd}/`
-          );
+        const fileRef = sRef(storage, `${STORAGE_KEY}/${userWalletAdd}/`);
 
-          await uploadBytes(fileRef, file);
-          imageURL = await getDownloadURL(fileRef);
-
+        await uploadBytes(fileRef, file);
+        imageURL = await getDownloadURL(fileRef);
       } catch (error) {
         console.error("Error handling photo upload:", error);
       }
@@ -53,21 +57,36 @@ export default function OnboardingPage() {
         userName: userName,
         profilePicture: imageURL,
         //referralCode: userReferralCode
-      }
+      };
 
       // update BE with inserted data
       try {
         // Edit user data
-        const infoSubmit = await axios.post(`${BACKEND_URL}/users/editInfo`, editData);
+        const infoSubmit = await axios.post(
+          `${BACKEND_URL}/users/editInfo`,
+          editData,
+        );
 
         // If user input referral code
         if (userReferralCode) {
           // Request referer wallet address
-          const queryReferrerUser = await axios.post(`${BACKEND_URL}/users/getUserDataViaReferralCode`, {referralCode: userReferralCode});
+          const queryReferrerUser = await axios.post(
+            `${BACKEND_URL}/users/getUserDataViaReferralCode`,
+            { referralCode: userReferralCode },
+          );
           // Record transactions on referral
-          const recordTransaction = await axios.post(`${BACKEND_URL}/transactions/points/add/`, referralPoints(queryReferrerUser.data.output.walletAddress, userWalletAdd));
+          const recordTransaction = await axios.post(
+            `${BACKEND_URL}/transactions/points/add/`,
+            referralPoints(
+              queryReferrerUser.data.output.walletAddress,
+              userWalletAdd,
+            ),
+          );
           // Update referral table
-          const recordReferral = await axios.post(`${BACKEND_URL}/users/recordReferrerAndReferree/`, {walletAddress: userWalletAdd, referralCode: userReferralCode});
+          const recordReferral = await axios.post(
+            `${BACKEND_URL}/users/recordReferrerAndReferree/`,
+            { walletAddress: userWalletAdd, referralCode: userReferralCode },
+          );
         }
 
         if (infoSubmit) {
@@ -77,29 +96,21 @@ export default function OnboardingPage() {
       } catch (err) {
         console.error("Error submit user info:", err);
       }
-    };
-  }
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-    setImagePreviewURL(URL.createObjectURL(e.target.files[0]));
+    }
   };
 
   return (
-    <div>
-      <header className="p-10 sm:px-6 lg:px-8">
+    <div className="flex flex-col items-center justify-center">
+      <header className="">
         <h1 className="text-3xl font-bold text-black">
-          Make your Bitcoin work harder with Bitjar
+          Time to get your Bitcoin to work
         </h1>
       </header>
       <main>
         <div className="px-10 pb-10 sm:px-6 lg:px-8">
-          <form onSubmit={handleSubmit}>
+          <form>
             <div className="space-y-12">
               <div className="border-b border-gray-900/10 pb-12">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Onboarding
-                </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-600">
                   Edit your personal information here
                 </p>
@@ -172,8 +183,7 @@ export default function OnboardingPage() {
                     <div className="mt-2">
                       <input
                         type="text"
-                        name="username"
-                        id="username"
+                        id="userName"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-yellow-200 sm:text-sm sm:leading-6"
                         value={userName}
                         onChange={(e) => setUserName(e.target.value)}
@@ -191,7 +201,6 @@ export default function OnboardingPage() {
                     <div className="mt-2">
                       <input
                         id="email"
-                        name="email"
                         type="email"
                         autoComplete="email"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-yellow-200 sm:text-sm sm:leading-6"
@@ -245,4 +254,4 @@ export default function OnboardingPage() {
       </main>
     </div>
   );
-};
+}
