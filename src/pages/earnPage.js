@@ -10,9 +10,16 @@ import ProductCard from "../components/ProductCard/ProductCard.js";
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 
 //-----------Utilities-----------//
-import { formatEthValue, formatCurrency } from "../utilities/formatting.js";
+import {
+  formatEthValue,
+  formatCurrency,
+  formatWalletAddress,
+} from "../utilities/formatting.js";
 import erc20ABI from "../utilities/erc20.abi.json";
 import aaveLendingPoolABI from "../utilities/aaveLendingPoolABI.json";
+import axios from "axios";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
@@ -150,6 +157,15 @@ export default function EarnPage() {
       console.log(
         `Deposited ${depositAmount} of ${token} to Aave v3 (${pool})`,
       );
+
+      let depositFloat = parseFloat(depositAmount);
+
+      await axios.post(`${BACKEND_URL}/transactions/products/deposit`, {
+        depositAmount: depositFloat,
+        token: token,
+        poolAddress: lendingPoolAddress,
+        walletAddress: account,
+      });
     } catch (error) {
       console.error(`Error in supplying ${token} to ${pool}:`, error);
     }
@@ -190,6 +206,14 @@ export default function EarnPage() {
       console.log(
         `Withdraw ${withdrawAmount} of ${token} from Aave v3 (${pool})`,
       );
+
+      let withdrawFloat = parseFloat(withdrawAmount);
+      await axios.post(`${BACKEND_URL}/transactions/products/withdraw`, {
+        withdrawAmount: withdrawFloat,
+        token: token,
+        poolAddress: lendingPoolAddress,
+        walletAddress: account,
+      });
     } catch (error) {
       console.error(`Error in withdrawing ${token} from ${pool}:`, error);
     }
@@ -486,7 +510,7 @@ export default function EarnPage() {
                 amount={amount.WETH}
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("WETH", "main")}
-                onWithdraw={() => withdraw("WTH", "main")}
+                onWithdraw={() => withdraw("WETH", "main")}
                 tvl={formatCurrency(wethPoolData.tvlUsd)}
                 apy={wethPoolData.apy}
                 currency="ETH"
@@ -517,8 +541,8 @@ export default function EarnPage() {
               />
               <ProductCard
                 id="sepoliaWETH"
-                title="SEPOLIA WTH"
-                description="Lend on Aave V3 protocol"
+                title="SEPOLIA WETH"
+                description="Lend on AAVE V3 Sepolia Testnet"
                 amount={amount.sepoliaWETH}
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("sepoliaWETH", "sepolia")}
@@ -530,7 +554,7 @@ export default function EarnPage() {
               <ProductCard
                 id="sepoliaWBTC"
                 title="SEPOLIA WBTC"
-                description="Lend on AAVE V3 testnet"
+                description="Lend on AAVE V3 Sepolia Testnet"
                 amount={amount.sepoliaWBTC}
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("sepoliaWBTC", "sepolia")}
@@ -542,7 +566,7 @@ export default function EarnPage() {
               <ProductCard
                 id="sepoliaUSDC"
                 title="SEPOLIA USDC"
-                description="Lend on AAVE V3 testnet"
+                description="Lend on AAVE V3 Sepolia Testnet"
                 amount={amount.sepoliaUSDC}
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("sepoliaUSDC", "sepolia")}
@@ -624,10 +648,10 @@ export default function EarnPage() {
                         {formatEthValue(tx.value)} ETH
                       </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                        {tx.from}
+                        {formatWalletAddress(tx.from)}
                       </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                        {tx.to}
+                        {formatWalletAddress(tx.to)}
                       </td>
                     </tr>
                   ))}

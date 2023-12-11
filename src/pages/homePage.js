@@ -134,7 +134,7 @@ export default function HomePage() {
       className="flex w-full flex-col items-center justify-center"
     >
       <header className="sticky top-0 z-50 flex h-auto w-full flex-row justify-between gap-8 bg-white px-[1em] py-[.5em] align-bottom opacity-90 lg:px-[10em]">
-        <figure className=" flex w-full flex-row items-center hover:scale-[1.03]">
+        <figure className=" flex w-full origin-left flex-row items-center transition-all hover:scale-[1.05]">
           <div>
             <img
               src={logo}
