@@ -21,6 +21,7 @@ export default function SwapPage() {
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
   const [swapQuote, setSwapQuote] = useState(null);
+  const [gasPrice, setGasPrice] = useState("");
 
   // Pass in as Props to Swap Components in order to set state in Parent component
   const [fromCoin, setFromCoin] = useState(null);
@@ -151,6 +152,10 @@ export default function SwapPage() {
       );
       quoteResponse.data.gasPrice = 50000000000; // Hardcode - Increase gas price
       setSwapQuote(quoteResponse.data);
+
+      let result = quoteResponse.data.gasPrice / 10 ** 9; // to wei
+      setGasPrice(result);
+
       console.log("FetchQuote", quoteResponse.data);
     } catch (err) {
       console.log(err);
@@ -222,7 +227,7 @@ export default function SwapPage() {
                 fromCoin={fromCoin}
                 toCoin={toCoin}
               />
-              <p>Gas Price: {swapQuote && swapQuote.gasPrice}</p>
+              <p> {swapQuote && `Gas Price:${gasPrice} ETH`}</p>
             </div>
             {/* Swap buttons */}
             <div className="mt-6 flex flex-row gap-2">

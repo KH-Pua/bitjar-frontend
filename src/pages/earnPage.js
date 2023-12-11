@@ -5,7 +5,6 @@ import Web3 from "web3";
 import { Network, Alchemy } from "alchemy-sdk";
 
 //-----------Components-----------//
-import { fetchPoolData } from "../utilities/defillama.js";
 import ProductCard from "../components/ProductCard/ProductCard.js";
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 
@@ -57,11 +56,6 @@ export default function EarnPage() {
     sepoliaUSDC: "",
   });
 
-  // const [wethAmount, setWethAmount] = useState("");
-  // const [wbtcAmount, setWbtcAmount] = useState("");
-  // const [usdcAmount, setUsdcAmount] = useState("");
-  // const [sepoliaWbtcAmount, setSepoliaWbtcAmount] = useState("");
-
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState([]);
 
@@ -69,7 +63,6 @@ export default function EarnPage() {
   const [wethPoolData, setWethPoolData] = useState({});
   const [wbtcPoolData, setWbtcPoolData] = useState({});
   const [usdcPoolData, setUsdcPoolData] = useState({});
-  const [sepoliaPoolData, setSepoliaPoolData] = useState({});
 
   useEffect(() => {
     if (account) {
@@ -82,7 +75,7 @@ export default function EarnPage() {
     //Check for web3 wallet
     if (window.ethereum) {
       web3 = new Web3(window.ethereum);
-    };
+    }
   }, []);
 
   // Get pool data from BE that call to Defi Llama
@@ -105,7 +98,6 @@ export default function EarnPage() {
     // });
 
     getProductInfo();
-    
   }, []);
 
   // Get pool data from BE that call Defillama API every 30 minutes to update data.
@@ -115,7 +107,7 @@ export default function EarnPage() {
       //Convert the returned array into obj
       const productInfoArray = productInfo.data.output;
 
-      const productInfoObj = {}
+      const productInfoObj = {};
 
       productInfoArray.forEach((item) => {
         const { productName, ...rest } = item;
@@ -128,10 +120,6 @@ export default function EarnPage() {
     }
   };
 
-  const handleAmountChange = (e, setter) => {
-    setter(e.target.value);
-  };
-
   // Helper Functions
   const textChange = (e) => {
     const name = e.target.id;
@@ -139,6 +127,12 @@ export default function EarnPage() {
     setAmount((prevState) => {
       return { ...prevState, [name]: value };
     });
+  };
+
+  const toSatoshi = (amount) => {
+    // WBTC has 8 decimal places
+    // Multiply the amount by 10^8 to convert to satoshi
+    return (parseFloat(amount) * Math.pow(10, 8)).toString();
   };
 
   const deposit = async (token, pool) => {
@@ -255,229 +249,6 @@ export default function EarnPage() {
     }
   };
 
-  // const supplyWETH = async () => {
-  //   if (!account || !wethAmount) return;
-
-  //   try {
-  //     const wethTokenAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
-  //     const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
-
-  //     const wethContract = new web3.eth.Contract(erc20ABI, wethTokenAddress);
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     // Approve the LendingPool contract to spend your WETH
-  //     const amountInWei = web3.utils.toWei(wethAmount, "ether");
-
-  //     console.log(web3.utils.toWei(wethAmount, "ether"));
-  //     await wethContract.methods
-  //       .approve(lendingPoolAddress, amountInWei)
-  //       .send({ from: account });
-
-  //     // Deposit WETH into the LendingPool
-  //     await lendingPoolContract.methods
-  //       .deposit(wethTokenAddress, amountInWei, account, 0)
-  //       .send({ from: account });
-
-  //     console.log("Deposited", wethAmount, "WETH to Aave v3");
-  //   } catch (error) {
-  //     console.error("Error in supplying WETH:", error);
-  //   }
-  // };
-
-  // const withdrawWETH = async () => {
-  //   if (!account || !wethAmount) return;
-
-  //   try {
-  //     const wethTokenAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
-  //     const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
-
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     // Convert the amount to Wei
-  //     const amountInWei = web3.utils.toWei(wethAmount, "ether");
-
-  //     // Withdraw WETH from the LendingPool
-  //     await lendingPoolContract.methods
-  //       .withdraw(wethTokenAddress, amountInWei, account)
-  //       .send({ from: account });
-
-  //     console.log("Withdrew", wethAmount, "WETH from Aave v3");
-  //   } catch (error) {
-  //     console.error("Error in withdrawing WETH:", error);
-  //   }
-  // };
-
-  const toSatoshi = (amount) => {
-    // WBTC has 8 decimal places
-    // Multiply the amount by 10^8 to convert to satoshi
-    return (parseFloat(amount) * Math.pow(10, 8)).toString();
-  };
-
-  // const supplyWBTC = async () => {
-  //   if (!account || !wbtcAmount) return;
-
-  //   try {
-  //     const wbtcTokenAddress = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
-  //     const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
-
-  //     const wbtcContract = new web3.eth.Contract(erc20ABI, wbtcTokenAddress);
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     // Convert the amount to satoshi for WBTC
-  //     const amountInSatoshi = toSatoshi(wbtcAmount);
-  //     await wbtcContract.methods
-  //       .approve(lendingPoolAddress, amountInSatoshi)
-  //       .send({ from: account });
-
-  //     await lendingPoolContract.methods
-  //       .deposit(wbtcTokenAddress, amountInSatoshi, account, 0)
-  //       .send({ from: account });
-
-  //     console.log("Deposited", wbtcAmount, "WBTC to Aave v3");
-  //   } catch (error) {
-  //     console.error("Error in supplying WBTC:", error);
-  //   }
-  // };
-
-  // const withdrawWBTC = async () => {
-  //   if (!account || !wbtcAmount) return;
-
-  //   try {
-  //     const wbtcTokenAddress = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
-  //     const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
-
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     const amountInSatoshi = toSatoshi(wbtcAmount);
-  //     await lendingPoolContract.methods
-  //       .withdraw(wbtcTokenAddress, amountInSatoshi, account)
-  //       .send({ from: account });
-
-  //     console.log("Withdrew", wbtcAmount, "WBTC from Aave v3");
-  //   } catch (error) {
-  //     console.error("Error in withdrawing WBTC:", error);
-  //   }
-  // };
-
-  // const supplyUSDC = async () => {
-  //   if (!account || !usdcAmount) return;
-
-  //   try {
-  //     const usdcTokenAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-  //     const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
-
-  //     const wethContract = new web3.eth.Contract(erc20ABI, usdcTokenAddress);
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     // Approve the LendingPool contract to spend your USDC
-  //     const amountInWei = web3.utils.toWei(usdcAmount, "ether");
-  //     await wethContract.methods
-  //       .approve(lendingPoolAddress, amountInWei)
-  //       .send({ from: account });
-
-  //     // Deposit USDC into the LendingPool
-  //     await lendingPoolContract.methods
-  //       .deposit(usdcTokenAddress, amountInWei, account, 0)
-  //       .send({ from: account });
-
-  //     console.log("Deposited", usdcAmount, "USDC to Aave v3");
-  //   } catch (error) {
-  //     console.error("Error in supplying USDC:", error);
-  //   }
-  // };
-
-  // const withdrawUSDC = async () => {
-  //   if (!account || !usdcAmount) return;
-
-  //   try {
-  //     const usdcTokenAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-  //     const lendingPoolAddress = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
-
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     const amountInSatoshi = toSatoshi(usdcAmount);
-  //     await lendingPoolContract.methods
-  //       .withdraw(usdcTokenAddress, amountInSatoshi, account)
-  //       .send({ from: account });
-
-  //     console.log("Withdrew", usdcAmount, "USDC from Aave v3");
-  //   } catch (error) {
-  //     console.error("Error in withdrawing USDC:", error);
-  //   }
-  // };
-
-  // const supplySepoliaWBTC = async () => {
-  //   if (!account || !sepoliaWbtcAmount) return;
-
-  //   try {
-  //     console.log("Supply Sepolia WBTC");
-  //     const wbtcTokenAddress = "0x29f2D40B0605204364af54EC677bD022dA425d03";
-  //     const lendingPoolAddress = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
-
-  //     const wbtcContract = new web3.eth.Contract(erc20ABI, wbtcTokenAddress);
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     // Convert the amount to satoshi for WBTC
-  //     const amountInSatoshi = toSatoshi(sepoliaWbtcAmount);
-  //     await wbtcContract.methods
-  //       .approve(lendingPoolAddress, amountInSatoshi)
-  //       .send({ from: account });
-
-  //     await lendingPoolContract.methods
-  //       .deposit(wbtcTokenAddress, amountInSatoshi, account, 0)
-  //       .send({ from: account });
-
-  //     console.log("Deposited", sepoliaWbtcAmount, "Sepolia WBTC to Aave v3");
-  //   } catch (error) {
-  //     console.error("Error in supplying WBTC:", error);
-  //   }
-  // };
-
-  // const withdrawSepoliaWBTC = async () => {
-  //   if (!account || !sepoliaWbtcAmount) return;
-
-  //   try {
-  //     const sepoliaWbtcTokenAddress =
-  //       "0x29f2D40B0605204364af54EC677bD022dA425d03";
-  //     const lendingPoolAddress = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
-
-  //     const lendingPoolContract = new web3.eth.Contract(
-  //       aaveLendingPoolABI,
-  //       lendingPoolAddress,
-  //     );
-
-  //     const amountInSatoshi = toSatoshi(sepoliaWbtcAmount);
-  //     await lendingPoolContract.methods
-  //       .withdraw(sepoliaWbtcTokenAddress, amountInSatoshi, account)
-  //       .send({ from: account });
-
-  //     console.log("Withdrew", sepoliaWbtcAmount, "Sepolia WBTC from Bitjar");
-  //   } catch (error) {
-  //     console.error("Error in withdrawing Sepolia WBTC:", error);
-  //   }
-  // };
-
   const fetchTransactions = async (address) => {
     try {
       const response = await alchemy.core.getAssetTransfers({
@@ -538,9 +309,9 @@ export default function EarnPage() {
                 </p>
               </div>
             </div>
-            <div className="sm:flex sm:items-center pt-6">
+            <div className="pt-6 sm:flex sm:items-center">
               <div className="sm:flex-auto">
-                <h2 className=" text-lg font-semibold leading-8 text-gray-900 text-center">
+                <h2 className=" text-center text-lg font-semibold leading-8 text-gray-900">
                   Mainnet
                 </h2>
               </div>
@@ -584,15 +355,15 @@ export default function EarnPage() {
               />
             </div>
             <br />
-            <div className="sm:flex sm:items-center pt-6">
+            <div className="pt-6 sm:flex sm:items-center">
               <div className="sm:flex-auto">
-                <h2 className=" text-lg font-semibold leading-8 text-gray-900 text-center">
+                <h2 className=" text-center text-lg font-semibold leading-8 text-gray-900">
                   Testnet
                 </h2>
               </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <ProductCard
+              <ProductCard
                 id="sepoliaWETH"
                 title="SEPOLIA WETH"
                 description="Lend on AAVE V3 Sepolia Testnet"
@@ -691,7 +462,7 @@ export default function EarnPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white">
-                  {transactions ? 
+                  {transactions ? (
                     transactions.map((tx, index) => (
                       <tr key={index} className="even:bg-gray-50">
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
@@ -708,15 +479,15 @@ export default function EarnPage() {
                         </td>
                       </tr>
                     ))
-                    : 
+                  ) : (
                     <tr>
-                      <td className="px-3 py-3 text-base font-medium text-gray-900 col-span-4">
+                      <td className="col-span-4 px-3 py-3 text-base font-medium text-gray-900">
                         {transactions === null
-                        ? "Loading..."
-                        : "No Transactions at the moment"}
+                          ? "Loading..."
+                          : "No Transactions at the moment"}
                       </td>
                     </tr>
-                  }
+                  )}
                 </tbody>
               </table>
             </div>

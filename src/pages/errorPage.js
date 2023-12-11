@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, useRouteError } from "react-router-dom";
+import { useRouteError } from "react-router-dom";
 
 const ErrorPage = () => {
   const error = useRouteError();
@@ -6,7 +6,7 @@ const ErrorPage = () => {
 
   return (
     <>
-      {error.message ==
+      {error.message ===
       `Cannot read properties of undefined (reading 'userName')` ? (
         <div className="animate-pulse">Filling In Information</div>
       ) : (

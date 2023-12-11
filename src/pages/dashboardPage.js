@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 //-----------Libraries-----------//
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
@@ -8,7 +9,6 @@ import Web3 from "web3";
 import { Network, Alchemy } from "alchemy-sdk";
 
 //-----------Components-----------//
-import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import TierTable from "../components/rewards/TierTable.js";
@@ -162,7 +162,7 @@ export default function DashboardPage() {
         token.contractAddress,
       );
 
-      if (balance != 0) {
+      if (balance !== 0) {
         // Compute token balance in human-readable format
         balance = balance / Math.pow(10, metadata.decimals);
         balance = balance.toFixed(2);
@@ -338,7 +338,7 @@ export default function DashboardPage() {
             <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">
               Current Holdings
             </h1>
-            <div>{account && <HoldingsTable account={account} />}</div>  
+            <div>{account && <HoldingsTable account={account} />}</div>
           </div>
         )}
       </div>
