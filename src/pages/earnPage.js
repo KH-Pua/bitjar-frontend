@@ -169,9 +169,20 @@ export default function EarnPage() {
         lendingPoolAddress,
       );
 
-      await contract.methods
+      // Check current allowance
+      const currentAllowance = await contract.methods
+        .allowance(account, lendingPoolAddress)
+        .call();
+
+      console.log("allowance", currentAllowance);
+
+      // Compare current allowance with the sellAmount
+      if (currentAllowance < fullDepositAmount) {
+        // Approval is needed -> perform approval
+        await contract.methods
         .approve(lendingPoolAddress, fullDepositAmount)
         .send({ from: account });
+      }
 
       let transactionHash;
 
