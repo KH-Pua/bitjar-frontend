@@ -8,7 +8,7 @@ const formatCurrency = (amount) => {
 
 // Format APY from float to percentage value
 const formatApyToPercent = (value) => {
-  return (parseFloat(value).toFixed(4) * 100).toFixed(2);
+  return (parseFloat(value).toFixed(2));
 };
 
 // Format Ethereum value to a maximum of 4 decimal points
