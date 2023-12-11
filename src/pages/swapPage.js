@@ -88,12 +88,6 @@ export default function SwapPage() {
     }
   };
 
-  //// Commented Out, changing the user experience to Fetch Price -> Quote Price (Commitment) -> Execute
-  //// Automatically fetch price
-  // useEffect(() => {
-  //   fetchPrice();
-  // }, [currentTrade, fromAmount]);
-
   // Fetch a firm quote - commitment to fill the market order
   const fetchQuote = async () => {
     if (!currentTrade.from || !currentTrade.to || !fromAmount) return;
@@ -189,9 +183,21 @@ export default function SwapPage() {
   return (
     <>
       <div className="flex w-full flex-row ">
-        <div className="flex w-full flex-col justify-center gap-[.5em] border px-3">
-          {/* <div className="mt-12 w-max rounded-lg bg-white p-4 text-black shadow-md"> */}
-          <h1 className="text-2xl font-bold">Swap</h1>
+        <h1 className="text-2xl font-bold">Swap</h1>
+        <div className="flex w-full flex-col items-center justify-center gap-[.5em]  px-3">
+          <p className="translate-y-3">
+            {" "}
+            Crypto swaps powered by
+            <a
+              href="https://www.moonpay.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="font-bold text-purple-800"
+            >
+              {" "}
+              0x
+            </a>
+          </p>
           <p className="mt-4">
             Connected:
             <span className="font-semibold">
