@@ -8,7 +8,7 @@ export const SwapResult = ({ toAmount, fromAmount, fromCoin, toCoin }) => {
             <span className="text-[1.2rem] text-slate-700">
               {fromCoin ? fromCoin.symbol : null}
             </span>{" "}
-            = {toAmount.toFixed(6)}{" "}
+            = {parseFloat(toAmount).toFixed(4)}{" "}
             <span className="text-[1.2rem] text-slate-700">
               {toCoin ? toCoin.symbol : null}
             </span>
