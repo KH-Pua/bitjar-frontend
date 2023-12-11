@@ -150,9 +150,15 @@ export default function EarnPage() {
         .approve(lendingPoolAddress, fullDepositAmount)
         .send({ from: account });
 
+      let transactionHash;
+
       await lendingPoolContract.methods
         .deposit(depositTokenAddress, fullDepositAmount, account, 0)
-        .send({ from: account });
+        .send({ from: account })
+        .then((receipt) => {
+          console.log(receipt);
+          transactionHash = receipt.transactionHash;
+        });
 
       console.log(
         `Deposited ${depositAmount} of ${token} to Aave v3 (${pool})`,
@@ -165,6 +171,7 @@ export default function EarnPage() {
         token: token,
         poolAddress: lendingPoolAddress,
         walletAddress: account,
+        transactionHash: transactionHash,
       });
     } catch (error) {
       console.error(`Error in supplying ${token} to ${pool}:`, error);
@@ -198,10 +205,15 @@ export default function EarnPage() {
         lendingPoolAddress,
       );
 
+      let transactionHash;
       // Withdraw WETH from the LendingPool
       await lendingPoolContract.methods
         .withdraw(withdrawTokenAddress, fullWithdrawAmount, account)
-        .send({ from: account });
+        .send({ from: account })
+        .then((receipt) => {
+          console.log(receipt);
+          transactionHash = receipt.transactionHash;
+        });
 
       console.log(
         `Withdraw ${withdrawAmount} of ${token} from Aave v3 (${pool})`,
@@ -213,6 +225,7 @@ export default function EarnPage() {
         token: token,
         poolAddress: lendingPoolAddress,
         walletAddress: account,
+        transactionHash: transactionHash,
       });
     } catch (error) {
       console.error(`Error in withdrawing ${token} from ${pool}:`, error);

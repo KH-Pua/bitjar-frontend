@@ -72,9 +72,11 @@ export default function SwapPage() {
     setToAmount("Fetching Price...");
     console.log("fetchpriceParams", params);
 
+    let searchparams = new URLSearchParams(params);
+
     try {
       const priceResponse = await axios.get(
-        `https://api.0x.org/swap/v1/price?${new URLSearchParams(params)}`,
+        `https://api.0x.org/swap/v1/price?${searchparams.toString()}`,
         headers,
       );
 
@@ -100,21 +102,11 @@ export default function SwapPage() {
     };
 
     const endquery = new URLSearchParams(params);
-    console.log("yooo ", endquery.toString());
-    // console.log("hmmm?", qs.stringify(params));
+    console.log("Fetch Quote query params: ", endquery.toString());
 
     try {
-      // const quoteResponse = await axios.get(
-      //   `https://api.0x.org/swap/v1/quote?${endquery.toString()}`,
-      //   {
-      //     headers: {
-      //       "0x-api-key": API_KEY,
-      //     },
-      //   },
-      // );
-
-      let quoteResponse = await fetch(
-        `https://api.0x.org/swap/v1/quote?${qs.stringify(params)}`,
+      const quoteResponse = await axios.get(
+        `https://api.0x.org/swap/v1/quote?${endquery.toString()}`,
         {
           headers: {
             "0x-api-key": API_KEY,
@@ -122,9 +114,17 @@ export default function SwapPage() {
         },
       );
 
+      // let quoteResponse = await fetch(
+      //   `https://api.0x.org/swap/v1/quote?${qs.stringify(params)}`,
+      //   {
+      //     headers: {
+      //       "0x-api-key": API_KEY,
+      //     },
+      //   },
+      // );
+
       let swapQuoteJSON = await quoteResponse.json();
       console.log(swapQuoteJSON);
-
       setSwapQuote(quoteResponse.data);
       console.log("FetchQuote", swapQuote);
     } catch (err) {
