@@ -10,6 +10,9 @@ import { Network, Alchemy } from "alchemy-sdk";
 //-----------Components-----------//
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
 import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import TierTable from "../components/rewards/TierTable.js";
+import InfoTable from "../components/rewards/InfoTable.js";
 
 //-----------Utilities-----------//
 import { AAVE_ETH_CHAIN_COINLIST } from "../utilities/aaveEthChainAssetList.js";
@@ -196,6 +199,24 @@ export default function DashboardPage() {
     setImagesFlag(true);
   };
 
+  const calculateTier = (points) => {
+    if (points >= 0 && points < 1000) {
+      return "Silver";
+    }
+
+    if (points >= 1000 && points < 10000) {
+      return "Gold";
+    }
+
+    if (points >= 10000 && points < 100000) {
+      return "Platinum";
+    }
+
+    if (points >= 100000) {
+      return "Diamond";
+    }
+  };
+
   return (
     <div className="flex w-full flex-row ">
       <div className="flex w-full flex-col justify-center gap-[.5em] px-3">
@@ -228,7 +249,16 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-8 sm:px-6 xl:px-8">
               <dt className="text-sm font-medium leading-6 text-gray-500">
-                Silver Tier
+                {user.points && calculateTier(user.points)}
+                {" Tier"}
+                <button
+                  className="mb-auto scale-100 text-[.9rem] text-slate-600 transition-all hover:scale-95"
+                  onClick={() =>
+                    document.getElementById("points_info_modal").showModal()
+                  }
+                >
+                  <QuestionMarkCircleIcon className="ml-[.5em] inline h-5 w-5 -translate-y-[0.5px] text-slate-600" />
+                </button>
               </dt>
               <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
                 {user.points} Points
@@ -236,6 +266,27 @@ export default function DashboardPage() {
             </div>
           </dl>
         )}
+
+        <dialog id="points_info_modal" className="modal">
+          <div className="modal-box ">
+            <form method="dialog">
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
+                ✕
+              </button>
+            </form>
+            <h3 className="text-lg font-bold">How to earn points:</h3>
+            <p className="bg-yellow-200 text-center">
+              Hit your points milestones to get airdrop multipliers!
+            </p>
+            <TierTable />
+            <p className="bg-yellow-200 text-center">
+              Perform the following actions daily to rack up points!
+            </p>
+            <InfoTable />
+          </div>
+        </dialog>
+
         {/* User's Assets */}
         {!account ? null : (
           <div>
