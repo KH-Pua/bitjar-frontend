@@ -128,15 +128,15 @@ export default function HomePage() {
       </NavLink>
       {/* AUM Section */}
       <section className="mt-5 flex w-full flex-col items-center justify-center pt-[1em] lg:flex-row">
-        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[30%]">
-          <h1 className=" text-[3rem] font-bold text-yellow-400 lg:text-[4rem]">
+        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[40%] xl:w-[30%]">
+          <h1 className=" text-[3rem] font-bold text-yellow-400 md:text-[3rem] lg:text-[4rem]">
             ${assets.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">
             in assets deposited through Bitjar
           </h2>
         </figure>
-        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[30%] ">
+        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[40%] xl:w-[30%] ">
           <h1 className=" text-[3rem] font-bold text-yellow-400 lg:text-[4rem]">
             ${interest.toLocaleString()}
           </h1>
