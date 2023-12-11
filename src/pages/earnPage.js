@@ -85,25 +85,48 @@ export default function EarnPage() {
     };
   }, []);
 
-  // Get pool data from Defillama
+  // Get pool data from BE that call to Defi Llama
   useEffect(() => {
-    fetchPoolData("e880e828-ca59-4ec6-8d4f-27182a4dc23d").then((data) => {
-      console.log("WETH Pool Data: ", data);
-      setWethPoolData(data);
-    });
-    fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
-      console.log("WBTC Pool Data: ", data);
-      setWbtcPoolData(data);
-    });
-    fetchPoolData("aa70268e-4b52-42bf-a116-608b370f9501").then((data) => {
-      console.log("USDC Pool Data: ", data);
-      setUsdcPoolData(data);
-    });
-    fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
-      console.log("Sepolia Pool Data: ", data);
-      setSepoliaPoolData(data);
-    });
+    // fetchPoolData("e880e828-ca59-4ec6-8d4f-27182a4dc23d").then((data) => {
+    //   console.log("WETH Pool Data: ", data);
+    //   setWethPoolData(data);
+    // });
+    // fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
+    //   console.log("WBTC Pool Data: ", data);
+    //   setWbtcPoolData(data);
+    // });
+    // fetchPoolData("aa70268e-4b52-42bf-a116-608b370f9501").then((data) => {
+    //   console.log("USDC Pool Data: ", data);
+    //   setUsdcPoolData(data);
+    // });
+    // fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
+    //   console.log("Sepolia Pool Data: ", data);
+    //   setSepoliaPoolData(data);
+    // });
+
+    getProductInfo();
+    
   }, []);
+
+  // Get pool data from BE that call Defillama API every 30 minutes to update data.
+  const getProductInfo = async () => {
+    const productInfo = await axios.get(`${BACKEND_URL}/products`);
+    if (productInfo) {
+      //Convert the returned array into obj
+      const productInfoArray = productInfo.data.output;
+
+      const productInfoObj = {}
+
+      productInfoArray.forEach((item) => {
+        const { productName, ...rest } = item;
+        productInfoObj[productName] = rest;
+      });
+
+      setWethPoolData(productInfoObj["WETH AAVE"]);
+      setWbtcPoolData(productInfoObj["WBTC AAVE"]);
+      setUsdcPoolData(productInfoObj["USDC AAVE"]);
+    }
+  };
 
   const handleAmountChange = (e, setter) => {
     setter(e.target.value);
@@ -468,7 +491,7 @@ export default function EarnPage() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col px-2">
       <h1 className="text-3xl font-bold leading-6 text-gray-900">Earn</h1>
       {account && (
         <div>
@@ -490,7 +513,7 @@ export default function EarnPage() {
               </dd>
             </div>
           </dl>
-
+          <br />
           <div className="py-4">
             <div className="sm:flex sm:items-center">
               <div className="sm:flex-auto">
@@ -502,7 +525,14 @@ export default function EarnPage() {
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="sm:flex sm:items-center pt-6">
+              <div className="sm:flex-auto">
+                <h2 className=" text-lg font-semibold leading-8 text-gray-900 text-center">
+                  Mainnet
+                </h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <ProductCard
                 id="WETH"
                 title="WETH"
@@ -511,8 +541,8 @@ export default function EarnPage() {
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("WETH", "main")}
                 onWithdraw={() => withdraw("WETH", "main")}
-                tvl={formatCurrency(wethPoolData.tvlUsd)}
-                apy={wethPoolData.apy}
+                tvl={formatCurrency(wethPoolData.tvl)}
+                apy={wethPoolData.apr}
                 currency="ETH"
               />
               <ProductCard
@@ -523,8 +553,8 @@ export default function EarnPage() {
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("WBTC", "main")}
                 onWithdraw={() => withdraw("WBTC", "main")}
-                tvl={formatCurrency(wbtcPoolData.tvlUsd)}
-                apy={wbtcPoolData.apy}
+                tvl={formatCurrency(wbtcPoolData.tvl)}
+                apy={wbtcPoolData.apr}
                 currency="BTC"
               />
               <ProductCard
@@ -535,11 +565,21 @@ export default function EarnPage() {
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("USDC", "main")}
                 onWithdraw={() => withdraw("USDC", "main")}
-                tvl={formatCurrency(usdcPoolData.tvlUsd)}
-                apy={usdcPoolData.apy}
+                tvl={formatCurrency(usdcPoolData.tvl)}
+                apy={usdcPoolData.apr}
                 currency="USDC"
               />
-              <ProductCard
+            </div>
+            <br />
+            <div className="sm:flex sm:items-center pt-6">
+              <div className="sm:flex-auto">
+                <h2 className=" text-lg font-semibold leading-8 text-gray-900 text-center">
+                  Testnet
+                </h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <ProductCard
                 id="sepoliaWETH"
                 title="SEPOLIA WETH"
                 description="Lend on AAVE V3 Sepolia Testnet"
@@ -547,8 +587,8 @@ export default function EarnPage() {
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("sepoliaWETH", "sepolia")}
                 onWithdraw={() => withdraw("sepoliaWETH", "sepolia")}
-                tvl={formatCurrency(wethPoolData.tvlUsd)}
-                apy={wethPoolData.apy}
+                tvl="N/A"
+                apy="N/A"
                 currency="ETH"
               />
               <ProductCard
@@ -559,8 +599,8 @@ export default function EarnPage() {
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("sepoliaWBTC", "sepolia")}
                 onWithdraw={() => withdraw("sepoliaWBTC", "sepolia")}
-                tvl={formatCurrency(sepoliaPoolData.tvlUsd)}
-                apy={sepoliaPoolData.apy}
+                tvl="N/A"
+                apy="N/A"
                 currency="BTC"
               />
               <ProductCard
@@ -571,12 +611,11 @@ export default function EarnPage() {
                 handleChange={(e) => textChange(e)}
                 onDeposit={() => deposit("sepoliaUSDC", "sepolia")}
                 onWithdraw={() => withdraw("sepoliaUSDC", "sepolia")}
-                tvl={formatCurrency(usdcPoolData.tvlUsd)}
-                apy={usdcPoolData.apy}
+                tvl="N/A"
+                apy="N/A"
                 currency="USDC"
               />
             </div>
-            <br />
           </div>
         </div>
       )}
@@ -639,22 +678,32 @@ export default function EarnPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white">
-                  {transactions.map((tx, index) => (
-                    <tr key={index} className="even:bg-gray-50">
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                        {tx.blockNum}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {formatEthValue(tx.value)} ETH
-                      </td>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                        {formatWalletAddress(tx.from)}
-                      </td>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                        {formatWalletAddress(tx.to)}
+                  {transactions ? 
+                    transactions.map((tx, index) => (
+                      <tr key={index} className="even:bg-gray-50">
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                          {tx.blockNum}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {formatEthValue(tx.value)} ETH
+                        </td>
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                          {formatWalletAddress(tx.from)}
+                        </td>
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                          {formatWalletAddress(tx.to)}
+                        </td>
+                      </tr>
+                    ))
+                    : 
+                    <tr>
+                      <td className="px-3 py-3 text-base font-medium text-gray-900 col-span-4">
+                        {transactions === null
+                        ? "Loading..."
+                        : "No Transactions at the moment"}
                       </td>
                     </tr>
-                  ))}
+                  }
                 </tbody>
               </table>
             </div>

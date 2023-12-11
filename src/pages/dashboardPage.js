@@ -283,14 +283,14 @@ export default function DashboardPage() {
             </dl>
           </div>
         )}
-        {/* User's Transactions on BitJar */}
+        {/* User's Holding on BitJar */}
         {!account ? null : (
           <div className="pb-[2em]">
             <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">
               Current Holdings
             </h1>
             <div>
-              {account && <TransactionHistoryTable account={account} />}
+              {/* {account && <TransactionHistoryTable account={account} />} */}
               {account && <HoldingsTable account={account} />}
             </div>
           </div>

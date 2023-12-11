@@ -13,7 +13,7 @@ export const TransactionHistoryTable = ({ account }) => {
   useEffect(() => {
     if (account) {
       axios
-        .get(`${BACKEND_URL}/transactions/products/${account}`, {}) //
+        .get(`${BACKEND_URL}/transactions/products/${account}`) 
         .then((response) => {
           setUserTransactionHistory(response.data.data);
         })
@@ -46,8 +46,7 @@ export const TransactionHistoryTable = ({ account }) => {
           </thead>
           {/* body */}
           <tbody className="divide-y divide-gray-200 bg-white">
-            {account &&
-              userTransactionHistory &&
+            {account && userTransactionHistory ? (
               userTransactionHistory.map((element) => (
                 <tr key={element.id}>
                   <td className="py-3 pl-4 text-sm font-medium text-gray-900">
@@ -69,7 +68,16 @@ export const TransactionHistoryTable = ({ account }) => {
                     </a>
                   </td>
                 </tr>
-              ))}
+              ))
+            ) : (
+              <tr>
+                <td className="col-span-4 px-3 py-3 text-base font-medium text-gray-900">
+                  {userTransactionHistory === null
+                    ? "Loading..."
+                    : "No Transactions at the moment"}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
