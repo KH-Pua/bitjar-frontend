@@ -14,7 +14,7 @@ const SwapTo = ({ tokens, selectToken, setToCoin }) => {
       <div
         tabIndex={0}
         role="button"
-        className=" my-1 flex h-12 w-[100%] flex-row items-center rounded-md border-[1px] border-black  p-1 py-2 hover:bg-slate-200"
+        className=" my-1 flex h-12 w-[312px] flex-row items-center rounded-md border-[1px] border-black  p-1 py-2 hover:bg-slate-200"
       >
         <div>
           {coin ? (
