@@ -76,7 +76,6 @@ export default function DashboardPage() {
     const pastBitjarTransactions = await axios.get(
       `${BACKEND_URL}/users/holdings/${account}`,
     );
-    console.log("Bitjartx", pastBitjarTransactions);
 
     const userPastBitjarTransactions = pastBitjarTransactions.data.output;
 
@@ -90,9 +89,6 @@ export default function DashboardPage() {
       coinSymbolsList.push(coinSymbol);
       walletCoinAmount[coinSymbol] = userPastBitjarTransactions[coin].amount;
     }
-
-    console.log(`walletCoinAmount is ${JSON.stringify(walletCoinAmount)}`);
-    console.log(`coinSymbolsList is ${coinSymbolsList}`);
 
     let coinData = {};
 
@@ -171,8 +167,11 @@ export default function DashboardPage() {
         balance = 0;
       }
       // Print name, balance, and symbol of token
-      console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
-      console.log(`Image is: ${metadata.logo}`);
+      console.log(
+        `${i++}. ${metadata.name}: ${balance} ${metadata.symbol}${
+          metadata.logo
+        }`,
+      );
 
       // Store the Symbol to reference images
       // Store the respective token balance
@@ -195,7 +194,6 @@ export default function DashboardPage() {
     }
 
     setImagesFlag(true);
-    console.log("All Images Loaded");
   };
 
   return (
@@ -205,7 +203,7 @@ export default function DashboardPage() {
           <ConnectWalletDefault />
         ) : (
           <h1 className=" text-3xl font-bold text-black">
-            Welcome back {user.userName && user.userName}
+            Welcome back{user.userName ? `, ${user.userName}` : ""}
           </h1>
         )}
 

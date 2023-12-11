@@ -1,12 +1,9 @@
-import React, { useState, createContext, useEffect } from "react";
-import axios from "axios";
-import BACKEND_URL from "../constants";
+import React, { useState, createContext } from "react";
 import { MoonPayProvider } from "@moonpay/moonpay-react";
 
 export const GlobalContext = createContext();
 
 export default function GlobalProvider({ children }) {
-
   const [userWalletAdd, setUserWalletAdd] = useState("");
   const [userProfilePicture, setUserProfilePicture] = useState("");
 
@@ -14,7 +11,7 @@ export default function GlobalProvider({ children }) {
     userWalletAdd,
     setUserWalletAdd,
     userProfilePicture,
-    setUserProfilePicture
+    setUserProfilePicture,
   };
 
   return (

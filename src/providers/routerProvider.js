@@ -5,7 +5,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import BaseTemplate from "../components/template/baseTemplate.js";
 import HomePage from "../pages/homePage.js";
 import ErrorPage from "../pages/errorPage.js";
-import OnboardingPage from "../pages/onboardingPage.js";
 import DashboardPage from "../pages/dashboardPage.js";
 import MarketPage from "../pages/marketPage.js";
 import EarnPage from "../pages/earnPage.js";
@@ -18,11 +17,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/onboarding",
-    element: <OnboardingPage />,
     errorElement: <ErrorPage />,
   },
   {
