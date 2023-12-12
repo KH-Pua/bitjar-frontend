@@ -12,6 +12,7 @@ import { formatWalletAddress } from "../utilities/formatting";
 import { SwapResult } from "../components/Swap/SwapResult";
 import { apiRequest } from "../utilities/apiRequests";
 import erc20ABI from "../utilities/erc20.abi.json";
+import { filterProps } from "framer-motion";
 
 let web3;
 
@@ -21,6 +22,8 @@ export default function SwapPage() {
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
   const [swapQuote, setSwapQuote] = useState(null);
+  const [gasPrice, setGasPrice] = useState(0);
+  const [gasPriceUsd, setGasPriceUsd] = useState(0);
 
   // Pass in as Props to Swap Components in order to set state in Parent component
   const [fromCoin, setFromCoin] = useState(null);
@@ -63,6 +66,12 @@ export default function SwapPage() {
     const updatedTrade = { ...currentTrade, [side]: token };
     setCurrentTrade(updatedTrade);
   };
+
+  useEffect(() => {
+    if (currentTrade.from || currentTrade.to || fromAmount) {
+      fetchPrice();
+    }
+  }, [currentTrade.from, currentTrade.to, fromAmount]);
 
   const fetchPrice = async () => {
     setSwapQuote(null); // Reset swap code to null if re-fetching
@@ -149,8 +158,16 @@ export default function SwapPage() {
           },
         },
       );
-      quoteResponse.data.gasPrice = 50000000000; // Hardcode - Increase gas price
+      // quoteResponse.data.gasPrice = 50000000000; // Hardcode - Increase gas price
       setSwapQuote(quoteResponse.data);
+      const convertedAmount =
+        quoteResponse.data.buyAmount / 10 ** currentTrade.to.decimals;
+      setToAmount(convertedAmount);
+      // Calculate gas price in ETH and USD
+      getGasPrice();
+      // Load confirmation Modal
+      document.getElementById("swap_modal").showModal();
+
       console.log("FetchQuote", quoteResponse.data);
     } catch (err) {
       console.log(err);
@@ -167,6 +184,26 @@ export default function SwapPage() {
       await web3.eth.sendTransaction(swapQuote);
     } catch (error) {
       console.error("Error executing swap", error);
+    }
+  };
+
+  // Calculate gas price in ETH and USD https://ethereum.stackexchange.com/questions/54606/what-is-difference-between-gas-gas-price-and-fee
+  const getGasPrice = async () => {
+    // Calculate gas price (Fee = gas*gasPrice)
+    let fee = (swapQuote.gasPrice * swapQuote.gas) / 10 ** 18;
+    setGasPrice(fee);
+
+    try {
+      let information = await apiRequest.post(`users/getCoinLatestInfo`, {
+        coinSYM: "ETH",
+      });
+      const ethPrice = information.data.data.data["ETH"].quote.USD.price;
+      const result = fee * ethPrice;
+      console.log(result);
+      setGasPriceUsd(result.toFixed(2));
+      return result;
+    } catch (error) {
+      console.error("Error fetching Ethereum price:", error);
     }
   };
 
@@ -222,49 +259,56 @@ export default function SwapPage() {
                 fromCoin={fromCoin}
                 toCoin={toCoin}
               />
-              <p>Gas Price: {swapQuote && swapQuote.gasPrice}</p>
             </div>
             {/* Swap buttons */}
             <div className="mt-6 flex flex-row gap-2">
-              <button onClick={fetchPrice} className="btn">
+              {/* <button onClick={fetchPrice} className="btn">
                 Fetch Price
-              </button>
+              </button> */}
 
-              <button onClick={fetchQuote} className="btn">
-                Fetch Quote
+              <button onClick={fetchQuote} className="btn w-72">
+                Swap
               </button>
-              {/* Table to display the quote data
-              {swapQuote && (
-                <div className="mt-6">
-                  <h2 className="text-xl font-semibold">Swap Quote:</h2>
-                  <table className="min-w-full table-fixed">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2">Field</th>
-                        <th className="px-4 py-2">Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(swapQuote).map(([key, value]) => (
-                        <tr key={key}>
-                          <td className="border px-4 py-2">{key}</td>
-                          <td className="border px-4 py-2">
-                            {value.toString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              {/* Swap confirmation modal */}
+              <dialog id="swap_modal" className="modal">
+                <div className="modal-box w-[370px]">
+                  <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
+                      ✕
+                    </button>
+                  </form>
+
+                  <main className="flex flex-col items-center">
+                    <h3 className="mb-3 text-xl font-bold">Review Swap</h3>
+                    <figure className="mb-1 rounded-lg bg-slate-100 p-3">
+                      {swapQuote && (
+                        <SwapResult
+                          fromAmount={fromAmount}
+                          toAmount={toAmount}
+                          fromCoin={fromCoin}
+                          toCoin={toCoin}
+                        />
+                      )}
+                    </figure>
+                    <p className="mb-4 animate-pulse text-xs">
+                      {" "}
+                      {swapQuote &&
+                        `Network Cost: ~${gasPrice.toFixed(
+                          4,
+                        )} ETH ($${gasPriceUsd})`}
+                    </p>
+                    <button
+                      onClick={executeSwap}
+                      className=" btn bg-yellow-400 text-white hover:bg-yellow-500"
+                    >
+                      Confirm Swap
+                    </button>
+                  </main>
                 </div>
-              )} */}
+              </dialog>
 
               {/* Execute Swap */}
-              <button
-                onClick={executeSwap}
-                className="btn bg-yellow-300 text-white hover:bg-yellow-400"
-              >
-                Execute Swap
-              </button>
             </div>
           </main>
         </div>

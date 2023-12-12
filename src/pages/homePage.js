@@ -200,7 +200,6 @@ export default function HomePage() {
           </p>
           <div className="mt-4 flex w-full flex-row justify-center">
             <ProfileImage src={spencerIcon} label="Spy Investments" />
-            <ProfileImage src="/logos/spy.png" label="Spy Investments" />
             <ProfileImage src={sqicon} label="SQ Partners" />
             <ProfileImage src="/logos/kee.png" label="Kee Capital" />
             <ProfileImage src={gabicon} label="G Combinator" />
