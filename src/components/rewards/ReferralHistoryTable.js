@@ -23,7 +23,7 @@ const ReferralHistoryTable = ({ data }) => {
             <th className="table-header pl-[1em] pr-[2em] lg:w-[25%]">
               Timestamp
             </th>
-            <th className="table-header pl-[1em]">Username</th>
+            <th className="table-header pl-[1em] pr-[1em]">Username</th>
             {windowWidth <= 1024 ? null : (
               <th className="table-header pl-[1em] pr-[2em]">Wallet Address</th>
             )}
