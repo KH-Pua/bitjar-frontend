@@ -1,5 +1,6 @@
 //-----------Libraries-----------//
 import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 
 //-----------Components-----------//
 import ProgressBar from "../components/rewards/ProgressBar.js";
@@ -14,7 +15,8 @@ import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
 import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 export default function RewardsPage() {
-  const address = localStorage.getItem("connection_meta");
+  // const address = localStorage.getItem("connection_meta");
+  const address = useOutletContext();
 
   //-----------Data-----------//
   const [pointsLeaderboard, setPointsLeaderboard] = useState();
@@ -70,7 +72,7 @@ export default function RewardsPage() {
 
   useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [address]);
 
   // GET - Retrieve all data
   useEffect(() => {
@@ -84,7 +86,7 @@ export default function RewardsPage() {
 
   return (
     <div className=" flex w-full flex-col items-center px-3">
-      {user ? (
+      {address ? (
         <>
           <header className="flex w-full flex-row justify-between">
             <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>

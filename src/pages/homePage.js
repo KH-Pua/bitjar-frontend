@@ -199,7 +199,7 @@ export default function HomePage() {
           <p className="pb-[2em] tracking-tighter">
             Over 420,000,000 in $BJ raised since inception 💰
           </p>
-          <div className=" mt-4 flex w-full flex-row items-start">
+          <div className=" mt-4 flex w-full flex-row items-start justify-center">
             <ProfileImage src={spyicon} label="Spy Investments" />
             <ProfileImage src={sqicon} label="SQ Partners" />
             <ProfileImage src={khicon} label="Kee Capital" />

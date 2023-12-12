@@ -12,7 +12,7 @@ const InfoTable = ({ data }) => {
         </thead>
         <tbody className="text-center">
           <tr>
-            <td>Sign up with Bitjar</td>
+            <td>Sign up</td>
             <td>50</td>
             <td>Max (1) once per wallet</td>
           </tr>
@@ -27,22 +27,22 @@ const InfoTable = ({ data }) => {
             <td>Max (1) per day</td>
           </tr>
           <tr>
-            <td>Purchase Crypto on Bitjar</td>
+            <td>Purchase crypto</td>
             <td>$10/pt</td>
             <td>Capped at 1000pts per day</td>
           </tr>
           <tr>
-            <td>Deposit Crypto on Bitjar</td>
+            <td>Deposit crypto to Earn</td>
             <td>$10/pt</td>
             <td>Capped at 1000pts per day</td>
           </tr>
           <tr>
-            <td>Referee purchases Crypto on Bitjar</td>
+            <td>Referee: Purchases crypto</td>
             <td>$100/pt</td>
             <td>Capped at 100 per day</td>
           </tr>
           <tr>
-            <td>Referee purchases Crypto on Bitjar</td>
+            <td>Referee: Deposits crypto to Earn</td>
             <td>$100/pt</td>
             <td>Capped at 100 per day</td>
           </tr>
