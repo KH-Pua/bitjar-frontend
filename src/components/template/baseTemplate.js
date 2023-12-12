@@ -1,15 +1,12 @@
 //-----------Libraries-----------//
-import { useState, useEffect, useContext, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 import Web3 from "web3";
-import axios from "axios";
 
 //-----------Utilities-----------//
 import { formatWalletAddress } from "../../utilities/formatting";
-import { GlobalContext } from "../../providers/globalProvider.js";
-import BACKEND_URL from "../../constants.js";
-import { getUserData } from "../../utilities/apiRequests";
+import { apiRequest } from "../../utilities/apiRequests.js";
 import { signUpPoints } from "../../utilities/pointsMessages.js";
 
 //-----------Media-----------//
@@ -17,20 +14,18 @@ import {
   Bars3Icon,
   BellIcon,
   HomeIcon,
-  UsersIcon,
   XMarkIcon,
   CurrencyDollarIcon,
-  ChartBarIcon,
   ArrowsRightLeftIcon,
   TrophyIcon,
   BanknotesIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import logo from "../../media/bitjar-logo.png";
+import bitjar from "../../media/BitJar-gif.gif";
+
+import OnboardingModal from "./OnboardingModal.js";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -39,9 +34,6 @@ function classNames(...classes) {
 let web3;
 
 export default function BaseTemplate() {
-  const { userProfilePicture, setUserProfilePicture } =
-    useContext(GlobalContext);
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [sidebarNavigation, setSidebarNavigation] = useState("");
@@ -51,12 +43,12 @@ export default function BaseTemplate() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [account, setAccount] = useState("");
-  const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
+  const [profilePicture, setProfilePicture] = useState("");
+  const [verifyNewUserBool, setVerifyNewUserBool] = useState(null);
 
   const connectWallet = async () => {
     try {
       const accounts = await web3.eth.requestAccounts();
-      console.log("these are the accounts: ", accounts);
       setAccount(accounts[0]);
       localStorage.setItem("connection_meta", accounts[0]);
     } catch (error) {
@@ -78,9 +70,64 @@ export default function BaseTemplate() {
   ];
 
   const userNavigation = [
-    { name: "Switch wallet", onclick: "" }, // Switch wallet function to be added
+    // { name: "Switch wallet", onclick: "" }, -- not in use
     { name: "Disconnect", onclick: disconnectWallet },
   ];
+
+  // Verify user info. If is new user, create account + redirect to onbording, else re-render sidebarWithHeader.
+  const verifyUserInfo = async () => {
+    try {
+      let userInfo = await apiRequest.post(`/users/getInfoViaWalletAdd`, {
+        walletAddress: account,
+      });
+      setProfilePicture(userInfo.data.output.dataValues.profilePicture);
+      // New user verification boolean
+      setVerifyNewUserBool(userInfo.data.output.newUser);
+    } catch (err) {
+      console.error("Error verify user info:", err);
+    }
+  };
+
+  // On mount - get account, check registered, updates route
+  useEffect(() => {
+    // Wallet ID whenever page refreshes
+    setAccount(localStorage.getItem("connection_meta")); //Check for web3 wallet
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+    }
+
+    //Handles button selection on the sidebar
+    let route = location.pathname;
+    let updatedNav = selectedPageButtonHandler(navigation, route);
+    setSidebarNavigation(updatedNav);
+    setDropdownNavigation(userNavigation);
+    if (account) {
+      verifyUserInfo();
+    }
+  }, [account]);
+
+  useEffect(() => {
+    async function recordSignupTransaction() {
+      try {
+        await apiRequest.post(
+          `/transactions/points/add/`,
+          signUpPoints(account),
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    if (verifyNewUserBool) {
+      console.log("New user created, launch onboarding");
+      recordSignupTransaction();
+    } else {
+      console.log("Existing user");
+      renderSideBarWithHeader();
+    }
+  }, [verifyNewUserBool]);
+
+  //-----------Page layout functions-----------//
 
   // Set current to true if route matches nav
   const selectedPageButtonHandler = (array, route) => {
@@ -91,38 +138,6 @@ export default function BaseTemplate() {
       return navObj;
     });
   };
-
-  // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
-  const verifyUserInfo = async () => {
-    try {
-      let userInfo = await axios.post(
-        `${BACKEND_URL}/users/getInfoViaWalletAdd`,
-        { walletAddress: account },
-      );
-      setUserProfilePicture(userInfo.data.output.dataValues.profilePicture);
-      // New user verification boolean
-      setVerifyNewUserBool(userInfo.data.output.newUser);
-    } catch (err) {
-      console.error("Error verify user info:", err);
-    }
-  };
-
-  useEffect(() => {
-    // Wallet ID whenever page refreshes
-    setAccount(localStorage.getItem("connection_meta"));
-    verifyUserInfo();
-
-    //Check for web3 wallet
-    if (window.ethereum) {
-      web3 = new Web3(window.ethereum);
-    }
-
-    //Handles button selection on the sidebar
-    let route = location.pathname;
-    let updatedNav = selectedPageButtonHandler(navigation, route);
-    setSidebarNavigation(updatedNav);
-    setDropdownNavigation(userNavigation);
-  }, []);
 
   useEffect(() => {
     // Check current path name and set sidebar navigation button
@@ -140,42 +155,15 @@ export default function BaseTemplate() {
     dropdownNavigation,
     sidebarOpen,
     account,
-    userProfilePicture,
+    profilePicture,
   ]);
-
-  useEffect(() => {
-    if (account) {
-      verifyUserInfo();
-    }
-  }, [account]);
-
-  useEffect(() => {
-    async function recordSignupTransaction() {
-      try {
-        await axios.post(
-          `${BACKEND_URL}/transactions/points/add/`,
-          signUpPoints(account),
-        );
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    if (verifyNewUserBool) {
-      console.log("new user created, redirect to onboarding page");
-      recordSignupTransaction();
-      navigate("/onboarding");
-    } else {
-      console.log("Existing user");
-      renderSideBarWithHeader();
-    }
-  }, [verifyNewUserBool]);
 
   const renderSideBarWithHeader = () => {
     if (sidebarNavigation && dropdownNavigation) {
       setTemplate(
         <>
           <div>
+            {verifyNewUserBool && <OnboardingModal address={account} />}
             <Transition.Root show={sidebarOpen} as={Fragment}>
               <Dialog
                 as="div"
@@ -376,26 +364,6 @@ export default function BaseTemplate() {
                 />
 
                 <div className="flex flex-1 flex-row-reverse gap-x-4 self-stretch lg:gap-x-6">
-                  {/* <form
-                    className="relative flex flex-1"
-                    action="#"
-                    method="GET"
-                  >
-                    <label htmlFor="search-field" className="sr-only">
-                      Search
-                    </label>
-                    <MagnifyingGlassIcon
-                      className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                    <input
-                      id="search-field"
-                      className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                      placeholder="Search..."
-                      type="search"
-                      name="search"
-                    />
-                  </form> */}
                   <div className="flex items-center gap-x-4 lg:gap-x-6">
                     {/* <button
                       type="button"
@@ -443,7 +411,7 @@ export default function BaseTemplate() {
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-8 w-8 rounded-full bg-gray-50"
-                            src={userProfilePicture ? userProfilePicture : ""}
+                            src={profilePicture ? profilePicture : bitjar}
                             alt="img"
                           />
                           <span className="hidden lg:flex lg:items-center">

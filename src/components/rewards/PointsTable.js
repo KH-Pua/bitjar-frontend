@@ -1,5 +1,4 @@
 //-----------Libraries-----------//
-import axios from "axios";
 import { useState } from "react";
 
 //-----------Components-----------//
@@ -11,28 +10,15 @@ import { formatWalletAddress } from "../../utilities/formatting";
 //-----------Media-----------//
 import logo from "../../media/bitjar-logo.png";
 import { RankingOutput } from "./RankingOutput";
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const PointsTable = ({ data }) => {
   const [windowWidth, setWindowWidth] = useState(null);
-  const [userRefererList, setUserRefererList] = useState(null); // also dead code
 
   const reportWindowSize = () => {
     let widthOutput = window.innerWidth;
     setWindowWidth(widthOutput);
   };
   window.addEventListener("resize", reportWindowSize);
-
-  // Dead code, but leaving it here to talk about during the code review, as to why this code is not feasible
-  const getUserReferer = async (address) => {
-    let referer = await axios.post(`${BACKEND_URL}/users/getUserRefererIfAny`, {
-      walletAddress: address,
-    });
-
-    setUserRefererList((prevState) => {
-      return { ...prevState, [address]: referer.output };
-    });
-  };
 
   return (
     <>
@@ -71,7 +57,6 @@ const PointsTable = ({ data }) => {
                     </div>
                   </td>
 
-                  {/* This part is pretty interesting, will talk about it during code review */}
                   <td>
                     {row.userName ? (
                       <div className="flex flex-col gap-0">

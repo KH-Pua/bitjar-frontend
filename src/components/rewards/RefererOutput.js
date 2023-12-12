@@ -3,6 +3,9 @@ import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 
+// Import Utilities
+import { formatWalletAddress } from "../../utilities/formatting";
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export const RefererOutput = ({ walletaddress }) => {
@@ -19,13 +22,17 @@ export const RefererOutput = ({ walletaddress }) => {
       walletAddress: address,
     });
 
-    if (Array.isArray(output.data.output)) {
+    // If No Referer
+    if (Array.isArray(output.data.output[0].referer)) {
       setRefererName("xx");
     } else {
-      if (output.data.output.userName == "") {
-        setRefererName("an unnamed user");
+      // If Unnamed User, Put Wallet Address
+      if (output.data.output[0].referer.userName == "") {
+        setRefererName(
+          formatWalletAddress(output.data.output[0].referer.walletAddress),
+        );
       } else {
-        setRefererName(output.data.output.userName);
+        setRefererName(output.data.output[0].referer.userName);
       }
     }
   };

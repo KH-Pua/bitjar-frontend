@@ -1,26 +1,25 @@
 //-----------Libraries-----------//
-import { useState, useEffect, useContext } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import Web3 from "web3";
-import axios from "axios";
+
 //-----------Components-----------//
 import InfoTable from "../components/rewards/InfoTable.js";
 import TierTable from "../components/rewards/TierTable.js";
 import ProductInfo from "../components/ProductCard/ProductInfo.js";
 import ProfileImage from "../components/details/ProfileImage.js";
-
-//-----------Utilities-----------//
-import { GlobalContext } from "../providers/globalProvider.js";
-import BACKEND_URL from "../constants.js";
-import { signUpPoints } from "../utilities/pointsMessages.js";
+import Footer from "../components/details/Footer.js";
 
 //-----------Media-----------//
 import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import btcIcon from "cryptocurrency-icons/svg/color/btc.svg";
+
+import spyicon from "../media/InvestorIcons/punk.jpg";
 import gabicon from "../media/InvestorIcons/wonderpal.png";
 import sqicon from "../media/InvestorIcons/gharliera-logo.jpg";
+import khicon from "../media/InvestorIcons/peksy_penguin.jpg";
+
 import githiredlogo from "../media/CompanyIcons/githiredLogo.png";
 import paireduplogo from "../media/CompanyIcons/pairedUpLogo.png";
 import moontradelogo from "../media/CompanyIcons/Eclipse.png";
@@ -28,100 +27,24 @@ import globalgemslogo from "../media/CompanyIcons/globalgems.png";
 import powderfullogo from "../media/CompanyIcons/og-image.jpg";
 import sessionslogo from "../media/CompanyIcons/sessions.png";
 
-let web3;
-
 export default function HomePage() {
-  const { userWalletAdd, setUserWalletAdd } = useContext(GlobalContext);
-  const navigate = useNavigate();
   const [assets, setAssets] = useState(42320232);
   const [interest, setInterest] = useState(250123);
-
-  const [account, setAccount] = useState("");
-  const [verifyNewUserBool, setVerifyNewUserBool] = useState("");
-
-  const connectWallet = async () => {
-    try {
-      const accounts = await web3.eth.requestAccounts();
-      console.log("these are the accounts: ", accounts);
-      setAccount(accounts[0]);
-      localStorage.setItem("connection_meta", accounts[0]);
-    } catch (error) {
-      console.error("Error connecting to wallet:", error);
-    }
-  };
-
-  // Web3 Instance
-  useEffect(() => {
-    //Check for web3 wallet
-    if (window.ethereum) {
-      web3 = new Web3(window.ethereum);
-    }
-  }, []);
 
   useEffect(() => {
     //Set time interval
     const interval = setInterval(() => {
       const randomIncrement = Math.floor(Math.random() * (500 - 10 + 1)) + 10;
-
       setAssets((prevAmount) => prevAmount + randomIncrement);
     }, 1000);
 
     const altInterval = setInterval(() => {
       const randomIncrement = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
-
       setInterest((prevAmount) => prevAmount + randomIncrement);
     }, 1500);
 
     return () => clearInterval(interval, altInterval);
   }, []);
-
-  useEffect(() => {
-    // Verify user info. If is new user redirect to onbording, else re-render sidebarWithHeader.
-    const verifyUserInfo = async () => {
-      try {
-        let userInfo = await axios.post(
-          `${BACKEND_URL}/users/getInfoViaWalletAdd`,
-          { walletAddress: account },
-        );
-        console.log(userInfo);
-
-        //Set wallet address & profile picture to global state for passing around.
-        setUserWalletAdd(userInfo.data.output.dataValues.walletAddress);
-
-        // New user verification boolean
-        setVerifyNewUserBool(userInfo.data.output.newUser);
-      } catch (err) {
-        console.error("Error verify user info:", err);
-      }
-    };
-
-    if (account) {
-      verifyUserInfo();
-    }
-  }, [account]);
-
-  useEffect(() => {
-    // Record transactions when sign up
-    async function recordSignupTransaction() {
-      try {
-        await axios.post(
-          `${BACKEND_URL}/transactions/points/add/`,
-          signUpPoints(userWalletAdd),
-        );
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    if (verifyNewUserBool && userWalletAdd) {
-      console.log("new user created, redirect to onboarding page");
-      recordSignupTransaction();
-      navigate("/onboarding");
-    } else if (verifyNewUserBool === false) {
-      console.log("Existing user");
-      navigate("/dashboard");
-    }
-  }, [verifyNewUserBool, userWalletAdd]);
 
   return (
     <motion.div
@@ -131,41 +54,58 @@ export default function HomePage() {
         duration: 0.8,
         ease: "easeInOut",
       }}
-      className="flex flex-col items-center justify-center "
+      className="flex w-full flex-col items-center justify-center"
     >
-      <header className="fixed top-0 z-50 flex w-11/12 flex-row items-center justify-between bg-white opacity-90 sm:w-10/12">
-        <figure className="flex flex-row items-center hover:scale-[1.03]">
-          <img src={logo} alt="BitJar Logo" className="h-16" />
-          <h1 className="translate-y-2 text-[36px] font-semibold tracking-tight">
-            Bitjar
-          </h1>
+      <header className="sticky top-0 z-50 flex h-auto w-full flex-row justify-between gap-8 bg-white px-[1em] py-[.5em] align-bottom opacity-90 lg:px-[10em]">
+        <figure className=" flex w-full origin-left flex-row items-center transition-all hover:scale-[1.05]">
+          <div>
+            <img
+              src={logo}
+              alt="BitJar Logo"
+              className="w-[4em] -translate-y-1"
+            />
+          </div>
+          <div>
+            <h1 className="w-full translate-y-2 text-[2rem] font-semibold tracking-tight lg:text-[2.5rem]">
+              Bitjar
+            </h1>
+          </div>
         </figure>
-        <nav className="flex flex-row gap-3">
-          <NavLink to="/" className="hover:translate-y-[-2px] hover:underline">
-            Home
-          </NavLink>
-          <NavLink
-            to="/buy"
-            className="hover:translate-y-[-2px] hover:underline"
-          >
-            Buy
-          </NavLink>
-          <NavLink
-            to="/earn"
-            className="hover:translate-y-[-2px] hover:underline"
-          >
-            Earn
-          </NavLink>
-          <NavLink
-            to="/rewards"
-            className="hover:translate-y-[-2px] hover:underline"
-          >
-            Rewards
-          </NavLink>
-        </nav>
+        <div className="flex flex-col justify-center ">
+          <nav className="flex flex-row gap-2 ">
+            <NavLink
+              to="/"
+              className="hover:translate-y-[-2px] hover:underline "
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/buy"
+              className="hover:translate-y-[-2px] hover:underline"
+            >
+              Buy
+            </NavLink>
+            <NavLink
+              to="/earn"
+              className="hover:translate-y-[-2px] hover:underline"
+            >
+              Earn
+            </NavLink>
+            <NavLink
+              to="/rewards"
+              className="hover:translate-y-[-2px] hover:underline"
+            >
+              Rewards
+            </NavLink>
+          </nav>
+        </div>
       </header>
-      <main className="mt-[4.5em] flex flex-col items-center justify-center p-3 lg:mt-[130px]">
-        <img src={logogif} alt="BitJar Logo" className=" mb-[2em] h-[14rem]" />
+      <main className="mt-[4.5em] flex flex-col items-center justify-center p-3 lg:mt-[3em]">
+        <img
+          src={logogif}
+          alt="BitJar Logo"
+          className=" mb-[2em] h-[14rem] lg:h-[18rem]"
+        />
         <h1 className="text-center text-[42px] font-bold tracking-tighter text-black">
           Make your Bitcoin work harder with Bitjar
         </h1>
@@ -181,24 +121,24 @@ export default function HomePage() {
           </p>
         </div>
       </main>
-      <button
+      <NavLink
         className="btn w-72 border-0 bg-yellow-300 text-lg hover:translate-y-[-2px] hover:bg-yellow-400"
-        onClick={connectWallet}
+        to="/dashboard"
       >
-        Sign Up / Sign In with Wallet
-      </button>
+        Launch App →
+      </NavLink>
       {/* AUM Section */}
-      <section className="mt-5 flex flex-col items-center pt-[1em] lg:flex-row">
-        <figure className="m-2 flex w-[400px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100">
-          <h1 className=" text-[60px] font-bold text-yellow-400">
+      <section className="mt-5 flex w-full flex-col items-center justify-center pt-[1em] lg:flex-row">
+        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[40%] xl:w-[30%]">
+          <h1 className=" text-[3rem] font-bold text-yellow-400 md:text-[3rem] lg:text-[4rem]">
             ${assets.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">
             in assets deposited through Bitjar
           </h2>
         </figure>
-        <figure className="m-2 flex w-[400px] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 ">
-          <h1 className=" text-[60px] font-bold text-yellow-400">
+        <figure className="m-2 flex w-[90%] flex-col items-center border bg-slate-50 pb-[1em] shadow-sm transition-all hover:bg-yellow-100 md:w-[50%] lg:w-[40%] xl:w-[30%] ">
+          <h1 className=" text-[3rem] font-bold text-yellow-400 lg:text-[4rem]">
             ${interest.toLocaleString()}
           </h1>
           <h2 className="tracking-tighter">of crypto earned by users</h2>
@@ -251,18 +191,18 @@ export default function HomePage() {
         </NavLink>
       </section>
       {/* Backers Section */}
-      <section className="m-4 flex flex-col items-center justify-center pt-[4em]">
-        <article className=" flex flex-col items-center justify-center">
+      <section className="m-4 flex w-full flex-col items-center justify-center pt-[4em]">
+        <article className="flex w-full flex-col items-center justify-center">
           <h1 className="text-center text-[42px] font-bold tracking-tighter">
             Backed by institutional partners
           </h1>
           <p className="pb-[2em] tracking-tighter">
-            Over 420,000,000 in SHIBA raised since inception 💰
+            Over 420,000,000 in $BJ raised since inception 💰
           </p>
-          <div className="mt-4 flex flex-row justify-center">
-            <ProfileImage src="/logos/spy.png" label="Spy Investments" />
+          <div className="mt-4 flex w-full flex-row justify-center">
+            <ProfileImage src={spyicon} label="Spy Investments" />
             <ProfileImage src={sqicon} label="SQ Partners" />
-            <ProfileImage src="/logos/kee.png" label="Kee Capital" />
+            <ProfileImage src={khicon} label="Kee Capital" />
             <ProfileImage src={gabicon} label="G Combinator" />
           </div>
         </article>
@@ -287,28 +227,7 @@ export default function HomePage() {
           </div>
         </article>
       </section>
-
-      <footer className="bottom-2 mt-[5em] flex w-full justify-center p-[1em]">
-        <p className="text-sm">
-          © 2023 Bitjar -{" "}
-          <a
-            href="https://github.com/KH-Pua/bitjar-frontend"
-            target="_blank"
-            className=" text-sm hover:underline"
-            rel="noreferrer"
-          >
-            Github -{" "}
-          </a>
-          <a
-            href="https://twitter.com/bitjarxyz"
-            target="_blank"
-            className=" text-sm hover:underline"
-            rel="noreferrer"
-          >
-            Twitter
-          </a>
-        </p>
-      </footer>
+      <Footer />
     </motion.div>
   );
 }

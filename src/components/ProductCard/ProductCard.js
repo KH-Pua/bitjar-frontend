@@ -41,10 +41,16 @@ const ProductCard = ({
         </h3>
         <p className="mt-2 text-sm text-gray-500">{description}</p>
         <div className="mt-2">Total Value Locked: {tvl || "Loading..."}</div>
-        <div>APY: {apy ? apy.toFixed(2) : "Loading..."}%</div>
+        <div>
+          APY: {apy ? 
+            apy === "N/A" ? 
+              "N/A" :
+              `${apy.toFixed(2)} %`    
+            : "Loading..."}
+        </div>
         <div className="mt-4">
           <input
-            id={id}
+            id={id} 
             type="text"
             value={amount}
             onChange={handleChange}

@@ -78,7 +78,7 @@ export default function BuyPage() {
         `/transactions/payments/${address}`,
       );
       setPaymentData(response.data.output);
-      console.log("Payemtn History", paymentData);
+      console.log("Payment History", paymentData);
     } catch (err) {
       console.log(err);
     }
@@ -104,7 +104,7 @@ export default function BuyPage() {
             className="font-bold text-purple-800"
           >
             {" "}
-            MoonPay🌙
+            MoonPay 🌙
           </a>
         </p>
         <MoonPayBuyWidget
@@ -114,9 +114,6 @@ export default function BuyPage() {
           defaultCurrencyCode="eth"
           walletAddress={address}
           colorCode="#face5e"
-          onLogin={() => {
-            console.log("Logging into moonpay");
-          }}
           onTransactionCompleted={(props) => {
             console.log("tx complete", props);
             recordPaymentConfirmation(props);

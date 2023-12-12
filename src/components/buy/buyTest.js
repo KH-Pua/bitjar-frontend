@@ -11,13 +11,11 @@ const BuyTest = ({ address }) => {
   const [purchaseAmount, setPurchaseAmount] = useState(0);
   const [renderNotification, setRenderNotification] = useState(false);
   const executePayment = async () => {
-    console.log("hello", purchaseAmount);
     try {
       const response = await apiRequest.post(
         `/transactions/points/add/`,
         purchasePoints(address, "wBTC", purchaseAmount),
       );
-      console.log("Purchase Points Received");
       setRenderNotification(true);
     } catch (err) {
       console.log(err);

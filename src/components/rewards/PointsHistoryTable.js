@@ -1,15 +1,6 @@
 import { formatTimestamp } from "../../utilities/formatting";
-import { useState } from "react";
 
 const PointsHistoryTable = ({ data }) => {
-  const [windowWidth, setWindowWidth] = useState(null);
-
-  const reportWindowSize = () => {
-    let widthOutput = window.innerWidth;
-    setWindowWidth(widthOutput);
-  };
-  window.addEventListener("resize", reportWindowSize);
-
   return (
     <div className="overflow-y-auto bg-white pr-[.5em]">
       <table className="text-left">
