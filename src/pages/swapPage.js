@@ -121,9 +121,9 @@ export default function SwapPage() {
   https://0x.org/docs/0x-swap-api/advanced-topics/how-to-set-your-token-allowances
   */
   const fetchQuote = async () => {
+    if (!currentTrade.from || !currentTrade.to || !fromAmount)
+      return setSwapText("Please fill in all fields");
     setSwapText("Swapping...");
-    if (!currentTrade.from || !currentTrade.to || !fromAmount) return;
-
     const params = {
       sellToken: currentTrade.from.address,
       buyToken: currentTrade.to.address,
