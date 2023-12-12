@@ -23,14 +23,16 @@ export const RefererOutput = ({ walletaddress }) => {
     });
 
     // If No Referer
-    if (Array.isArray(output.data.output)) {
+    if (Array.isArray(output.data.output[0].referer)) {
       setRefererName("xx");
     } else {
       // If Unnamed User, Put Wallet Address
-      if (output.data.output.userName == "") {
-        setRefererName(formatWalletAddress(output.data.output.walletAddress));
+      if (output.data.output[0].referer.userName == "") {
+        setRefererName(
+          formatWalletAddress(output.data.output[0].referer.walletAddress),
+        );
       } else {
-        setRefererName(output.data.output.userName);
+        setRefererName(output.data.output[0].referer.userName);
       }
     }
   };

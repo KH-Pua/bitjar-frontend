@@ -80,23 +80,6 @@ export default function EarnPage() {
 
   // Get pool data from BE that call to Defi Llama
   useEffect(() => {
-    // fetchPoolData("e880e828-ca59-4ec6-8d4f-27182a4dc23d").then((data) => {
-    //   console.log("WETH Pool Data: ", data);
-    //   setWethPoolData(data);
-    // });
-    // fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
-    //   console.log("WBTC Pool Data: ", data);
-    //   setWbtcPoolData(data);
-    // });
-    // fetchPoolData("aa70268e-4b52-42bf-a116-608b370f9501").then((data) => {
-    //   console.log("USDC Pool Data: ", data);
-    //   setUsdcPoolData(data);
-    // });
-    // fetchPoolData("7e382157-b1bc-406d-b17b-facba43b716e").then((data) => {
-    //   console.log("Sepolia Pool Data: ", data);
-    //   setSepoliaPoolData(data);
-    // });
-
     getProductInfo();
   }, []);
 
@@ -138,11 +121,8 @@ export default function EarnPage() {
   const deposit = async (token, pool) => {
     console.log("deposit start!", token, pool);
     const depositTokenAddress = tokenAddress[token];
-    console.log("TokenAddress", depositTokenAddress);
     const lendingPoolAddress = lendingPool[pool];
-    console.log("PoolAddress", lendingPoolAddress);
     const depositAmount = amount[token];
-    console.log("DepositAmount", depositAmount);
 
     let fullDepositAmount;
     if (token.includes("BTC")) {
@@ -150,11 +130,9 @@ export default function EarnPage() {
     } else {
       fullDepositAmount = web3.utils.toWei(depositAmount, "ether");
     }
-    console.log("Fulldeposit", fullDepositAmount);
 
     if (!depositTokenAddress || !lendingPoolAddress || !fullDepositAmount)
       return;
-    console.log("Deposit", token, pool);
 
     try {
       const contract = new web3.eth.Contract(erc20ABI, depositTokenAddress);
@@ -168,14 +146,12 @@ export default function EarnPage() {
         .allowance(account, lendingPoolAddress)
         .call();
 
-      console.log("allowance", currentAllowance);
-
       // Compare current allowance with the sellAmount
       if (currentAllowance < fullDepositAmount) {
         // Approval is needed -> perform approval
         await contract.methods
-        .approve(lendingPoolAddress, fullDepositAmount)
-        .send({ from: account });
+          .approve(lendingPoolAddress, fullDepositAmount)
+          .send({ from: account });
       }
 
       let transactionHash;
@@ -184,7 +160,6 @@ export default function EarnPage() {
         .deposit(depositTokenAddress, fullDepositAmount, account, 0)
         .send({ from: account })
         .then((receipt) => {
-          console.log(receipt);
           transactionHash = receipt.transactionHash;
         });
 
@@ -209,11 +184,8 @@ export default function EarnPage() {
   const withdraw = async (token, pool) => {
     console.log("withdraw start!", token, pool);
     const withdrawTokenAddress = tokenAddress[token];
-    console.log("TokenAddress", withdrawTokenAddress);
     const lendingPoolAddress = lendingPool[pool];
-    console.log("PoolAddress", lendingPoolAddress);
     const withdrawAmount = amount[token];
-    console.log("WithdrawAmount", withdrawAmount);
 
     let fullWithdrawAmount;
     if (token.includes("BTC")) {
@@ -221,11 +193,9 @@ export default function EarnPage() {
     } else {
       fullWithdrawAmount = web3.utils.toWei(withdrawAmount, "ether");
     }
-    console.log("Fullwithdraw", fullWithdrawAmount);
 
     if (!withdrawTokenAddress || !lendingPoolAddress || !fullWithdrawAmount)
       return;
-    console.log("start withdraw");
 
     try {
       const lendingPoolContract = new web3.eth.Contract(
@@ -239,7 +209,6 @@ export default function EarnPage() {
         .withdraw(withdrawTokenAddress, fullWithdrawAmount, account)
         .send({ from: account })
         .then((receipt) => {
-          console.log(receipt);
           transactionHash = receipt.transactionHash;
         });
 
@@ -269,7 +238,6 @@ export default function EarnPage() {
         maxCount: "0x10",
       });
       setTransactions(response.transfers);
-      console.log(response.transfers);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }

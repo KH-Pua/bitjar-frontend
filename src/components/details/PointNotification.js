@@ -1,5 +1,5 @@
 //-----------Libaries-----------//
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import animation from "../../media/BitJar-gif.gif";
 
 const PointNotification = ({ data }) => {

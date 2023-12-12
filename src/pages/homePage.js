@@ -15,9 +15,10 @@ import logo from "../media/bitjar-logo.png";
 import logogif from "../media/BitJar-gif.gif";
 import btcIcon from "cryptocurrency-icons/svg/color/btc.svg";
 
-import spencerIcon from "../media/InvestorIcons/punk.jpg";
+import spyicon from "../media/InvestorIcons/punk.jpg";
 import gabicon from "../media/InvestorIcons/wonderpal.png";
 import sqicon from "../media/InvestorIcons/gharliera-logo.jpg";
+import khicon from "../media/InvestorIcons/peksy_penguin.jpg";
 
 import githiredlogo from "../media/CompanyIcons/githiredLogo.png";
 import paireduplogo from "../media/CompanyIcons/pairedUpLogo.png";
@@ -196,12 +197,12 @@ export default function HomePage() {
             Backed by institutional partners
           </h1>
           <p className="pb-[2em] tracking-tighter">
-            Over 420,000,000 in SHIBA raised since inception 💰
+            Over 420,000,000 in $BJ raised since inception 💰
           </p>
           <div className="mt-4 flex w-full flex-row justify-center">
-            <ProfileImage src={spencerIcon} label="Spy Investments" />
+            <ProfileImage src={spyicon} label="Spy Investments" />
             <ProfileImage src={sqicon} label="SQ Partners" />
-            <ProfileImage src="/logos/kee.png" label="Kee Capital" />
+            <ProfileImage src={khicon} label="Kee Capital" />
             <ProfileImage src={gabicon} label="G Combinator" />
           </div>
         </article>
