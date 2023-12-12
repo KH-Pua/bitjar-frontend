@@ -11,6 +11,7 @@ import ReferralHistoryTable from "../components/rewards/ReferralHistoryTable.js"
 //-----------Utilities-----------//
 import { apiRequest, getUserData } from "../utilities/apiRequests";
 import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
+import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 export default function RewardsPage() {
   const address = localStorage.getItem("connection_meta");
@@ -130,16 +131,7 @@ export default function RewardsPage() {
           </main>
         </>
       ) : (
-        <div className="h-screen w-full">
-          <header>
-            <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
-          </header>
-          <main className="flex h-full items-center justify-center ">
-            <button className="rounded-lg bg-yellow-200 p-3">
-              Connect Wallet
-            </button>
-          </main>
-        </div>
+        <ConnectWalletDefault />
       )}
     </div>
   );
