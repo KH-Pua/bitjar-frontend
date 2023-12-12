@@ -6,7 +6,6 @@ import BaseTemplate from "../components/template/baseTemplate.js";
 import HomePage from "../pages/homePage.js";
 import ErrorPage from "../pages/errorPage.js";
 import DashboardPage from "../pages/dashboardPage.js";
-import MarketPage from "../pages/marketPage.js";
 import EarnPage from "../pages/earnPage.js";
 import SwapPage from "../pages/swapPage.js";
 import BuyPage from "../pages/buyPage.js";
@@ -27,11 +26,6 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <DashboardPage />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "market",
-        element: <MarketPage />,
         errorElement: <ErrorPage />,
       },
       {

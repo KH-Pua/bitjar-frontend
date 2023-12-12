@@ -14,19 +14,14 @@ import {
   Bars3Icon,
   BellIcon,
   HomeIcon,
-  UsersIcon,
   XMarkIcon,
   CurrencyDollarIcon,
-  ChartBarIcon,
   ArrowsRightLeftIcon,
   TrophyIcon,
   BanknotesIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import logo from "../../media/bitjar-logo.png";
 import bitjar from "../../media/BitJar-gif.gif";
 
@@ -54,7 +49,6 @@ export default function BaseTemplate() {
   const connectWallet = async () => {
     try {
       const accounts = await web3.eth.requestAccounts();
-      console.log("these are the accounts: ", accounts);
       setAccount(accounts[0]);
       localStorage.setItem("connection_meta", accounts[0]);
     } catch (error) {
@@ -370,26 +364,6 @@ export default function BaseTemplate() {
                 />
 
                 <div className="flex flex-1 flex-row-reverse gap-x-4 self-stretch lg:gap-x-6">
-                  {/* <form
-                    className="relative flex flex-1"
-                    action="#"
-                    method="GET"
-                  >
-                    <label htmlFor="search-field" className="sr-only">
-                      Search
-                    </label>
-                    <MagnifyingGlassIcon
-                      className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                    <input
-                      id="search-field"
-                      className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                      placeholder="Search..."
-                      type="search"
-                      name="search"
-                    />
-                  </form> */}
                   <div className="flex items-center gap-x-4 lg:gap-x-6">
                     {/* <button
                       type="button"

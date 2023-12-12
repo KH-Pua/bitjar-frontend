@@ -14,14 +14,10 @@ const DailyRewardsButton = ({ address, fetchPointsHistory, fetchUserData }) => {
   const [timeToClaim, setTimeToClaim] = useState(null);
   const [renderNotification, setRenderNotification] = useState(false);
 
-  const [windowHeight, setWindowHeight] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
 
   function reportWindowSize() {
-    let heightOutput = window.innerHeight;
     let widthOutput = window.innerWidth;
-
-    setWindowHeight(heightOutput);
     setWindowWidth(widthOutput);
   }
 

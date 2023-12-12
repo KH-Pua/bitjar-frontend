@@ -1,23 +1,7 @@
 import { formatTimestamp } from "../../utilities/formatting";
-import { useState } from "react";
 import { LinkIcon } from "@heroicons/react/24/outline";
 
 const PaymentHistoryTable = ({ data }) => {
-  const [windowHeight, setWindowHeight] = useState(null);
-  const [windowWidth, setWindowWidth] = useState(null);
-
-  // console.log(`window size ${window.matchMedia("(max-width: 700px)").matches}`);
-
-  function reportWindowSize() {
-    let heightOutput = window.innerHeight;
-    let widthOutput = window.innerWidth;
-
-    setWindowHeight(heightOutput);
-    setWindowWidth(widthOutput);
-  }
-
-  window.onresize = reportWindowSize;
-
   return (
     <div className="overflow-y-auto bg-white px-[1em]">
       {/* <table className="table"> */}

@@ -12,7 +12,6 @@ import { formatWalletAddress } from "../utilities/formatting";
 import { SwapResult } from "../components/Swap/SwapResult";
 import { apiRequest } from "../utilities/apiRequests";
 import erc20ABI from "../utilities/erc20.abi.json";
-import { filterProps } from "framer-motion";
 
 let web3;
 
@@ -113,7 +112,7 @@ export default function SwapPage() {
   https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2#writeContract
   
   Step 2: Connect wallet and approve
-  address: 0xdef1c0ded9bec7f1a1670819833240f027b25eff
+  address: 0xdef1c0ded9bec7f1a1670819833240f027b25eff  // 0x Exchange Proxy
   wad (uint256): 115792089237316195423570985008687907853269984665640564039457584007913129639935
   
   https://0x.org/docs/0x-swap-api/advanced-topics/how-to-set-your-token-allowances

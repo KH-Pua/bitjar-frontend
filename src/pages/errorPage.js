@@ -6,19 +6,15 @@ const ErrorPage = () => {
 
   return (
     <>
-      {error.message ===
-      `Cannot read properties of undefined (reading 'userName')` ? (
-        <div className="animate-pulse">Filling In Information</div>
-      ) : (
-        <div>
-          <br />
-          <h2>Oops!</h2>
-          <p>Sorry, an unexpected error has occurred.</p>
-          <p>
-            <i>{error.statustext || error.message}</i>
-          </p>
-        </div>
-      )}
+      {/* Make more beautiful */}
+      <div>
+        <br />
+        <h2>Oops!</h2>
+        <p>Sorry, an unexpected error has occurred.</p>
+        <p>
+          <i>{error.statustext || error.message}</i>
+        </p>
+      </div>
     </>
   );
 };
