@@ -46,41 +46,43 @@ export const TransactionHistoryTable = ({ account }) => {
           </thead>
           {/* body */}
           <tbody className="divide-y divide-gray-200 bg-white">
-            {account && userTransactionHistory ? (
-              userTransactionHistory.map((element) => (
-                <tr key={element.id}>
-                  <td className="py-3 pl-4 text-sm font-medium text-gray-900">
-                    {element.coin.coinName}
-                  </td>
-                  <td className="px-3 py-4 text-sm text-gray-500">
-                    {element.product.productName}
-                  </td>
-                  <td className="px-3 py-4 text-sm text-gray-500">
-                    {element.amount}
-                  </td>
-                  <td>
-                    <a
-                      href={`https://etherscan.io/tx/${element.transactionHash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <LinkIcon className="h-6 w-6 text-gray-500" />
-                    </a>
+            {account && userTransactionHistory ? 
+              userTransactionHistory.length > 0 ? (
+                userTransactionHistory.map((element) => (
+                  <tr key={element.id}>
+                    <td className="py-3 pl-4 text-sm font-medium text-gray-900">
+                      {element.coin.coinName}
+                    </td>
+                    <td className="px-3 py-4 text-sm text-gray-500">
+                      {element.product.productName}
+                    </td>
+                    <td className="px-3 py-4 text-sm text-gray-500">
+                      {element.amount}
+                    </td>
+                    <td>
+                      <a
+                        href={`https://etherscan.io/tx/${element.transactionHash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <LinkIcon className="h-6 w-6 text-gray-500" />
+                      </a>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="px-4 py-4 text-base font-medium text-gray-900 text-center">
+                    {userTransactionHistory === null
+                      ? "Loading..."
+                      : "No Transactions available"}
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td className="col-span-4 px-3 py-3 text-base font-medium text-gray-900">
-                  {userTransactionHistory === null
-                    ? "Loading..."
-                    : "No Transactions at the moment"}
-                </td>
-              </tr>
-            )}
+              ) : null }
           </tbody>
         </table>
       </div>
     </>
   );
+  
 };
