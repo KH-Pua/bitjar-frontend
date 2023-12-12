@@ -45,7 +45,8 @@ export const HoldingsTable = ({ account }) => {
           </thead>
           {/* body */}
           <tbody className="divide-y divide-gray-200 bg-white">
-            {account && holdings ? (
+            {account && holdings ? 
+              holdings.length > 0 ? (
               holdings.map((element) => (
                 <tr key={element.id}>
                   <td className="py-3 pl-4 text-sm font-medium text-gray-900">
@@ -64,11 +65,13 @@ export const HoldingsTable = ({ account }) => {
               ))
             ) : (
               <tr>
-                <td className="col-span-4 px-3 py-3 text-base font-medium text-gray-900">
-                  No HODLings available
+                <td colSpan="4" className="px-4 py-4 text-base font-medium text-gray-900 text-center">
+                  {holdings === null
+                    ? "Loading..."
+                    : "No HODLings available"}
                 </td>
               </tr>
-            )}
+            ) : null }
           </tbody>
         </table>
       </div>

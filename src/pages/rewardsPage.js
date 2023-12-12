@@ -8,6 +8,7 @@ import PointsTable from "../components/rewards/PointsTable.js";
 import ReferralTable from "../components/rewards/ReferralTable.js";
 import PointsHistoryTable from "../components/rewards/PointsHistoryTable.js";
 import ReferralHistoryTable from "../components/rewards/ReferralHistoryTable.js";
+import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 //-----------Utilities-----------//
 import { apiRequest, getUserData } from "../utilities/apiRequests";
@@ -71,7 +72,9 @@ export default function RewardsPage() {
   };
 
   useEffect(() => {
-    fetchUserData();
+    if (address) {
+      fetchUserData();
+    }
   }, [address]);
 
   // GET - Retrieve all data
@@ -102,7 +105,7 @@ export default function RewardsPage() {
             <ProgressBar userData={user && user} />
           </div>
 
-          <main className="mt-3 grid w-full grid-cols-1 gap-y-[3em] xl:grid-cols-2">
+          <main className="mb-0 mt-3 grid w-full grid-cols-1 gap-y-[3em] xl:grid-cols-2">
             <figure className="flex h-[500px] flex-col items-center">
               <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
                 Points Leaderboard 🍯
