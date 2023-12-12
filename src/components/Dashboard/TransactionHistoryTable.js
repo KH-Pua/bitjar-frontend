@@ -1,19 +1,19 @@
 //-----------Libraries-----------//
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-// Import Icons
-import { LinkIcon } from "@heroicons/react/24/outline";
+//-----------Utilities-----------//
+import { apiRequest } from "../../utilities/apiRequests";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+//-----------Media-----------//
+import { LinkIcon } from "@heroicons/react/24/outline";
 
 export const TransactionHistoryTable = ({ account }) => {
   const [userTransactionHistory, setUserTransactionHistory] = useState(null);
 
   useEffect(() => {
     if (account) {
-      axios
-        .get(`${BACKEND_URL}/transactions/products/${account}`) 
+      apiRequest
+        .get(`/transactions/products/${account}`)
         .then((response) => {
           setUserTransactionHistory(response.data.data);
         })
@@ -46,7 +46,7 @@ export const TransactionHistoryTable = ({ account }) => {
           </thead>
           {/* body */}
           <tbody className="divide-y divide-gray-200 bg-white">
-            {account && userTransactionHistory ? 
+            {account && userTransactionHistory ? (
               userTransactionHistory.length > 0 ? (
                 userTransactionHistory.map((element) => (
                   <tr key={element.id}>
@@ -72,17 +72,20 @@ export const TransactionHistoryTable = ({ account }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="px-4 py-4 text-base font-medium text-gray-900 text-center">
+                  <td
+                    colSpan="4"
+                    className="px-4 py-4 text-center text-base font-medium text-gray-900"
+                  >
                     {userTransactionHistory === null
                       ? "Loading..."
                       : "No Transactions available"}
                   </td>
                 </tr>
-              ) : null }
+              )
+            ) : null}
           </tbody>
         </table>
       </div>
     </>
   );
-  
 };

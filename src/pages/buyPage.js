@@ -123,9 +123,12 @@ export default function BuyPage() {
               }}
             />
           </div>
-          <h2 className="pb-[.5em] text-[1rem] font-semibold">
-            Payment History
-          </h2>
+          <h1 className="pt-12 text-base font-semibold leading-6 text-gray-900">
+            Payments
+          </h1>
+          <p className="my-2 text-sm text-gray-700">
+            List of past 5 purchases ordered by timestamp
+          </p>
           <figure className="flex h-[500px] flex-col items-center">
             <PaymentHistoryTable data={paymentData} />
           </figure>

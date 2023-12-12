@@ -13,7 +13,6 @@ import { ConnectWalletDefault } from "../components/ConnectWalletDefault/Connect
 //-----------Utilities-----------//
 import { apiRequest, getUserData } from "../utilities/apiRequests";
 import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
-import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 export default function RewardsPage() {
   // const address = localStorage.getItem("connection_meta");

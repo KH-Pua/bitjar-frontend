@@ -14,7 +14,9 @@ const PointNotification = ({ data }) => {
       <div className="modal-box flex flex-col items-center justify-center">
         <img src={animation} alt="logoicon" className="w-36" />
         <p className="mt-3 text-lg">{actionName}</p>
-        <p className="  font-semibold">Points earned: {pointsAllocated}</p>
+        {pointsAllocated && (
+          <p className="font-semibold">Points earned: {pointsAllocated}</p>
+        )}
       </div>
       <form method="dialog" className="modal-backdrop">
         <button>close</button>

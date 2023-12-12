@@ -7,18 +7,13 @@ import { Network, Alchemy } from "alchemy-sdk";
 //-----------Components-----------//
 import ProductCard from "../components/ProductCard/ProductCard.js";
 import { TransactionHistoryTable } from "../components/Dashboard/TransactionHistoryTable.js";
+import PointNotification from "../components/details/PointNotification.js";
 
 //-----------Utilities-----------//
-import {
-  formatEthValue,
-  formatCurrency,
-  formatWalletAddress,
-} from "../utilities/formatting.js";
+import { formatEthValue, formatCurrency } from "../utilities/formatting.js";
 import erc20ABI from "../utilities/erc20.abi.json";
 import aaveLendingPoolABI from "../utilities/aaveLendingPoolABI.json";
-import axios from "axios";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+import { apiRequest } from "../utilities/apiRequests.js";
 
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
@@ -30,8 +25,8 @@ const alchemy = new Alchemy(settings);
 let web3;
 
 export default function EarnPage() {
+  //-----------Constants-----------//
   const account = useOutletContext();
-
   const tokenAddress = {
     WETH: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -40,12 +35,12 @@ export default function EarnPage() {
     sepoliaUSDC: "0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8",
     sepoliaWETH: "0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c",
   };
-
   const lendingPool = {
     main: "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
     sepolia: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
   };
 
+  //-----------Variables-----------//
   //Get staging tokens - https://staging.aave.com/faucet/
   const [amount, setAmount] = useState({
     WBTC: "",
@@ -59,16 +54,14 @@ export default function EarnPage() {
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState([]);
 
-  // Add state for WETH and WBTC pool data
+  //-----------Pool data-----------//
   const [wethPoolData, setWethPoolData] = useState({});
   const [wbtcPoolData, setWbtcPoolData] = useState({});
   const [usdcPoolData, setUsdcPoolData] = useState({});
 
-  useEffect(() => {
-    if (transactions) {
-      console.log(transactions);
-    }
-  },[transactions])
+  //-----------State Toggles-----------//
+  const [notificationData, setNotificationData] = useState(false);
+  const [renderNotification, setRenderNotification] = useState(false);
 
   useEffect(() => {
     if (account) {
@@ -91,7 +84,7 @@ export default function EarnPage() {
 
   // Get pool data from BE that call Defillama API every 30 minutes to update data.
   const getProductInfo = async () => {
-    const productInfo = await axios.get(`${BACKEND_URL}/products`);
+    const productInfo = await apiRequest.get(`/products`);
     if (productInfo) {
       //Convert the returned array into obj
       const productInfoArray = productInfo.data.output;
@@ -131,6 +124,7 @@ export default function EarnPage() {
     const depositAmount = amount[token];
 
     let fullDepositAmount;
+    // Convert to uint256 integer based on decimals
     if (token.includes("BTC")) {
       fullDepositAmount = toSatoshi(depositAmount);
     } else {
@@ -154,7 +148,6 @@ export default function EarnPage() {
 
       // Compare current allowance with the sellAmount
       if (currentAllowance < fullDepositAmount) {
-        // Approval is needed -> perform approval
         await contract.methods
           .approve(lendingPoolAddress, fullDepositAmount)
           .send({ from: account });
@@ -175,13 +168,20 @@ export default function EarnPage() {
 
       let depositFloat = parseFloat(depositAmount);
 
-      await axios.post(`${BACKEND_URL}/transactions/products/deposit`, {
+      await apiRequest.post(`/transactions/products/deposit`, {
         depositAmount: depositFloat,
         token: token,
         poolAddress: lendingPoolAddress,
         walletAddress: account,
         transactionHash: transactionHash,
       });
+
+      // Notifications
+      setNotificationData({
+        actionName: `Deposited ${depositAmount} of ${token} to Aave v3 (${pool})`,
+        pointsAllocated: 100,
+      });
+      setRenderNotification(true);
     } catch (error) {
       console.error(`Error in supplying ${token} to ${pool}:`, error);
     }
@@ -223,25 +223,32 @@ export default function EarnPage() {
       );
 
       let withdrawFloat = parseFloat(withdrawAmount);
-      await axios.post(`${BACKEND_URL}/transactions/products/withdraw`, {
+      await apiRequest.post(`/transactions/products/withdraw`, {
         withdrawAmount: withdrawFloat,
         token: token,
         poolAddress: lendingPoolAddress,
         walletAddress: account,
         transactionHash: transactionHash,
       });
+
+      // Notifications
+      setNotificationData({
+        actionName: `Withdrew ${withdrawAmount} of ${token} from Aave v3 (${pool})`,
+      });
+      setRenderNotification(true);
     } catch (error) {
       console.error(`Error in withdrawing ${token} from ${pool}:`, error);
     }
   };
 
+  // Get blockchain transactions - NOT IN USE
   const fetchTransactions = async (address) => {
     try {
       const response = await alchemy.core.getAssetTransfers({
         fromBlock: "0x0",
         fromAddress: address,
         category: ["erc721", "external", "erc20"],
-        maxCount: "0x10",
+        maxCount: "0x5",
       });
       setTransactions(response.transfers);
     } catch (error) {
@@ -256,6 +263,22 @@ export default function EarnPage() {
       setBalance(balanceEth);
     } catch (error) {
       console.error("Error fetching balance:", error);
+    }
+  };
+
+  // Not in use atm
+  const fetchPrice = async (token, amount) => {
+    try {
+      let information = await apiRequest.post(`users/getCoinLatestInfo`, {
+        coinSYM: "BTC",
+      });
+      console.log("information", information);
+      const price = information.data.data.data["BTC"].quote.USD.price;
+      const points = parseFloat(price * amount);
+      console.log("amount", amount, "points", points);
+      return points;
+    } catch (error) {
+      console.error(`Error fetching ${token} price:`, error);
     }
   };
 
@@ -386,6 +409,7 @@ export default function EarnPage() {
               />
             </div>
           </div>
+          {renderNotification && <PointNotification data={notificationData} />}
         </div>
       )}
 
@@ -402,7 +426,7 @@ export default function EarnPage() {
         </div>
       )}
 
-      {/* Transactions Table */}
+      {/* Blockchain Transactions Table */}
       {/* <div className="py-4">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
