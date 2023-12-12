@@ -20,6 +20,7 @@ import {
   TrophyIcon,
   BanknotesIcon,
   Cog6ToothIcon,
+  BookOpenIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import logo from "../../media/bitjar-logo.png";
@@ -67,6 +68,7 @@ export default function BaseTemplate() {
     { name: "Swap", href: "/swap", icon: ArrowsRightLeftIcon, current: false },
     { name: "Buy", href: "/buy", icon: BanknotesIcon, current: false },
     { name: "Rewards", href: "/rewards", icon: TrophyIcon, current: false },
+    { name: "FAQs", href: "/faq", icon: BookOpenIcon, current: false },
   ];
 
   const userNavigation = [
@@ -260,6 +262,7 @@ export default function BaseTemplate() {
                                 ))}
                               </ul>
                             </li>
+
                             <li className="mt-auto">
                               <NavLink
                                 to="/settings"
@@ -325,6 +328,7 @@ export default function BaseTemplate() {
                         ))}
                       </ul>
                     </li>
+
                     <li className="mt-auto">
                       <NavLink
                         to="/settings"
