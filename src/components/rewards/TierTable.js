@@ -5,9 +5,9 @@ const TierTable = ({ data }) => {
         {/* head */}
         <thead className="">
           <tr className="text-center">
-            <th>Airdrop Tier</th>
-            <th>Points Needed</th>
-            <th>Points Multiplier</th>
+            <th>Tier</th>
+            <th>Points</th>
+            <th>Multiplier</th>
           </tr>
         </thead>
         <tbody className="text-center">

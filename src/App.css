@@ -40,5 +40,9 @@
 
 /* Table Formatting */
 .table-header {
-  @apply py-[1em] text-[1rem] font-semibold;
+  @apply py-[1em] pl-[1.5em] text-center text-[0.8rem] font-semibold sm:pl-[4em];
+}
+
+.table-data {
+  @apply py-[1em] pl-[1.5em] text-center text-[0.8rem]  md:pl-[4em];
 }

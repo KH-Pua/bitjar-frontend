@@ -82,7 +82,7 @@ const ProgressBar = ({ userData }) => {
     <div>
       <header className="flex flex-row justify-between">
         <h1 className="flex flex-row items-center gap-[1em]">
-          <div className="m-1 flex items-center gap-3">
+          <div className=" flex items-center">
             <div className="avatar">
               <div className="h-16 w-16 rounded-full bg-white">
                 <img src={profilePicture ? profilePicture : logo} alt="DP" />
@@ -97,12 +97,12 @@ const ProgressBar = ({ userData }) => {
                 {formatWalletAddress(userData && walletAddress)}
               </span>
             </p>
-            <p className="font-bold">
+            <p className="text-[12px] font-bold sm:text-base">
               {currentTier} Tier : {points} Points
             </p>
-            <p>
-              (<span className="font-bold">{bonusPoints}</span> bonus points
-              added at end of season from {multiplier}x multiplier)
+            <p className="text-[12px] sm:text-base">
+              (<span className="font-bold">{bonusPoints}</span> bonus points at
+              end of season from {multiplier}x multiplier)
             </p>
           </div>
         </h1>
@@ -115,13 +115,13 @@ const ProgressBar = ({ userData }) => {
                 ✕
               </button>
             </form>
-            <h3 className="text-lg font-bold">How to earn points:</h3>
-            <p className="bg-yellow-200 text-center">
-              Hit your points milestones to get airdrop multipliers!
+            <h3 className="mb-2 text-lg font-bold">How to earn points:</h3>
+            <p className="mb-2 bg-yellow-200 p-1 text-center text-sm">
+              Hit your milestones and get multipliers! 🎯
             </p>
             <TierTable />
-            <p className="bg-yellow-200 text-center">
-              Perform the following actions daily to rack up points!
+            <p className="mb-2 bg-yellow-200 p-1 text-center text-sm">
+              Daily actions to rack up points! 📈
             </p>
             <InfoTable />
           </div>
@@ -134,13 +134,12 @@ const ProgressBar = ({ userData }) => {
         ></div>
       </div>
       <div className="text-right">
-        <p className="">
-          Earn{" "}
+        <p className="text-[12px] sm:text-base">
           <span className="animate-pulse font-bold text-sky-800">
             {nextTierPoints.toFixed(2)}{" "}
           </span>
           more points to reach
-          <span className="font-bold"> {nextTier} Tier!</span>
+          <span className="font-bold"> {nextTier}!</span>
         </p>
 
         <button
