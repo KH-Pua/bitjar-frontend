@@ -157,7 +157,7 @@ export default function EarnPage() {
       let transactionHash;
 
       await lendingPoolContract.methods
-        .deposit(depositTokenAddress, fullDepositAmount, account, 0)
+        .supply(depositTokenAddress, fullDepositAmount, account, 0)
         .send({ from: account })
         .then((receipt) => {
           transactionHash = receipt.transactionHash;

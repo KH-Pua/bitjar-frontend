@@ -7,14 +7,13 @@ const PaymentHistoryTable = ({ data }) => {
       {/* <table className="table"> */}
       <table className="text-left">
         {/* head */}
-        <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50">
+        <thead className="sticky top-0 z-10 mb-[1em] bg-slate-50 ">
           <tr>
-            <th className="table-header pl-[1em] lg:w-[25%]">Timestamp</th>
-            <th className="table-header pr-[3em]">Payment Status</th>
-            <th className="table-header pr-[3em]">Purchase Amount (USD)</th>
-            <th className="table-header pr-[3em]">Coin bought</th>
-            <th className="table-header  pl-[1em] pr-[3em]">Amount</th>
-            <th className="table-header  pl-[1em] pr-[3em]">Link</th>
+            <th className="table-header">Timestamp</th>
+            <th className="table-header ">Status</th>
+            <th className="table-header ">Amount (USD)</th>
+            <th className="table-header ">Coin</th>
+            <th className="table-header pr-[1em]">Link</th>
           </tr>
         </thead>
 
@@ -24,14 +23,11 @@ const PaymentHistoryTable = ({ data }) => {
             // Not sure why I can't put border-b-[1px]
             <tbody key={row.id} className="border-b-[1px] border-slate-300">
               <tr>
-                <td className="py-[1em] pl-[1em]">
-                  {formatTimestamp(row.createdAt)}
-                </td>
-                <td>{row.paymentStatus}</td>
-                <td>{row.fiatAmountUsd}</td>
-                <td>{row.coin.coinSymbol}</td>
-                <td>{row.coinAmountPurchased}</td>
-                <td>
+                <td className="table-data">{formatTimestamp(row.createdAt)}</td>
+                <td className="table-data">{row.paymentStatus}</td>
+                <td className="table-data">{row.fiatAmountUsd}</td>
+                <td className="table-data">{row.coin.coinSymbol}</td>
+                <td className="table-data pr-[1em]">
                   <a
                     href={`https://buy.moonpay.com/transaction_receipt?transactionId=${row.transactionHash}`}
                     target="_blank"
