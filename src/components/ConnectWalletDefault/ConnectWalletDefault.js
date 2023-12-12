@@ -3,8 +3,8 @@ import BITJARLOGO from "../../media/bitjar-logo.png";
 export const ConnectWalletDefault = () => {
   return (
     <>
-      <div className="flex h-full w-full flex-row justify-center ">
-        <div className="flex h-full flex-col items-center text-center">
+      <div className="flex w-full flex-row justify-center ">
+        <div className="flex flex-col items-center text-center">
           <div className="pb-[3em] pt-[2em]">
             <p className="font-bold">Please Connect Wallet!</p>
             <p className="font-medium text-slate-600">

@@ -1,5 +1,6 @@
 //-----------Libraries-----------//
 import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 
 //-----------Components-----------//
 import ProgressBar from "../components/rewards/ProgressBar.js";
@@ -7,13 +8,15 @@ import PointsTable from "../components/rewards/PointsTable.js";
 import ReferralTable from "../components/rewards/ReferralTable.js";
 import PointsHistoryTable from "../components/rewards/PointsHistoryTable.js";
 import ReferralHistoryTable from "../components/rewards/ReferralHistoryTable.js";
+import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 //-----------Utilities-----------//
 import { apiRequest, getUserData } from "../utilities/apiRequests";
 import DailyRewardsButton from "../components/rewards/DailyRewardsButton.js";
 
 export default function RewardsPage() {
-  const address = localStorage.getItem("connection_meta");
+  // const address = localStorage.getItem("connection_meta");
+  const address = useOutletContext();
 
   //-----------Data-----------//
   const [pointsLeaderboard, setPointsLeaderboard] = useState();
@@ -68,8 +71,10 @@ export default function RewardsPage() {
   };
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    if (address) {
+      fetchUserData();
+    }
+  }, [address]);
 
   // GET - Retrieve all data
   useEffect(() => {
@@ -83,7 +88,7 @@ export default function RewardsPage() {
 
   return (
     <div className=" flex w-full flex-col items-center px-3">
-      {user ? (
+      {user && address ? (
         <>
           <header className="flex w-full flex-row justify-between">
             <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
@@ -99,7 +104,7 @@ export default function RewardsPage() {
             <ProgressBar userData={user && user} />
           </div>
 
-          <main className="mt-3 grid w-full grid-cols-1 gap-y-[3em] xl:grid-cols-2">
+          <main className="mb-0 mt-3 grid w-full grid-cols-1 gap-y-[3em] xl:grid-cols-2">
             <figure className="flex h-[500px] flex-col items-center">
               <h2 className="pb-[.5em] text-[1.5rem] font-semibold">
                 Points Leaderboard 🍯
@@ -130,16 +135,7 @@ export default function RewardsPage() {
           </main>
         </>
       ) : (
-        <div className="h-screen w-full">
-          <header>
-            <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>
-          </header>
-          <main className="flex h-full items-center justify-center ">
-            <button className="rounded-lg bg-yellow-200 p-3">
-              Connect Wallet
-            </button>
-          </main>
-        </div>
+        <ConnectWalletDefault />
       )}
     </div>
   );

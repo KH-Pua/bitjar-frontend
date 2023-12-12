@@ -46,11 +46,16 @@ export default function DashboardPage() {
   const [totalHoldings, setTotalHoldings] = useState(null);
 
   useEffect(() => {
-    fetchUserData();
     if (window.ethereum && account) {
       web3 = new Web3(window.ethereum);
     }
   }, []);
+
+  useEffect(() => {
+    if (account) {
+      fetchUserData();
+    }
+  }, [account]);
 
   const fetchUserData = async () => {
     try {
@@ -224,7 +229,7 @@ export default function DashboardPage() {
           <ConnectWalletDefault />
         ) : (
           <h1 className=" text-3xl font-bold text-black">
-            Welcome back{user.userName ? `, ${user.userName}` : ""}
+            Welcome back{user && user.userName ? `, ${user.userName}!` : "!"}
           </h1>
         )}
 
@@ -249,7 +254,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-8 sm:px-6 xl:px-8">
               <dt className="text-sm font-medium leading-6 text-gray-500">
-                {user.points && calculateTier(user.points)}
+                {user && user.points && calculateTier(user.points)}
                 {" Tier"}
                 <button
                   className="mb-auto scale-100 text-[.9rem] text-slate-600 transition-all hover:scale-95"
@@ -261,7 +266,7 @@ export default function DashboardPage() {
                 </button>
               </dt>
               <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-                {user.points} Points
+                {user && user.points ? `${user.points} Points` : null}
               </dd>
             </div>
           </dl>

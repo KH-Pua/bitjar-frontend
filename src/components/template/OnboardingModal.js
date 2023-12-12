@@ -82,6 +82,7 @@ const OnboardingModal = ({ address }) => {
         if (editUser) {
           // Close modal on successful submission
           document.getElementById("onboardingModal").close();
+          window.location.reload();
         }
       } catch (err) {
         console.error("Error submit user info:", err);
