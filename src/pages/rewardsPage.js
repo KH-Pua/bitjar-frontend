@@ -88,7 +88,7 @@ export default function RewardsPage() {
 
   return (
     <div className=" flex w-full flex-col items-center px-3">
-      {user && address ? (
+      {address ? (
         <>
           <header className="flex w-full flex-row justify-between">
             <h1 className="p-0 text-3xl font-bold text-black">Rewards</h1>

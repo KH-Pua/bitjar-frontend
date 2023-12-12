@@ -6,6 +6,7 @@ import Web3 from "web3";
 //-----------Components-----------//
 import SwapFrom from "../components/Swap/SwapFrom";
 import SwapTo from "../components/Swap/SwapTo";
+import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault";
 
 //-----------Utilties-----------//
 import { formatWalletAddress } from "../utilities/formatting";
@@ -16,6 +17,11 @@ import erc20ABI from "../utilities/erc20.abi.json";
 let web3;
 
 export default function SwapPage() {
+  // Constants
+  const API_KEY = process.env.REACT_APP_0X_KEY;
+  const address = useOutletContext();
+
+  // Variables
   const [tokens, setTokens] = useState([]);
   const [currentTrade, setCurrentTrade] = useState({ from: null, to: null });
   const [fromAmount, setFromAmount] = useState("");
@@ -23,14 +29,11 @@ export default function SwapPage() {
   const [swapQuote, setSwapQuote] = useState(null);
   const [gasPrice, setGasPrice] = useState(0);
   const [gasPriceUsd, setGasPriceUsd] = useState(0);
+  const [swapText, setSwapText] = useState("Swap");
 
   // Pass in as Props to Swap Components in order to set state in Parent component
   const [fromCoin, setFromCoin] = useState(null);
   const [toCoin, setToCoin] = useState(null);
-
-  // Constants
-  const API_KEY = process.env.REACT_APP_0X_KEY;
-  const address = useOutletContext();
 
   // Headers for 0x API requests
   const headers = {
@@ -73,6 +76,7 @@ export default function SwapPage() {
   }, [currentTrade.from, currentTrade.to, fromAmount]);
 
   const fetchPrice = async () => {
+    setSwapText("Swap");
     setSwapQuote(null); // Reset swap code to null if re-fetching
     if (!currentTrade.from || !currentTrade.to || !fromAmount) return;
 
@@ -93,7 +97,6 @@ export default function SwapPage() {
         headers,
       );
 
-      console.log("Price Response", priceResponse);
       const convertedAmount =
         priceResponse.data.buyAmount / 10 ** currentTrade.to.decimals;
       setToAmount(convertedAmount);
@@ -118,6 +121,7 @@ export default function SwapPage() {
   https://0x.org/docs/0x-swap-api/advanced-topics/how-to-set-your-token-allowances
   */
   const fetchQuote = async () => {
+    setSwapText("Swapping...");
     if (!currentTrade.from || !currentTrade.to || !fromAmount) return;
 
     const params = {
@@ -163,12 +167,14 @@ export default function SwapPage() {
         quoteResponse.data.buyAmount / 10 ** currentTrade.to.decimals;
       setToAmount(convertedAmount);
       // Calculate gas price in ETH and USD
-      getGasPrice();
+      getGasPrice(quoteResponse.data);
+      setSwapText("Swap");
       // Load confirmation Modal
       document.getElementById("swap_modal").showModal();
 
       console.log("FetchQuote", quoteResponse.data);
     } catch (err) {
+      setSwapText("Error swapping, try again");
       console.log(err);
     }
   };
@@ -187,9 +193,9 @@ export default function SwapPage() {
   };
 
   // Calculate gas price in ETH and USD https://ethereum.stackexchange.com/questions/54606/what-is-difference-between-gas-gas-price-and-fee
-  const getGasPrice = async () => {
+  const getGasPrice = async (quote) => {
     // Calculate gas price (Fee = gas*gasPrice)
-    let fee = (swapQuote.gasPrice * swapQuote.gas) / 10 ** 18;
+    let fee = (quote.gasPrice * quote.gas) / 10 ** 18;
     setGasPrice(fee);
 
     try {
@@ -198,7 +204,6 @@ export default function SwapPage() {
       });
       const ethPrice = information.data.data.data["ETH"].quote.USD.price;
       const result = fee * ethPrice;
-      console.log(result);
       setGasPriceUsd(result.toFixed(2));
       return result;
     } catch (error) {
@@ -208,110 +213,110 @@ export default function SwapPage() {
 
   return (
     <>
-      <div className="flex flex-col ">
-        <h1 className="text-2xl font-bold">Swap</h1>
-        <div className="flex flex-col items-center justify-center ">
-          <p className="">
-            Swaps powered by{" "}
-            <a
-              href="https://0x.org/"
-              target="_blank"
-              rel="noreferrer"
-              className="font-bold text-red-700"
-            >
-              0x Protocol
-            </a>
-          </p>
-          <p className="mb-2">
-            Connected:
-            <span className="font-semibold">
-              {formatWalletAddress(address)}
-            </span>
-          </p>
-          {/* Swap Form */}
-          <main className="flex flex-col items-center rounded-xl border-[1px] p-3 py-8">
-            <div className="pb-[1em]">
-              <h2 className="text-lg font-semibold">Swap from:</h2>
-              <SwapFrom
-                tokens={tokens && tokens}
-                selectToken={selectToken}
-                fromAmount={fromAmount}
-                setFromAmount={setFromAmount}
-                setFromCoin={setFromCoin}
-              />
-            </div>
-            <div className=" pb-[1em]">
-              <h2 className=" text-lg font-semibold">Swap to:</h2>
-              <SwapTo
-                tokens={tokens && tokens}
-                selectToken={selectToken}
-                setToCoin={setToCoin}
-              />
-            </div>
-            <div className="mt-2 rounded-xl bg-slate-100 p-2">
-              <p className=" text-[1rem] font-medium text-slate-600">
-                Estimated Price:
-              </p>
-              <SwapResult
-                fromAmount={fromAmount}
-                toAmount={toAmount}
-                fromCoin={fromCoin}
-                toCoin={toCoin}
-              />
-            </div>
-            {/* Swap buttons */}
-            <div className="mt-6 flex flex-row gap-2">
-              {/* <button onClick={fetchPrice} className="btn">
-                Fetch Price
-              </button> */}
+      {address ? (
+        <div className="flex flex-col ">
+          <h1 className="text-2xl font-bold">Swap</h1>
+          <div className="flex flex-col items-center justify-center ">
+            <p className="">
+              Swaps powered by{" "}
+              <a
+                href="https://0x.org/"
+                target="_blank"
+                rel="noreferrer"
+                className="font-bold text-red-700"
+              >
+                0x Protocol
+              </a>
+            </p>
+            <p className="mb-2">
+              Connected:
+              <span className="font-semibold">
+                {formatWalletAddress(address)}
+              </span>
+            </p>
+            {/* Swap Form */}
+            <main className="flex flex-col items-center rounded-xl border-[1px] p-3 py-8">
+              <div className="pb-[1em]">
+                <h2 className="text-lg font-semibold">Swap from:</h2>
+                <SwapFrom
+                  tokens={tokens && tokens}
+                  selectToken={selectToken}
+                  fromAmount={fromAmount}
+                  setFromAmount={setFromAmount}
+                  setFromCoin={setFromCoin}
+                />
+              </div>
+              <div className=" pb-[1em]">
+                <h2 className=" text-lg font-semibold">Swap to:</h2>
+                <SwapTo
+                  tokens={tokens && tokens}
+                  selectToken={selectToken}
+                  setToCoin={setToCoin}
+                />
+              </div>
+              <div className="mt-2 rounded-xl bg-slate-100 p-2">
+                <p className=" text-[1rem] font-medium text-slate-600">
+                  Estimated Price:
+                </p>
+                <SwapResult
+                  fromAmount={fromAmount}
+                  toAmount={toAmount}
+                  fromCoin={fromCoin}
+                  toCoin={toCoin}
+                />
+              </div>
+              {/* Swap buttons */}
+              <div className="mt-6 flex flex-row gap-2">
+                <button onClick={fetchQuote} className="btn w-72">
+                  {swapText}
+                </button>
+                {/* Swap confirmation modal */}
+                <dialog id="swap_modal" className="modal">
+                  <div className="modal-box w-[370px]">
+                    <form method="dialog">
+                      {/* if there is a button in form, it will close the modal */}
+                      <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
+                        ✕
+                      </button>
+                    </form>
 
-              <button onClick={fetchQuote} className="btn w-72">
-                Swap
-              </button>
-              {/* Swap confirmation modal */}
-              <dialog id="swap_modal" className="modal">
-                <div className="modal-box w-[370px]">
-                  <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
-                      ✕
-                    </button>
-                  </form>
+                    <main className="flex flex-col items-center">
+                      <h3 className="mb-3 text-xl font-bold">Review Swap</h3>
+                      <figure className="mb-1 rounded-lg bg-slate-100 p-3">
+                        {swapQuote && (
+                          <SwapResult
+                            fromAmount={fromAmount}
+                            toAmount={toAmount}
+                            fromCoin={fromCoin}
+                            toCoin={toCoin}
+                          />
+                        )}
+                      </figure>
+                      <p className="mb-4 animate-pulse text-xs">
+                        {" "}
+                        {swapQuote &&
+                          `Network Cost: ~${gasPrice.toFixed(
+                            4,
+                          )} ETH ($${gasPriceUsd})`}
+                      </p>
+                      <button
+                        onClick={executeSwap}
+                        className=" btn bg-yellow-400 text-white hover:bg-yellow-500"
+                      >
+                        Confirm Swap
+                      </button>
+                    </main>
+                  </div>
+                </dialog>
 
-                  <main className="flex flex-col items-center">
-                    <h3 className="mb-3 text-xl font-bold">Review Swap</h3>
-                    <figure className="mb-1 rounded-lg bg-slate-100 p-3">
-                      {swapQuote && (
-                        <SwapResult
-                          fromAmount={fromAmount}
-                          toAmount={toAmount}
-                          fromCoin={fromCoin}
-                          toCoin={toCoin}
-                        />
-                      )}
-                    </figure>
-                    <p className="mb-4 animate-pulse text-xs">
-                      {" "}
-                      {swapQuote &&
-                        `Network Cost: ~${gasPrice.toFixed(
-                          4,
-                        )} ETH ($${gasPriceUsd})`}
-                    </p>
-                    <button
-                      onClick={executeSwap}
-                      className=" btn bg-yellow-400 text-white hover:bg-yellow-500"
-                    >
-                      Confirm Swap
-                    </button>
-                  </main>
-                </div>
-              </dialog>
-
-              {/* Execute Swap */}
-            </div>
-          </main>
+                {/* Execute Swap */}
+              </div>
+            </main>
+          </div>
         </div>
-      </div>
+      ) : (
+        <ConnectWalletDefault />
+      )}
     </>
   );
 }
