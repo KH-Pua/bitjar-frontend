@@ -197,7 +197,7 @@ export default function HomePage() {
             Backed by institutional partners
           </h1>
           <p className="pb-[2em] tracking-tighter">
-            Over 420,000,000 in $BJ raised since inception 💰
+            Over 420,000,000 in $BITJ raised since inception 💰
           </p>
           <div className=" mt-4 flex w-full flex-row items-start justify-center">
             <ProfileImage src={spyicon} label="Spy Investments" />
