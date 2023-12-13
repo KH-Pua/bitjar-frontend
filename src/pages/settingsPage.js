@@ -99,6 +99,7 @@ export default function SettingsPage() {
       try {
         if (user.refererCode) {
           await apiRequest.post("/users/referrals/add", user);
+          getRefererInfo();
         }
       } catch (error) {
         console.error("An error occurred:", error);
