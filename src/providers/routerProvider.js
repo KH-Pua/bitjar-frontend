@@ -11,6 +11,7 @@ import SwapPage from "../pages/swapPage.js";
 import BuyPage from "../pages/buyPage.js";
 import RewardsPage from "../pages/rewardsPage.js";
 import SettingsPage from "../pages/settingsPage.js";
+import FaqPage from "../pages/faqPage.js";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
       {
         path: "rewards",
         element: <RewardsPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "faq",
+        element: <FaqPage />,
         errorElement: <ErrorPage />,
       },
       {
