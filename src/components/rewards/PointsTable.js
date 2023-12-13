@@ -73,9 +73,13 @@ const PointsTable = ({ data }) => {
                     )}
                   </td>
                   {windowWidth <= 1024 ? null : (
-                    <td>{formatWalletAddress(row.walletAddress)}</td>
+                    <td className="pl-[1em]">
+                      {formatWalletAddress(row.walletAddress)}
+                    </td>
                   )}
-                  <td className="pl-[1em] font-semibold">{row.points}</td>
+                  <td className="pl-[1em] text-center font-semibold">
+                    {row.points}
+                  </td>
                 </tr>
               </tbody>
             ))}

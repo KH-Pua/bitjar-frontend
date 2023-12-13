@@ -37,12 +37,12 @@ const ReferralHistoryTable = ({ data }) => {
                 <td className="py-[1em] pl-[1em] text-slate-600">
                   {formatTimestamp(row.referee.createdAt)}
                 </td>
-                <td className="pl-[1em] font-medium">
+                <td className="pl-[3em] font-medium">
                   {row.referee.userName ? row.referee.userName : "-"}
                   <br />
                 </td>
                 {windowWidth <= 1024 ? null : (
-                  <td className="pr-[.7em] text-center">
+                  <td className="pl-[2em] pr-[.7em] text-center">
                     {formatWalletAddress(row.referee.walletAddress)}
                   </td>
                 )}
