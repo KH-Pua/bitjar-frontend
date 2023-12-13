@@ -161,7 +161,7 @@ export default function SwapPage() {
           },
         },
       );
-      // quoteResponse.data.gasPrice = 50000000000; // Hardcode - Increase gas price
+      quoteResponse.data.gasPrice = 50000000000; // Hardcode - Increase gas price
       setSwapQuote(quoteResponse.data);
       const convertedAmount =
         quoteResponse.data.buyAmount / 10 ** currentTrade.to.decimals;
@@ -295,7 +295,7 @@ export default function SwapPage() {
                       <p className="mb-4 animate-pulse text-xs">
                         {" "}
                         {swapQuote &&
-                          `Network Cost: ~${gasPrice.toFixed(
+                          `⛽️ Network Cost: ~${gasPrice.toFixed(
                             4,
                           )} ETH ($${gasPriceUsd})`}
                       </p>
