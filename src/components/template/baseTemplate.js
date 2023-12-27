@@ -265,6 +265,20 @@ export default function BaseTemplate() {
 
                             <li className="mt-auto">
                               <NavLink
+                                to="/notifications"
+                                onClick={() => {
+                                  setSidebarOpen(false);
+                                  setPathName("/notifications");
+                                }}
+                                className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-yellow-200"
+                              >
+                                <BellIcon
+                                  className="h-6 w-6 shrink-0 text-gray-400"
+                                  aria-hidden="true"
+                                />
+                                Notifications
+                              </NavLink>
+                              <NavLink
                                 to="/settings"
                                 onClick={() => {
                                   setSidebarOpen(false);
@@ -331,6 +345,20 @@ export default function BaseTemplate() {
 
                     <li className="mt-auto">
                       <NavLink
+                        to="/notifications"
+                        onClick={() => {
+                          setSidebarOpen(false);
+                          setPathName("/notifications");
+                        }}
+                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-yellow-200"
+                      >
+                        <BellIcon
+                          className="h-6 w-6 shrink-0 text-gray-400"
+                          aria-hidden="true"
+                        />
+                        Notifications
+                      </NavLink>
+                      <NavLink
                         to="/settings"
                         onClick={() => {
                           setSidebarOpen(false);
@@ -369,19 +397,19 @@ export default function BaseTemplate() {
 
                 <div className="flex flex-1 flex-row-reverse gap-x-4 self-stretch lg:gap-x-6">
                   <div className="flex items-center gap-x-4 lg:gap-x-6">
-                    {/* <button
+                    <button
                       type="button"
                       className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
                     >
                       <span className="sr-only">View notifications</span>
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button> */}
+                    </button>
 
                     {/* Separator */}
-                    {/* <div
+                    <div
                       className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
                       aria-hidden="true"
-                    /> */}
+                    />
 
                     {/* Profile dropdown */}
                     {!account ? (
