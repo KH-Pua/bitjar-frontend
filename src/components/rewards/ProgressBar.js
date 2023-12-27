@@ -1,12 +1,17 @@
+//-----------Libraries-----------//
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
-import { formatWalletAddress } from "../../utilities/formatting";
-
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
-
-import logo from "../../media/bitjar-logo.png";
+//-----------Components-----------//
 import InfoTable from "./InfoTable";
 import TierTable from "./TierTable";
+
+//-----------Utilities-----------//
+import { formatWalletAddress } from "../../utilities/formatting";
+
+//-----------Media-----------//
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import logo from "../../media/bitjar-logo.png";
 
 const ProgressBar = ({ userData }) => {
   const [progress, setProgress] = useState(0);
@@ -84,7 +89,7 @@ const ProgressBar = ({ userData }) => {
         <h1 className="flex flex-row items-center gap-[1em]">
           <div className=" flex items-center">
             <div className="avatar">
-              <div className="h-16 w-16 rounded-full bg-white">
+              <div className="h-16 w-16 rounded-full bg-white hover:scale-110">
                 <img src={profilePicture ? profilePicture : logo} alt="DP" />
               </div>
             </div>
@@ -127,11 +132,14 @@ const ProgressBar = ({ userData }) => {
           </div>
         </dialog>
       </header>
-      <div className="my-[1em] h-4 w-full rounded-full bg-gray-600">
-        <div
-          className="h-full rounded-full bg-yellow-400"
+      <div className="my-[1em] h-5 w-full rounded-full bg-gray-600 ">
+        <motion.div
+          className="h-full rounded-full bg-yellow-400 hover:animate-pulse"
           style={{ width: `${progress}` }}
-        ></div>
+          initial={{ width: "0%" }} // Initial width set to 0%
+          animate={{ width: `${progress}` }} // Animate to the specified width
+          transition={{ duration: 3 }} // Transition duration
+        ></motion.div>
       </div>
       <div className="text-right">
         <p className="text-[12px] sm:text-base">

@@ -1,0 +1,70 @@
+[
+  {
+    "question": "What is Bitjar and how does it work?",
+    "answer": "Bitjar is a comprehensive platform that simplifies your journey into the world of cryptocurrency. It allows users to buy, swap, and earn crypto easily and efficiently. From purchasing your first crypto asset to earning yield through staking, Bitjar is designed to assist you every step of the way."
+  },
+  {
+    "question": "How can I earn with my cryptocurrency on Bitjar?",
+    "answer": "You can earn by lending your WBTC on Aave or participating in yield programs like Babylon BTC staking. Our platform selects the best non-custodial sources to maximize your crypto yield safely and securely."
+  },
+  {
+    "question": "What is WBTC and how is it used on Bitjar?",
+    "answer": "Wrapped Bitcoin (WBTC) is a tokenized version of Bitcoin on the Ethereum blockchain. It brings the liquidity of Bitcoin to the Ethereum ecosystem. On Bitjar, you can lend your WBTC on Aave to earn interest or use it in various other financial activities."
+  },
+  {
+    "question": "Can I buy crypto directly on Bitjar?",
+    "answer": "Yes, Bitjar leverages MoonPay to enable users to buy cryptocurrency with minimal fees. You can use your credit card and other financial options to make purchases easily."
+  },
+  {
+    "question": "What does 'swap tokens' mean and how do I do it on Bitjar?",
+    "answer": "Swapping tokens refers to exchanging one type of crypto asset for another. Bitjar offers instant conversion services, providing the best quotes to efficiently swap your crypto with just a few block confirmations."
+  },
+  {
+    "question": "What is a blockchain confirmation?",
+    "answer": "A blockchain confirmation is a verification of a transaction on a blockchain network. Each confirmation reduces the risk of a transaction being reversed. The more confirmations a transaction has, the more secure it is."
+  },
+  {
+    "question": "How does the leaderboard and referral system work?",
+    "answer": "Our leaderboard tracks in-app activities and referrals. You can compete against others and climb the ranks by earning points through these activities. Accumulating more points can unlock multipliers and make you eligible for seasonal airdrops."
+  },
+  {
+    "question": "What is a non-custodial platform?",
+    "answer": "A non-custodial platform means that you retain control of your private keys and your cryptocurrency. This type of platform enhances security as it reduces the risk of losing assets to platform-related issues like hacks."
+  },
+  {
+    "question": "What is staking in cryptocurrency?",
+    "answer": "Staking in cryptocurrency refers to the process of holding funds in a crypto wallet to support the operations of a blockchain network. It's often used in various consensus mechanisms like Proof of Stake (PoS), where it helps in validating transactions."
+  },
+  {
+    "question": "How do I set up my Bitjar account for the first time?",
+    "answer": "Setting up your Bitjar account is simple. Setup a non-custodial wallet with Metamask, Coinbase Wallet or your favourite web3 wallet app, connect the wallet to the app, and fill in some information to help the app personalize the experience for you."
+  },
+  {
+    "question": "How does Bitjar ensure the best rates for crypto swaps?",
+    "answer": "Bitjar aggregates prices from various sources to ensure you get the best rates for your crypto swaps. Our platform performs real-time comparisons to provide the most favorable quotes."
+  },
+  {
+    "question": "What cryptocurrencies can I buy on Bitjar?",
+    "answer": "Bitjar supports a wide range of cryptocurrencies including popular ones like Bitcoin (BTC), Ethereum (ETH), Wrapped Bitcoin (WBTC), and many others. We regularly update our offerings based on market trends."
+  },
+  {
+    "question": "How can I track my earnings and transactions on Bitjar?",
+    "answer": "Bitjar provides a user-friendly dashboard where you can easily track all your earnings, transactions, and portfolio performance. This helps you make informed decisions about your crypto investments."
+  },
+  {
+    "question": "What is a blockchain wallet and how does it work?",
+    "answer": "A blockchain wallet is a digital wallet that allows you to store, manage, and trade your cryptocurrencies. It uses cryptographic techniques to provide a secure way to conduct transactions and access your funds."
+  },
+  {
+    "question": "Can I use Bitjar to learn about cryptocurrency trading?",
+    "answer": "Absolutely! Bitjar is designed to be user-friendly for beginners and offers various resources to help you understand the basics of cryptocurrency trading and investment."
+  },
+  {
+    "question": "How do I participate in seasonal airdrops on Bitjar?",
+    "answer": "Seasonal airdrops are rewards distributed to active users. You can participate by engaging in qualifying activities within the app, such as trading, staking, or referring new users. Keep an eye on our announcements for upcoming airdrops."
+  },
+  {
+    "question": "What should I do if I encounter an issue with a transaction?",
+    "answer": "If you encounter any issues with a transaction, please reach out to our support team immediately. Provide transaction details, and our team will assist you in resolving the issue as quickly as possible."
+  }
+]

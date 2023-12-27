@@ -22,11 +22,11 @@ const PointsHistoryTable = ({ data }) => {
                 <td className="pl-[2em] text-slate-600">
                   {formatTimestamp(row.createdAt)}
                 </td>
-                <td className="py-[1em] pl-[1em] font-medium">
+                <td className="py-[1em] pl-[3em] font-medium">
                   {row.actionName}
                   <br />
                 </td>
-                <td className="pr-[.7em] text-center font-semibold">
+                <td className="pl-[2em] text-center font-semibold">
                   {row.pointsAllocated}
                 </td>
               </tr>

@@ -50,7 +50,9 @@ const ReferralTable = ({ data }) => {
                 {windowWidth <= 1024 ? null : (
                   <td>{formatWalletAddress(row.walletAddress)}</td>
                 )}
-                <td className="pl-[2em] font-semibold">{row.referralCount}</td>
+                <td className="pl-[2em] text-center font-semibold">
+                  {row.referralCount}
+                </td>
               </tr>
             </tbody>
           ))}

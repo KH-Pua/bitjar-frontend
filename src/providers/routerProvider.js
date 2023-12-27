@@ -12,6 +12,7 @@ import BuyPage from "../pages/buyPage.js";
 import RewardsPage from "../pages/rewardsPage.js";
 import SettingsPage from "../pages/settingsPage.js";
 import NotificationsPage from "../pages/notificationsPage.js";
+import FaqPage from "../pages/faqPage.js";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,11 @@ const router = createBrowserRouter([
       {
         path: "notifications",
         element: <NotificationsPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "faq",
+        element: <FaqPage />,
         errorElement: <ErrorPage />,
       },
       {
