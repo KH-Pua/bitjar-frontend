@@ -1,16 +1,12 @@
 //-----------Libraries-----------//
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import { MoonPayBuyWidget } from "@moonpay/moonpay-react";
 
 //-----------Components-----------//
-import PaymentHistoryTable from "../components/buy/PaymentHistoryTable.js";
-import PointNotification from "../components/details/PointNotification.js";
 import { ConnectWalletDefault } from "../components/ConnectWalletDefault/ConnectWalletDefault.js";
 
 //-----------Utilities-----------//
 import { apiRequest } from "../utilities/apiRequests";
-import { purchasePoints } from "../utilities/pointsMessages.js";
 
 export default function NotificationsPage() {
   const address = useOutletContext();
